@@ -220,7 +220,7 @@ export default function PricingPageContent() {
       </section>
 
       <p className="pricing-unified-note">
-        All plans include full access to Pelican. Same model, same capabilities. Choose based on how often you&apos;ll use it.
+        All plans include full access to Pelican. Same model, same capabilities. Choose the plan based on your expected usage.
       </p>
 
       {error && (

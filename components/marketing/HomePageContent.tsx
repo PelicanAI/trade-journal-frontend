@@ -270,7 +270,7 @@ export default function HomePageContent() {
           </div>
 
           <p className="pricing-unified-note animate-on-scroll">
-            All plans include full access to Pelican. Same model, same capabilities. Choose based on how often you&apos;ll use it.
+            All plans include full access to Pelican. Same model, same capabilities. Choose the plan based on your expected usage.
           </p>
 
           <div className="pricing-tiers">
