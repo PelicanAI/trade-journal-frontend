@@ -16,7 +16,7 @@ export default function PrivacyPage() {
       <nav className="legal-nav">
         <Link href="/" className="back-link">← Back to Home</Link>
       </nav>
-      <main className="legal-content">
+      <main id="main-content" className="legal-content">
         <h1>Privacy Policy</h1>
         <p className="legal-meta">
           <strong>PELICAN TRADING, LLC</strong><br />

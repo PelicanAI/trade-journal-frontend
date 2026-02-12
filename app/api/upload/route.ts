@@ -4,6 +4,9 @@ import { v4 as uuidv4 } from "uuid"
 import { createHash } from "crypto"
 import { sanitizeFilename } from "@/lib/sanitize"
 import { captureException, addBreadcrumb } from "@/lib/sentry"
+import { createUserRateLimiter, rateLimitResponse } from "@/lib/rate-limit"
+
+const uploadLimiter = createUserRateLimiter('upload', 20, '1 h')
 
 // =============================================================================
 // Configuration
@@ -175,6 +178,10 @@ export async function POST(request: NextRequest) {
     if (authError || !user) {
       return NextResponse.json({ error: "Authentication required" }, { status: 401 })
     }
+
+    const { success } = await uploadLimiter.limit(user.id)
+    if (!success) return rateLimitResponse()
+
     const userId = user.id
 
     const formData = await request.formData()

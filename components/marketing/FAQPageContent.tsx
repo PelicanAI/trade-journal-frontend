@@ -241,7 +241,7 @@ export default function FAQPageContent() {
         mobileNavId="faq-mobile-nav"
       />
 
-      <main className="faq-page">
+      <main id="main-content" className="faq-page">
         <div className="faq-container">
           <header className="faq-header">
             <div className="faq-tag">{t.marketing.faq.helpCenter}</div>

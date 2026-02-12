@@ -29,12 +29,15 @@ export function generateMetadata(): Metadata {
       images: [{ url: '/og-image.png', width: 1200, height: 630, alt: 'Pelican Trading' }],
       type: 'website',
       siteName: 'Pelican Trading',
+      url: 'https://pelicantrading.ai',
     },
     twitter: {
       card: 'summary_large_image',
       title: 'Pelican Trading | AI Market Intelligence for Traders',
       description: 'AI-powered trading assistant for smarter trading decisions.',
       images: ['/og-image.png'],
+      site: '@PelicanAI_',
+      creator: '@GrasshopperNick',
     },
     other: {
       ...Sentry.getTraceData()

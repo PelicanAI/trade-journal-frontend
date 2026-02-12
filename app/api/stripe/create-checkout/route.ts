@@ -1,8 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server'
 import Stripe from 'stripe'
 import { createClient } from '@/lib/supabase/server'
+import { createUserRateLimiter, rateLimitResponse } from '@/lib/rate-limit'
 
 export const dynamic = 'force-dynamic'
+
+const checkoutLimiter = createUserRateLimiter('stripe-checkout', 5, '1 h')
 
 const getStripeClient = () => {
   const secretKey = process.env.STRIPE_SECRET_KEY
@@ -20,6 +23,9 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Authentication required' }, { status: 401 })
     }
 
+    const { success } = await checkoutLimiter.limit(user.id)
+    if (!success) return rateLimitResponse()
+
     let stripe: Stripe
     try {
       stripe = getStripeClient()
@@ -31,9 +37,9 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    const { priceId, planName } = await request.json()
+    const { priceId } = await request.json()
 
-    if (!priceId || !planName) {
+    if (!priceId) {
       return NextResponse.json(
         { error: 'Missing required fields' },
         { status: 400 }
@@ -54,7 +60,20 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Derive credits server-side from priceId — never trust client-supplied values
+    // Derive plan name and credits server-side from priceId — never trust client-supplied values
+    const PRICE_TO_PLAN: Record<string, string> = {
+      [process.env.NEXT_PUBLIC_STRIPE_STARTER_PRICE_ID!]: 'starter',
+      [process.env.NEXT_PUBLIC_STRIPE_PRO_PRICE_ID!]: 'pro',
+      [process.env.NEXT_PUBLIC_STRIPE_POWER_PRICE_ID!]: 'power',
+    }
+    const serverPlanName = PRICE_TO_PLAN[priceId]
+    if (!serverPlanName) {
+      return NextResponse.json(
+        { error: 'Invalid price configuration' },
+        { status: 400 }
+      )
+    }
+
     const PLAN_CREDITS: Record<string, number> = {
       [process.env.NEXT_PUBLIC_STRIPE_STARTER_PRICE_ID!]: 1000,
       [process.env.NEXT_PUBLIC_STRIPE_PRO_PRICE_ID!]: 3500,
@@ -94,18 +113,18 @@ export async function POST(request: NextRequest) {
           quantity: 1
         }
       ],
-      success_url: `${process.env.NEXT_PUBLIC_APP_URL}/chat?subscribed=true&plan=${planName}`,
+      success_url: `${process.env.NEXT_PUBLIC_APP_URL}/chat?subscribed=true&plan=${serverPlanName}`,
       cancel_url: `${process.env.NEXT_PUBLIC_APP_URL}/pricing?canceled=true`,
       client_reference_id: user.id,
       metadata: {
         user_id: user.id,
-        plan: planName,
+        plan: serverPlanName,
         credits: planCredits.toString()
       },
       subscription_data: {
         metadata: {
           user_id: user.id,
-          plan: planName,
+          plan: serverPlanName,
           credits: planCredits.toString()
         }
       },

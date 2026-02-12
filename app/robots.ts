@@ -6,7 +6,7 @@ export default function robots(): MetadataRoute.Robots {
       {
         userAgent: '*',
         allow: '/',
-        disallow: ['/auth/', '/admin/', '/chat/', '/settings/', '/profile/', '/api/'],
+        disallow: ['/auth/', '/admin/', '/chat/', '/settings/', '/profile/', '/api/', '/accept-terms/'],
       },
     ],
     sitemap: 'https://pelicantrading.ai/sitemap.xml',

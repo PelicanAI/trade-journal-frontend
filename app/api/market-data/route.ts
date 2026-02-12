@@ -1,7 +1,10 @@
 import { NextResponse } from "next/server"
 import { createClient } from "@/lib/supabase/server"
+import { createUserRateLimiter, rateLimitResponse } from "@/lib/rate-limit"
 
 export const dynamic = "force-dynamic"
+
+const marketDataLimiter = createUserRateLimiter('market-data', 60, '1 m')
 
 const POLYGON_API_KEY = process.env.POLYGON_API_KEY
 
@@ -72,6 +75,9 @@ export async function GET() {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
     }
 
+    const { success } = await marketDataLimiter.limit(user.id)
+    if (!success) return rateLimitResponse()
+
     if (!POLYGON_API_KEY) {
       return NextResponse.json({
         indices: [
@@ -103,7 +109,11 @@ export async function GET() {
     ])
 
     if (!indicesResponse.ok || !stocksResponse.ok) {
-      throw new Error("Failed to fetch from Polygon.io")
+      console.error("Polygon.io API error:", { indices: indicesResponse.status, stocks: stocksResponse.status })
+      return NextResponse.json(
+        { error: "Failed to fetch market data from upstream provider" },
+        { status: 502 }
+      )
     }
 
     const indicesData: PolygonIndicesResponse = await indicesResponse.json()
@@ -209,7 +219,7 @@ export async function GET() {
   } catch (error) {
     console.error("Market data API error:", error)
 
-    // Return null values instead of crashing
+    // Return null values with 502 to indicate upstream failure
     return NextResponse.json(
       {
         indices: [
@@ -232,7 +242,7 @@ export async function GET() {
           { symbol: "SPY", price: null, changePercent: null },
         ],
       },
-      { status: 200 }
+      { status: 502 }
     )
   }
 }

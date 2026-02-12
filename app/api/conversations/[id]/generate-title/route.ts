@@ -1,6 +1,9 @@
 import { type NextRequest, NextResponse } from "next/server"
 import { createClient } from "@/lib/supabase/server"
 import * as Sentry from "@sentry/nextjs"
+import { createUserRateLimiter, rateLimitResponse } from "@/lib/rate-limit"
+
+const titleLimiter = createUserRateLimiter('title-generation', 10, '1 h')
 
 export async function POST(
   req: NextRequest,
@@ -18,7 +21,14 @@ export async function POST(
       return NextResponse.json({ error: "Authentication required" }, { status: 401 })
     }
 
-    const { userMessage, assistantMessage } = await req.json()
+    const { success } = await titleLimiter.limit(user.id)
+    if (!success) return rateLimitResponse()
+
+    const body = await req.text()
+    if (body.length > 10000) {
+      return NextResponse.json({ error: "Body too large" }, { status: 413 })
+    }
+    const { userMessage, assistantMessage } = JSON.parse(body)
     if (!userMessage || !assistantMessage) {
       return NextResponse.json({ error: "Missing userMessage or assistantMessage" }, { status: 400 })
     }

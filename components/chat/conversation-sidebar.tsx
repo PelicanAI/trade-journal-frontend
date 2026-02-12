@@ -131,6 +131,13 @@ const ConversationItem = React.memo(function ConversationItem({
         if (isNavigatingToThis) return
         onSelect(conversation.id)
       }}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault()
+          if (isNavigatingToThis) return
+          onSelect(conversation.id)
+        }
+      }}
     >
       <div className="flex-1 min-w-0 max-w-[180px]">
         <h3 className="font-medium text-sm truncate text-sidebar-foreground">
@@ -602,7 +609,7 @@ export function ConversationSidebar({
             asChild
             className="h-10 w-10 hover:bg-sidebar-accent/50"
           >
-            <Link href="/settings">
+            <Link href="/settings" aria-label="Settings">
               <Settings className="h-4 w-4" />
             </Link>
           </Button>

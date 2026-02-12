@@ -1,49 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { createClient } from '@/lib/supabase/server';
+import { createUserRateLimiter, rateLimitResponse } from '@/lib/rate-limit';
 
-// Simple in-memory rate limiter
-const RATE_LIMIT_WINDOW_MS = 60 * 1000 // 1 minute
-const RATE_LIMIT_MAX_REQUESTS = 10
 const MAX_CONTENT_LENGTH = 2000
 
-interface RateLimitEntry {
-  count: number
-  resetAt: number
-}
-
-const rateLimitMap = new Map<string, RateLimitEntry>()
-
-// Clean up expired entries periodically
-setInterval(() => {
-  const now = Date.now()
-  for (const [key, entry] of rateLimitMap) {
-    if (now > entry.resetAt) {
-      rateLimitMap.delete(key)
-    }
-  }
-}, 60 * 1000)
-
-function getClientIp(request: NextRequest): string {
-  return request.headers.get('x-forwarded-for')?.split(',')[0]?.trim()
-    || request.headers.get('x-real-ip')
-    || 'unknown'
-}
-
-function checkRateLimit(ip: string): boolean {
-  const now = Date.now()
-  const entry = rateLimitMap.get(ip)
-
-  if (!entry || now > entry.resetAt) {
-    rateLimitMap.set(ip, { count: 1, resetAt: now + RATE_LIMIT_WINDOW_MS })
-    return true
-  }
-
-  if (entry.count >= RATE_LIMIT_MAX_REQUESTS) {
-    return false
-  }
-
-  entry.count++
-  return true
-}
+const educationLimiter = createUserRateLimiter('education-chat', 20, '1 h')
 
 const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
 
@@ -72,16 +33,17 @@ interface ChatRequest {
 }
 
 export async function POST(request: NextRequest) {
-  // Rate limit check
-  const clientIp = getClientIp(request)
-  if (!checkRateLimit(clientIp)) {
-    return NextResponse.json(
-      { error: 'Too many requests. Please try again in a minute.' },
-      { status: 429 }
-    )
-  }
-
   try {
+    const supabase = await createClient()
+    const { data: { user }, error: authError } = await supabase.auth.getUser()
+
+    if (authError || !user) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+
+    const { success } = await educationLimiter.limit(user.id)
+    if (!success) return rateLimitResponse()
+
     const { message, history = [], termContext }: ChatRequest = await request.json();
 
     if (!message || typeof message !== 'string') {
@@ -91,6 +53,16 @@ export async function POST(request: NextRequest) {
     if (message.length > MAX_CONTENT_LENGTH) {
       return NextResponse.json({ error: 'Message too long' }, { status: 400 });
     }
+
+    // Validate and sanitize history
+    if (Array.isArray(history) && history.length > 50) {
+      return NextResponse.json({ error: 'History too long' }, { status: 400 })
+    }
+
+    const sanitizedHistory = (history || []).slice(-10).map((msg: ChatMessage) => ({
+      role: msg.type === 'bot' ? 'assistant' as const : 'user' as const,
+      content: typeof msg.content === 'string' ? msg.content.slice(0, 2000) : '',
+    }))
 
     // Check for API key
     if (!OPENAI_API_KEY) {
@@ -103,21 +75,16 @@ export async function POST(request: NextRequest) {
     ];
 
     // Add term context if provided
-    if (termContext) {
+    if (termContext && typeof termContext === 'string') {
       messages.push({
         role: 'system',
-        content: `The user is currently learning about: ${termContext}. Tailor your responses to this context when relevant.`
+        content: `The user is currently learning about: ${termContext.slice(0, 500)}. Tailor your responses to this context when relevant.`
       });
     }
 
-    // Add conversation history (last 10 messages)
-    const recentHistory = history.slice(-10);
-    for (const msg of recentHistory) {
-      if (msg.type === 'user') {
-        messages.push({ role: 'user', content: msg.content });
-      } else if (msg.type === 'bot') {
-        messages.push({ role: 'assistant', content: msg.content });
-      }
+    // Add sanitized conversation history
+    for (const msg of sanitizedHistory) {
+      messages.push(msg);
     }
 
     // Add current message

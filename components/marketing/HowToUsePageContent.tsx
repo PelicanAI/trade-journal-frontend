@@ -101,7 +101,7 @@ export default function HowToUsePageContent() {
   };
 
   return (
-    <div className="how-to-use-page">
+    <div id="main-content" className="how-to-use-page">
       <ScrollAnimationObserver dep={activeTab} />
       <div className="grid-bg"></div>
 

@@ -190,7 +190,7 @@ export default function PricingPageContent() {
     <>
       <MarketingNav links={navLinks} ctaAction="signup" ctaLabel={t.marketing.nav.getStarted} />
 
-      <section className="pricing-hero">
+      <section id="main-content" className="pricing-hero">
         <div className="pricing-hero-inner">
           <div className="pricing-nav-links">
             <Link href="/" className="pricing-back-link">
