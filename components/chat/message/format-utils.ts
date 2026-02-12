@@ -150,24 +150,25 @@ export function applyTickerLinks(
 
   let result = html
 
-  // Process longer tickers first so "EUR/USD" matches before "EUR" or "USD"
-  const sorted = [...(tickers ?? [])].sort((a, b) => b.length - a.length)
+  // Single-pass ticker highlighting: prevents nested spans (BTC inside BTC-USD)
+  // and limits to first occurrence per base symbol.
+  if (tickers && tickers.length > 0) {
+    const sorted = [...tickers].sort((a, b) => b.length - a.length)
+    const pattern = sorted.map((t) => escapeRegExp(t)).join("|")
+    const re = new RegExp(`\\b(${pattern})\\b`, "g")
+    const highlighted = new Set<string>()
 
-  for (const ticker of sorted) {
-    // Match the ticker as a standalone word, but only outside of HTML tags.
-    // Split on HTML tags, process only text parts.
     const parts = result.split(/(<[^>]*>)/g)
-    const escaped = escapeRegExp(ticker)
     result = parts
       .map((part) => {
-        // If this part is an HTML tag, leave it alone
         if (part.startsWith("<")) return part
-        // Replace standalone ticker matches in text content
-        const re = new RegExp(`\\b(${escaped})\\b`, "g")
-        return part.replace(
-          re,
-          `<span class="ticker-link text-purple-400 hover:text-purple-300 underline decoration-purple-400/40 hover:decoration-purple-300 cursor-pointer font-medium" data-ticker="${ticker}">$1</span>`
-        )
+        return part.replace(re, (match) => {
+          // Dedup by base symbol: BTC-USD and BTC share base "BTC"
+          const base = match.split(/[-/]/)[0] || match
+          if (highlighted.has(base)) return match
+          highlighted.add(base)
+          return `<span class="ticker-link text-purple-400 hover:text-purple-300 underline decoration-purple-400/40 hover:decoration-purple-300 cursor-pointer font-medium" data-ticker="${match}">${match}</span>`
+        })
       })
       .join("")
   }
