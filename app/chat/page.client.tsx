@@ -296,6 +296,27 @@ export default function ChatPage() {
           console.error('[Chat] Failed to persist image metadata:', e)
         }
       }
+
+      // Auto-generate conversation title after first exchange
+      const convId = latestConversationIdRef.current
+      if (convId) {
+        const userMessages = messages.filter(m => m.role === 'user')
+        const firstUserMsg = userMessages[0]
+        if (userMessages.length === 1 && firstUserMsg) {
+          const userContent = firstUserMsg.content
+          const assistantContent = message.content
+          if (userContent && assistantContent) {
+            fetch(`/api/conversations/${convId}/generate-title`, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                userMessage: userContent,
+                assistantMessage: assistantContent,
+              }),
+            }).catch(() => {})
+          }
+        }
+      }
     },
     onConversationCreated: (conversationId: string) => {
       latestConversationIdRef.current = conversationId
