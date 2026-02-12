@@ -123,7 +123,16 @@ export function useFileUpload({ sendMessage, addSystemMessage, chatInputRef }: U
         return
       }
 
-      const validFiles = files.filter((file) => {
+      // Deduplicate files (paste events can produce duplicates)
+      const seen = new Set<string>()
+      const dedupedFiles = files.filter((file) => {
+        const key = `${file.name}:${file.size}:${file.type}:${file.lastModified}`
+        if (seen.has(key)) return false
+        seen.add(key)
+        return true
+      })
+
+      const validFiles = dedupedFiles.filter((file) => {
         if (!isAcceptedFileType(file)) {
           addSystemMessage(`${file.name} is not supported and will be skipped.`)
           return false

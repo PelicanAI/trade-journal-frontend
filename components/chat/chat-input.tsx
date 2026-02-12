@@ -83,11 +83,19 @@ export const ChatInput = forwardRef<ChatInputRef, ChatInputProps>(
       if (!items) return
 
       const files: File[] = []
+      const seen = new Set<string>()
       for (let i = 0; i < items.length; i++) {
         const item = items[i]
         if (item && item.type.startsWith("image/")) {
           const file = item.getAsFile()
-          if (file) files.push(file)
+          if (file) {
+            // Deduplicate: browsers can expose the same image as multiple DataTransferItems
+            const key = `${file.name}:${file.size}:${file.type}:${file.lastModified}`
+            if (!seen.has(key)) {
+              seen.add(key)
+              files.push(file)
+            }
+          }
         }
       }
 

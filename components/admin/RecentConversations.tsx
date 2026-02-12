@@ -13,6 +13,7 @@ import {
   Check,
   Clock,
 } from 'lucide-react'
+import { formatLine } from '@/components/chat/message/format-utils'
 
 // =============================================================================
 // TYPES
@@ -93,6 +94,17 @@ function formatCopyThread(messages: ConvoMessage[]): string {
 // MESSAGE ROW
 // =============================================================================
 
+/**
+ * Render assistant content with basic markdown (bold, italic, headers, links).
+ * Uses the same formatLine utility as the main chat.
+ */
+function renderFormattedContent(content: string): string {
+  return content
+    .split('\n')
+    .map((line) => formatLine(line))
+    .join('<br />')
+}
+
 function AdminMessageRow({ msg }: { msg: ConvoMessage }) {
   const [hovered, setHovered] = useState(false)
   const [copied, setCopied] = useState(false)
@@ -109,16 +121,20 @@ function AdminMessageRow({ msg }: { msg: ConvoMessage }) {
 
   return (
     <div
-      className="py-3 border-b border-[#1e1e2e] last:border-b-0"
+      className={`rounded-lg mb-4 last:mb-0 ${
+        isUser
+          ? 'bg-[#1a1a25] border-l-2 border-purple-500/40 pl-4 pr-3 py-3'
+          : 'bg-[#13131a] border-l-2 border-blue-500/30 pl-4 pr-3 py-3'
+      }`}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
     >
-      <div className="flex items-center justify-between mb-1.5">
+      <div className="flex items-center justify-between mb-2">
         <span
-          className={`text-[11px] font-medium px-2 py-0.5 rounded-full ${
+          className={`text-xs font-medium px-3 py-1 rounded-md ${
             isUser
-              ? 'bg-purple-600/30 text-purple-300'
-              : 'bg-zinc-700/50 text-zinc-300'
+              ? 'bg-purple-500/20 text-purple-300'
+              : 'bg-blue-500/15 text-blue-300'
           }`}
         >
           {isUser ? 'User' : 'Assistant'}
@@ -127,7 +143,7 @@ function AdminMessageRow({ msg }: { msg: ConvoMessage }) {
           {hovered && (
             <button
               onClick={handleCopy}
-              className="text-[10px] text-muted-foreground hover:text-foreground transition-colors flex items-center gap-1"
+              className="text-[11px] text-muted-foreground hover:text-foreground transition-colors flex items-center gap-1"
             >
               {copied ? (
                 <Check className="size-3" />
@@ -142,9 +158,16 @@ function AdminMessageRow({ msg }: { msg: ConvoMessage }) {
           </span>
         </div>
       </div>
-      <p className="text-sm text-white whitespace-pre-wrap break-words">
-        {msg.content}
-      </p>
+      {isUser ? (
+        <p className="text-sm text-white whitespace-pre-wrap break-words">
+          {msg.content}
+        </p>
+      ) : (
+        <div
+          className="text-sm text-zinc-200 break-words leading-relaxed [&_strong]:text-white [&_a]:text-teal-400 [&_a]:underline [&_h1]:text-base [&_h1]:font-semibold [&_h1]:text-white [&_h2]:text-base [&_h2]:font-semibold [&_h2]:text-white [&_h3]:text-sm [&_h3]:font-semibold [&_h3]:text-white"
+          dangerouslySetInnerHTML={{ __html: renderFormattedContent(msg.content) }}
+        />
+      )}
     </div>
   )
 }
