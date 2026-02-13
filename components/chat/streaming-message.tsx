@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useEffect, useState } from "react"
+import React, { useEffect, useState, useMemo } from "react"
 import { motion } from "framer-motion"
 import { MessageBubble } from "./message-bubble"
 import type { Message } from "@/lib/chat-utils"
@@ -60,10 +60,10 @@ export const StreamingMessage = React.memo(function StreamingMessage({
     }
   }, [safeContent, message.isStreaming, displayedContent, message.role, showTypingIndicator, isRevealing])
 
-  const displayMessage = {
+  const displayMessage = useMemo(() => ({
     ...message,
     content: displayedContent,
-  }
+  }), [message.id, displayedContent, message.role])
 
   // Allow user to click to instantly reveal full message
   const handleClick = () => {

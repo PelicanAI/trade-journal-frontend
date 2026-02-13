@@ -5,7 +5,7 @@ import Image from "next/image"
 
 import { MessageActions } from "./message-actions"
 import { motion } from "framer-motion"
-import { useState, useCallback, useMemo } from "react"
+import { useState, useCallback, useMemo, memo } from "react"
 import { Copy, Check, Pencil } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { useToast } from "@/hooks/use-toast"
@@ -40,7 +40,7 @@ interface MessageBubbleProps {
   onPin?: (id: string) => void
 }
 
-export function MessageBubble({
+export const MessageBubble = memo(function MessageBubble({
   message,
   isStreaming = false,
   isGlobalLoading = false,
@@ -272,4 +272,18 @@ export function MessageBubble({
       </div>
     </motion.div>
   )
-}
+}, (prevProps, nextProps) => {
+  return (
+    prevProps.message.id === nextProps.message.id &&
+    prevProps.message.content === nextProps.message.content &&
+    prevProps.message.role === nextProps.message.role &&
+    prevProps.isStreaming === nextProps.isStreaming &&
+    prevProps.isGlobalLoading === nextProps.isGlobalLoading &&
+    prevProps.showSkeleton === nextProps.showSkeleton &&
+    prevProps.isDarkMode === nextProps.isDarkMode &&
+    prevProps.isRegenerating === nextProps.isRegenerating &&
+    !!prevProps.onRegenerate === !!nextProps.onRegenerate &&
+    !!prevProps.onStop === !!nextProps.onStop &&
+    !!prevProps.onEdit === !!nextProps.onEdit
+  )
+})

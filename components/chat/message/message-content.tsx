@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useMemo } from "react"
+import { useState, useMemo, memo } from "react"
 import { motion } from "framer-motion"
 import { EnhancedTypingDots } from "../enhanced-typing-dots"
 import { detectDataTable } from "@/lib/data-parsers"
@@ -17,7 +17,7 @@ interface MessageContentProps {
   economicTerms?: string[]
 }
 
-export function MessageContent({
+export const MessageContent = memo(function MessageContent({
   content,
   isStreaming,
   showSkeleton,
@@ -115,4 +115,12 @@ export function MessageContent({
       </div>
     </motion.div>
   )
-}
+}, (prevProps, nextProps) => {
+  return (
+    prevProps.content === nextProps.content &&
+    prevProps.isStreaming === nextProps.isStreaming &&
+    prevProps.showSkeleton === nextProps.showSkeleton &&
+    prevProps.tickers === nextProps.tickers &&
+    prevProps.economicTerms === nextProps.economicTerms
+  )
+})
