@@ -65,9 +65,11 @@ function ChartPanelExpander({ onExpand }: { onExpand: () => void }) {
 // Auto-expand trading panel and switch to Learn tab when a term is clicked
 function LearningPanelExpander({ onExpand }: { onExpand: () => void }) {
   const { selectedTerm } = useLearningMode()
+  const onExpandRef = useRef(onExpand)
+  onExpandRef.current = onExpand
   useEffect(() => {
-    if (selectedTerm) onExpand()
-  }, [selectedTerm, onExpand])
+    if (selectedTerm) onExpandRef.current()
+  }, [selectedTerm])
   return null
 }
 
