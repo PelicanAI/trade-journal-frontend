@@ -1,7 +1,30 @@
 import { createServerClient } from "@supabase/ssr"
 import { NextResponse, type NextRequest } from "next/server"
 
+const ALLOWED_EMAILS = [
+  "nick@pelicantrading.ai",
+  "jack@pelicantrading.ai",
+  "ray@pelicantrading.ai",
+]
+
+const PUBLIC_PATHS = [
+  "/auth/login",
+  "/auth/signup",
+  "/auth/callback",
+  "/auth/forgot-password",
+  "/auth/reset-password",
+  "/auth/unauthorized",
+  "/_next",
+  "/favicon.ico",
+]
+
 export async function updateSession(request: NextRequest) {
+  const { pathname } = request.nextUrl
+
+  if (PUBLIC_PATHS.some((path) => pathname.startsWith(path))) {
+    return NextResponse.next({ request })
+  }
+
   let supabaseResponse = NextResponse.next({
     request,
   })
@@ -38,18 +61,18 @@ export async function updateSession(request: NextRequest) {
     data: { user },
   } = await supabase.auth.getUser()
 
-  // Redirect unauthenticated users to login for protected routes
-  const protectedRoutes = ["/profile", "/chat", "/settings", "/admin"]
+  if (!user) {
+    const loginUrl = request.nextUrl.clone()
+    loginUrl.pathname = "/auth/login"
+    loginUrl.searchParams.set("redirectTo", pathname)
+    return NextResponse.redirect(loginUrl)
+  }
 
-  const isProtectedRoute = protectedRoutes.some(route =>
-    request.nextUrl.pathname.startsWith(route)
-  )
-
-  if (!user && isProtectedRoute) {
-    const url = request.nextUrl.clone()
-    url.pathname = "/auth/login"
-    url.searchParams.set('redirect', request.nextUrl.pathname)
-    return NextResponse.redirect(url)
+  const email = user.email?.toLowerCase()
+  if (!email || !ALLOWED_EMAILS.includes(email)) {
+    const unauthorizedUrl = request.nextUrl.clone()
+    unauthorizedUrl.pathname = "/auth/unauthorized"
+    return NextResponse.redirect(unauthorizedUrl)
   }
 
   return supabaseResponse
