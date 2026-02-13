@@ -10,11 +10,7 @@
       "memory": 1024,
       "maxDuration": 30
     },
-    "app/api/messages/[id]/regenerate/route.ts": {
-      "memory": 1024,
-      "maxDuration": 30
-    },
-    "app/api/upload/route.ts": {
+"app/api/upload/route.ts": {
       "memory": 1024,
       "maxDuration": 30
     },
