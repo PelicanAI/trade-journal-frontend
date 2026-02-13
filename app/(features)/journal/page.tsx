@@ -3,6 +3,8 @@
 import { useState } from "react"
 import { useTrades, Trade } from "@/hooks/use-trades"
 import { useTradeStats } from "@/hooks/use-trade-stats"
+
+export const dynamic = 'force-dynamic'
 import { usePelicanPanel } from "@/hooks/use-pelican-panel"
 import { LogTradeModal } from "@/components/journal/log-trade-modal"
 import { CloseTradeModal } from "@/components/journal/close-trade-modal"
