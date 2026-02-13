@@ -60,10 +60,10 @@ export interface UseTradesReturn {
   isLoading: boolean
   error: Error | null
   refetch: () => void
-  logTrade: (data: TradeFormData) => Promise<Trade | null>
-  closeTrade: (tradeId: string, data: CloseTradeData) => Promise<boolean>
-  updateTrade: (tradeId: string, updates: Partial<Trade>) => Promise<boolean>
-  deleteTrade: (tradeId: string) => Promise<boolean>
+  logTrade: (data: TradeFormData) => Promise<Trade>
+  closeTrade: (tradeId: string, data: CloseTradeData) => Promise<void>
+  updateTrade: (tradeId: string, updates: Partial<Trade>) => Promise<void>
+  deleteTrade: (tradeId: string) => Promise<void>
 }
 
 /**
@@ -111,99 +111,88 @@ export function useTrades({
   const openTrades = trades.filter((t) => t.status === 'open')
   const closedTrades = trades.filter((t) => t.status === 'closed')
 
-  const logTrade = async (tradeData: TradeFormData): Promise<Trade | null> => {
-    try {
-      const { data, error } = await supabase
-        .from('trades')
-        .insert({
-          ticker: tradeData.ticker.toUpperCase(),
-          asset_type: tradeData.asset_type || 'stock',
-          direction: tradeData.direction,
-          quantity: tradeData.quantity,
-          entry_price: tradeData.entry_price,
-          stop_loss: tradeData.stop_loss,
-          take_profit: tradeData.take_profit,
-          entry_date: tradeData.entry_date,
-          thesis: tradeData.thesis,
-          notes: tradeData.notes,
-          setup_tags: tradeData.setup_tags || [],
-          conviction: tradeData.conviction,
-          is_paper: tradeData.is_paper ?? false,
-          status: 'open',
-        })
-        .select()
-        .single()
-
-      if (error) throw error
-
-      // Revalidate trades
-      mutate()
-
-      return data as Trade
-    } catch (error) {
-      console.error('Error logging trade:', error)
-      return null
+  const logTrade = async (tradeData: TradeFormData): Promise<Trade> => {
+    // Get authenticated user
+    const { data: { user } } = await supabase.auth.getUser()
+    if (!user) {
+      throw new Error('You must be logged in to log a trade')
     }
-  }
 
-  const closeTrade = async (tradeId: string, closeData: CloseTradeData): Promise<boolean> => {
-    try {
-      // Call the close_trade RPC function
-      const { data, error } = await supabase.rpc('close_trade', {
-        p_trade_id: tradeId,
-        p_exit_price: closeData.exit_price,
-        p_exit_date: closeData.exit_date,
-        p_notes: closeData.notes || null,
+    const { data, error } = await supabase
+      .from('trades')
+      .insert({
+        user_id: user.id,
+        ticker: tradeData.ticker.toUpperCase(),
+        asset_type: tradeData.asset_type || 'stock',
+        direction: tradeData.direction,
+        quantity: tradeData.quantity,
+        entry_price: tradeData.entry_price,
+        stop_loss: tradeData.stop_loss,
+        take_profit: tradeData.take_profit,
+        entry_date: tradeData.entry_date,
+        thesis: tradeData.thesis,
+        notes: tradeData.notes,
+        setup_tags: tradeData.setup_tags || [],
+        conviction: tradeData.conviction,
+        is_paper: tradeData.is_paper ?? false,
+        status: 'open',
       })
+      .select()
+      .single()
 
-      if (error) throw error
-
-      // Revalidate trades
-      mutate()
-
-      return true
-    } catch (error) {
-      console.error('Error closing trade:', error)
-      return false
+    if (error) {
+      throw new Error(error.message || 'Failed to save trade')
     }
+
+    // Revalidate trades
+    mutate()
+
+    return data as Trade
   }
 
-  const updateTrade = async (tradeId: string, updates: Partial<Trade>): Promise<boolean> => {
-    try {
-      const { error } = await supabase
-        .from('trades')
-        .update(updates)
-        .eq('id', tradeId)
+  const closeTrade = async (tradeId: string, closeData: CloseTradeData): Promise<void> => {
+    // Call the close_trade RPC function
+    const { error } = await supabase.rpc('close_trade', {
+      p_trade_id: tradeId,
+      p_exit_price: closeData.exit_price,
+      p_exit_date: closeData.exit_date,
+      p_notes: closeData.notes || null,
+    })
 
-      if (error) throw error
-
-      // Revalidate trades
-      mutate()
-
-      return true
-    } catch (error) {
-      console.error('Error updating trade:', error)
-      return false
+    if (error) {
+      throw new Error(error.message || 'Failed to close trade')
     }
+
+    // Revalidate trades
+    mutate()
   }
 
-  const deleteTrade = async (tradeId: string): Promise<boolean> => {
-    try {
-      const { error } = await supabase
-        .from('trades')
-        .delete()
-        .eq('id', tradeId)
+  const updateTrade = async (tradeId: string, updates: Partial<Trade>): Promise<void> => {
+    const { error } = await supabase
+      .from('trades')
+      .update(updates)
+      .eq('id', tradeId)
 
-      if (error) throw error
-
-      // Revalidate trades
-      mutate()
-
-      return true
-    } catch (error) {
-      console.error('Error deleting trade:', error)
-      return false
+    if (error) {
+      throw new Error(error.message || 'Failed to update trade')
     }
+
+    // Revalidate trades
+    mutate()
+  }
+
+  const deleteTrade = async (tradeId: string): Promise<void> => {
+    const { error } = await supabase
+      .from('trades')
+      .delete()
+      .eq('id', tradeId)
+
+    if (error) {
+      throw new Error(error.message || 'Failed to delete trade')
+    }
+
+    // Revalidate trades
+    mutate()
   }
 
   return {

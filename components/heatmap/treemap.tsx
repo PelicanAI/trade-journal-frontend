@@ -25,13 +25,30 @@ function toMarketCapValue(stock: HeatmapStock): number {
   return stock.marketCap ?? (stock.volume ? stock.volume * (stock.price ?? 100) : 1_000_000_000)
 }
 
-function getTileColor(change: number): string {
-  if (Math.abs(change) <= 0.3) return "oklch(0.22 0.02 280 / 0.4)"
-  if (change >= 3) return "oklch(0.50 0.25 145)"
-  if (change >= 1) return "oklch(0.65 0.20 145 / 0.8)"
-  if (change <= -3) return "oklch(0.55 0.25 25)"
-  if (change <= -1) return "oklch(0.65 0.15 25 / 0.8)"
-  return "oklch(0.18 0.015 280)"
+function getTileColor(changePercent: number): string {
+  // Clamp between -5% and +5% for color mapping
+  const clampedChange = Math.max(-5, Math.min(5, changePercent))
+
+  if (Math.abs(changePercent) < 0.05) {
+    // Essentially flat — dark neutral
+    return '#2a2a3a'
+  }
+
+  if (changePercent > 0) {
+    // Green scale: more positive = brighter/more saturated green
+    const intensity = Math.min(clampedChange / 5, 1) // 0 to 1
+    const r = Math.round(20 + (0 - 20) * intensity)     // 20 → 0
+    const g = Math.round(60 + (180 - 60) * intensity)    // 60 → 180
+    const b = Math.round(30 + (50 - 30) * intensity)     // 30 → 50
+    return `rgb(${r}, ${g}, ${b})`
+  } else {
+    // Red scale: more negative = brighter/more saturated red
+    const intensity = Math.min(Math.abs(clampedChange) / 5, 1) // 0 to 1
+    const r = Math.round(60 + (200 - 60) * intensity)    // 60 → 200
+    const g = Math.round(30 + (20 - 30) * intensity)     // 30 → 20
+    const b = Math.round(30 + (30 - 30) * intensity)     // 30 → 30
+    return `rgb(${r}, ${g}, ${b})`
+  }
 }
 
 function getLabelSize(tileWidth: number): number {
@@ -93,8 +110,13 @@ export function Treemap({ stocks, width, height, onStockClick }: TreemapProps) {
           return (
             <div
               key={`sector-${sector}`}
-              className="pointer-events-none absolute truncate px-1 text-[10px] font-semibold uppercase tracking-wide text-foreground/50"
-              style={{ left: node.x0, top: node.y0, width: node.x1 - node.x0 }}
+              className="pointer-events-none absolute truncate px-1 text-[10px] font-semibold uppercase tracking-wide text-white/70"
+              style={{
+                left: node.x0,
+                top: node.y0,
+                width: node.x1 - node.x0,
+                textShadow: '0 1px 3px rgba(0,0,0,0.8)'
+              }}
             >
               {sector}
             </div>
@@ -114,17 +136,18 @@ export function Treemap({ stocks, width, height, onStockClick }: TreemapProps) {
           <button
             key={`stock-${stock.ticker}`}
             onClick={() => onStockClick?.(stock.ticker, stock.name)}
-            className="absolute cursor-pointer border border-black/20 transition-all duration-200 hover:z-20 hover:scale-[1.02] hover:border-white/30 hover:shadow-2xl"
+            className="absolute cursor-pointer border transition-all duration-200 hover:z-20 hover:scale-[1.02] hover:border-white/30 hover:shadow-2xl"
             style={{
               left: node.x0,
               top: node.y0,
               width: tileWidth,
               height: tileHeight,
               backgroundColor: getTileColor(change),
+              borderColor: 'rgba(0,0,0,0.3)',
             }}
             title={`${stock.ticker} ${formatChangePercent(stock.changePercent)}`}
           >
-            <div className="flex h-full w-full flex-col items-center justify-center px-1 font-mono text-white">
+            <div className="flex h-full w-full flex-col items-center justify-center px-1 font-mono text-white" style={{ textShadow: '0 1px 3px rgba(0,0,0,0.5)' }}>
               <div style={{ fontSize: `${labelSize}px` }} className="font-bold tracking-tight">
                 {stock.ticker}
               </div>

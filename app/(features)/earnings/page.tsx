@@ -2,220 +2,266 @@
 
 export const dynamic = "force-dynamic"
 
-import { useState, useMemo } from "react"
-import dynamicImport from "next/dynamic"
+import { useState, useEffect, useMemo } from "react"
+import { Search, RefreshCw, Sun, Moon, ChevronLeft, ChevronRight } from "lucide-react"
 import { useEarnings } from "@/hooks/use-earnings"
-import { usePelicanPanel } from "@/hooks/use-pelican-panel"
-import { Calendar, RefreshCw, TrendingUp, Search } from "lucide-react"
+import { usePelicanPanelContext } from "@/providers/pelican-panel-provider"
 
-const PelicanChatPanel = dynamicImport(
-  () => import("@/components/pelican-panel/pelican-chat-panel").then((m) => ({ default: m.PelicanChatPanel })),
-  { ssr: false }
-)
+interface EarningsEvent {
+  symbol: string
+  date: string
+  quarter: number
+  year: number
+  epsEstimate: number | null
+  revenueEstimate: number | null
+  hour: 'bmo' | 'amc' | 'dmh' | null
+}
 
 export default function EarningsPage() {
-  const [searchQuery, setSearchQuery] = useState("")
+  const [search, setSearch] = useState('')
+  const [weekOffset, setWeekOffset] = useState(0)
+  const [selectedDate, setSelectedDate] = useState<string>('')
+
   const { events, isLoading, refetch } = useEarnings()
-  const { state: pelicanState, openWithPrompt } = usePelicanPanel()
+  const { openWithPrompt } = usePelicanPanelContext()
 
-  // Group events by date
-  const groupedEvents = useMemo(() => {
-    const filtered = events.filter((event) =>
-      event.symbol.toLowerCase().includes(searchQuery.toLowerCase())
-    )
+  // Calculate the week's date range
+  const weekDates = useMemo(() => {
+    const today = new Date()
+    const startOfWeek = new Date(today)
+    startOfWeek.setDate(today.getDate() - today.getDay() + 1 + weekOffset * 7) // Monday
 
-    const groups = filtered.reduce((acc, event) => {
-      acc[event.date] = acc[event.date] || []
-      acc[event.date]!.push(event)
-      return acc
-    }, {} as Record<string, typeof events>)
+    return Array.from({ length: 5 }, (_, i) => {
+      const d = new Date(startOfWeek)
+      d.setDate(startOfWeek.getDate() + i)
+      return d
+    })
+  }, [weekOffset])
 
-    // Sort dates
-    return Object.entries(groups).sort(([a], [b]) => a.localeCompare(b))
-  }, [events, searchQuery])
-
-  const handleEarningsClick = (event: typeof events[0]) => {
-    const prompt = `Analyze ${event.symbol} earnings report:
-
-**Earnings Details:**
-- Date: ${new Date(event.date).toLocaleDateString()}
-- Time: ${event.hour === 'bmo' ? 'Before Market Open' : event.hour === 'amc' ? 'After Market Close' : 'During Market Hours'}
-- Quarter: Q${event.quarter} ${event.year}
-${event.epsEstimate ? `- EPS Estimate: $${event.epsEstimate.toFixed(2)}` : ''}
-${event.revenueEstimate ? `- Revenue Estimate: $${(event.revenueEstimate / 1000000).toFixed(0)}M` : ''}
-
-Please provide:
-1. Recent price action and technical setup
-2. Key metrics to watch in the earnings report
-3. Historical earnings reaction patterns
-4. Risk/reward assessment for trading the event`
-
-    openWithPrompt(event.symbol, prompt, 'earnings')
+  function formatDate(d: Date): string {
+    return d.toISOString().split('T')[0] ?? ''
   }
 
-  const showPelicanPanel = pelicanState.isOpen
+  function isToday(d: Date) {
+    return formatDate(d) === formatDate(new Date())
+  }
+
+  // Default to today if it's a weekday, otherwise Monday
+  useEffect(() => {
+    const today = new Date()
+    const dayOfWeek = today.getDay()
+    if (dayOfWeek >= 1 && dayOfWeek <= 5) {
+      setSelectedDate(formatDate(today))
+    } else if (weekDates[0]) {
+      setSelectedDate(formatDate(weekDates[0]))
+    }
+  }, [weekDates])
+
+  // Filter events by selected date and search
+  const filtered = useMemo(() => {
+    if (!selectedDate) return []
+    let result = events.filter(e => e.date === selectedDate)
+    if (search) {
+      const q = search.toUpperCase()
+      result = result.filter(e => e.symbol?.toUpperCase().includes(q))
+    }
+    return result
+  }, [events, selectedDate, search])
+
+  // Split into BMO (before market open) and AMC (after market close)
+  const bmo = filtered.filter(e => e.hour === 'bmo')
+  const amc = filtered.filter(e => e.hour === 'amc')
+  const other = filtered.filter(e => e.hour !== 'bmo' && e.hour !== 'amc')
+
+  const handleRowClick = (ticker: string) => {
+    if (typeof openWithPrompt === 'function') {
+      openWithPrompt(
+        ticker,
+        `Analyze ${ticker} earnings report. Include recent price action, key metrics to watch, and risk/reward assessment.`,
+        'earnings'
+      )
+    }
+  }
 
   return (
-    <div className="flex flex-col h-full overflow-hidden">
+    <div className="h-full overflow-y-auto p-6">
       {/* Header */}
-      <div className="flex-shrink-0 px-6 py-4 border-b border-border">
-        <div className="flex items-center justify-between mb-3">
-          <div>
-            <h1 className="text-xl font-semibold text-foreground">Earnings Calendar</h1>
-            <p className="text-xs text-muted-foreground mt-0.5">
-              {events.length} upcoming earnings reports
-            </p>
+      <div className="flex items-center justify-between mb-6">
+        <div>
+          <h1 className="text-xl font-bold text-white">Earnings Calendar</h1>
+          <p className="text-sm text-gray-400 mt-1">{filtered.length} reports</p>
+        </div>
+        <div className="flex items-center gap-2">
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-500" />
+            <input
+              type="text"
+              placeholder="Search ticker..."
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              className="pl-10 pr-4 py-2 bg-[#13131a] border border-[#1e1e2e] rounded-lg text-sm text-white placeholder-gray-500 focus:outline-none focus:border-[#8b5cf6] w-64"
+            />
           </div>
-
-          <div className="flex items-center gap-2">
-            {/* Search */}
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-foreground/40" />
-              <input
-                type="text"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Search ticker..."
-                className="w-64 pl-10 pr-4 py-2 rounded-lg bg-white/[0.06] border border-border text-foreground placeholder:text-foreground/40 focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500"
-              />
-            </div>
-
-            {/* Refresh */}
-            <button
-              onClick={() => refetch()}
-              disabled={isLoading}
-              className="px-3 py-2 rounded-lg bg-white/[0.06] border border-border hover:bg-white/[0.08] transition-colors disabled:opacity-50"
-            >
-              <RefreshCw className={`w-4 h-4 text-foreground/70 ${isLoading ? 'animate-spin' : ''}`} />
-            </button>
-          </div>
+          <button
+            onClick={() => refetch()}
+            disabled={isLoading}
+            className="p-2 rounded-lg bg-[#13131a] border border-[#1e1e2e] hover:bg-[#1a1a24] transition-colors disabled:opacity-50"
+          >
+            <RefreshCw className={`h-4 w-4 text-gray-400 ${isLoading ? 'animate-spin' : ''}`} />
+          </button>
         </div>
       </div>
 
-      {/* Main Content */}
-      <div className="flex-1 flex overflow-hidden">
-        {/* Earnings List */}
-        <div className="flex-1 overflow-auto p-6">
-          {isLoading && events.length === 0 ? (
-            <div className="flex items-center justify-center py-12">
-              <div className="text-center">
-                <div className="w-8 h-8 border-2 border-purple-500/30 border-t-purple-500 rounded-full animate-spin mx-auto mb-2" />
-                <p className="text-foreground/50 text-sm">Loading earnings calendar...</p>
-              </div>
-            </div>
-          ) : groupedEvents.length === 0 ? (
-            <div className="flex items-center justify-center py-12">
-              <p className="text-foreground/50 text-sm">
-                {searchQuery ? 'No earnings found matching your search' : 'No upcoming earnings'}
-              </p>
-            </div>
-          ) : (
-            <div className="space-y-6">
-              {groupedEvents.map(([date, dateEvents]) => (
-                <div key={date}>
-                  <div className="flex items-center gap-2 mb-3 sticky top-0 bg-background py-2">
-                    <Calendar className="w-4 h-4 text-purple-400" />
-                    <h2 className="text-sm font-semibold text-foreground">
-                      {new Date(date).toLocaleDateString('en-US', {
-                        weekday: 'long',
-                        month: 'long',
-                        day: 'numeric',
-                        year: 'numeric',
-                      })}
-                    </h2>
-                    <span className="text-xs text-foreground/40">({dateEvents.length} reports)</span>
-                  </div>
+      {/* Week Date Picker */}
+      <div className="flex items-center gap-2 mb-6">
+        <button
+          onClick={() => setWeekOffset(prev => prev - 1)}
+          className="p-1.5 rounded hover:bg-[#1e1e2e] text-gray-400 hover:text-white transition-colors"
+        >
+          <ChevronLeft className="h-4 w-4" />
+        </button>
 
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
-                    {dateEvents.map((event, idx) => (
-                      <button
-                        key={`${event.symbol}-${idx}`}
-                        onClick={() => handleEarningsClick(event)}
-                        className="p-4 rounded-lg border border-border bg-white/[0.03] hover:bg-white/[0.06] transition-colors text-left group"
-                      >
-                        <div className="flex items-start justify-between mb-2">
-                          <div className="font-mono font-bold text-foreground text-lg group-hover:text-purple-400 transition-colors">
-                            {event.symbol}
-                          </div>
-                          {event.hour && (
-                            <span
-                              className={`text-[10px] px-2 py-0.5 rounded font-medium uppercase ${
-                                event.hour === 'bmo'
-                                  ? 'bg-blue-600/20 text-blue-400'
-                                  : event.hour === 'amc'
-                                  ? 'bg-orange-600/20 text-orange-400'
-                                  : 'bg-purple-600/20 text-purple-400'
-                              }`}
-                            >
-                              {event.hour === 'bmo' ? 'Pre-Market' : event.hour === 'amc' ? 'After-Hours' : 'Intraday'}
-                            </span>
-                          )}
-                        </div>
-
-                        <div className="space-y-1.5 text-sm">
-                          <div className="flex items-center justify-between">
-                            <span className="text-foreground/60">Quarter</span>
-                            <span className="text-foreground font-medium">
-                              Q{event.quarter} {event.year}
-                            </span>
-                          </div>
-
-                          {event.epsEstimate !== null && (
-                            <div className="flex items-center justify-between">
-                              <span className="text-foreground/60">EPS Est.</span>
-                              <span className="font-mono text-foreground">
-                                ${event.epsEstimate.toFixed(2)}
-                              </span>
-                            </div>
-                          )}
-
-                          {event.revenueEstimate !== null && (
-                            <div className="flex items-center justify-between">
-                              <span className="text-foreground/60">Rev. Est.</span>
-                              <span className="font-mono text-foreground">
-                                ${(event.revenueEstimate / 1000000).toFixed(0)}M
-                              </span>
-                            </div>
-                          )}
-
-                          {event.epsActual !== null && (
-                            <div className="flex items-center justify-between">
-                              <span className="text-foreground/60">EPS Actual</span>
-                              <span
-                                className={`font-mono font-medium ${
-                                  event.epsEstimate && event.epsActual > event.epsEstimate
-                                    ? 'text-green-400'
-                                    : event.epsEstimate && event.epsActual < event.epsEstimate
-                                    ? 'text-red-400'
-                                    : 'text-foreground'
-                                }`}
-                              >
-                                ${event.epsActual.toFixed(2)}
-                              </span>
-                            </div>
-                          )}
-                        </div>
-
-                        <div className="mt-3 pt-3 border-t border-border/50 flex items-center gap-1 text-xs text-purple-400 opacity-0 group-hover:opacity-100 transition-opacity">
-                          <TrendingUp className="w-3 h-3" />
-                          Click to analyze
-                        </div>
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
+        <div className="flex gap-1">
+          {weekDates.map((d) => {
+            const dateStr = formatDate(d)
+            const active = dateStr === selectedDate
+            return (
+              <button
+                key={dateStr}
+                onClick={() => setSelectedDate(dateStr)}
+                className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+                  active
+                    ? 'bg-[#8b5cf6] text-white'
+                    : isToday(d)
+                    ? 'bg-[#1e1e2e] text-[#8b5cf6] border border-[#8b5cf6]/30'
+                    : 'bg-[#13131a] text-gray-400 hover:bg-[#1e1e2e] hover:text-white'
+                }`}
+              >
+                <div className="text-xs opacity-70">{d.toLocaleDateString('en-US', { weekday: 'short' })}</div>
+                <div>{d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}</div>
+              </button>
+            )
+          })}
         </div>
 
-        {/* Right Panel - Pelican AI */}
-        {showPelicanPanel && (
-          <div className="flex-shrink-0 w-[min(420px,30%)] h-full">
-            <PelicanChatPanel />
-          </div>
+        <button
+          onClick={() => setWeekOffset(prev => prev + 1)}
+          className="p-1.5 rounded hover:bg-[#1e1e2e] text-gray-400 hover:text-white transition-colors"
+        >
+          <ChevronRight className="h-4 w-4" />
+        </button>
+
+        {weekOffset !== 0 && (
+          <button
+            onClick={() => setWeekOffset(0)}
+            className="ml-2 text-xs text-[#8b5cf6] hover:underline"
+          >
+            This week
+          </button>
         )}
+      </div>
+
+      {isLoading ? (
+        <div className="flex items-center justify-center py-20">
+          <RefreshCw className="h-5 w-5 text-gray-500 animate-spin" />
+        </div>
+      ) : filtered.length === 0 ? (
+        <div className="text-center py-20 text-gray-500">
+          <p>No earnings reports for this date</p>
+        </div>
+      ) : (
+        <div className="space-y-6">
+          {/* Before Market Open */}
+          {bmo.length > 0 && (
+            <EarningsSection title="Before Market Open" icon={<Sun className="h-4 w-4 text-amber-400" />} events={bmo} onRowClick={handleRowClick} />
+          )}
+
+          {/* After Hours */}
+          {amc.length > 0 && (
+            <EarningsSection title="After Hours" icon={<Moon className="h-4 w-4 text-blue-400" />} events={amc} onRowClick={handleRowClick} />
+          )}
+
+          {/* Time TBD */}
+          {other.length > 0 && (
+            <EarningsSection title="Time TBD" events={other} onRowClick={handleRowClick} />
+          )}
+        </div>
+      )}
+    </div>
+  )
+}
+
+function EarningsSection({
+  title,
+  icon,
+  events,
+  onRowClick
+}: {
+  title: string
+  icon?: React.ReactNode
+  events: EarningsEvent[]
+  onRowClick: (ticker: string) => void
+}) {
+  return (
+    <div>
+      <div className="flex items-center gap-2 mb-3">
+        {icon}
+        <h2 className="text-sm font-semibold text-gray-300 uppercase tracking-wider">{title}</h2>
+        <span className="text-xs text-gray-500">({events.length})</span>
+      </div>
+
+      <div className="rounded-xl border border-[#1e1e2e] overflow-hidden">
+        <table className="w-full">
+          <thead>
+            <tr className="bg-[#0d0d14] text-[10px] uppercase tracking-widest text-gray-500 font-semibold">
+              <th className="text-left px-4 py-3">Symbol</th>
+              <th className="text-right px-4 py-3">Quarter</th>
+              <th className="text-right px-4 py-3">EPS Est.</th>
+              <th className="text-right px-4 py-3 hidden md:table-cell">Rev. Est.</th>
+            </tr>
+          </thead>
+          <tbody>
+            {events.map((event, i) => (
+              <tr
+                key={`${event.symbol}-${i}`}
+                className="border-t border-[#1e1e2e]/50 hover:bg-[#1a1a24] cursor-pointer transition-colors group"
+                onClick={() => onRowClick(event.symbol)}
+              >
+                <td className="px-4 py-3">
+                  <span className="font-mono font-bold text-[#8b5cf6] group-hover:text-[#a78bfa] transition-colors">
+                    {event.symbol}
+                  </span>
+                </td>
+                <td className="px-4 py-3 text-sm text-gray-400 text-right font-mono">
+                  Q{event.quarter} {event.year}
+                </td>
+                <td className="px-4 py-3 text-sm text-right font-mono">
+                  {event.epsEstimate != null ? (
+                    <span className={event.epsEstimate >= 0 ? 'text-emerald-400' : 'text-red-400'}>
+                      ${event.epsEstimate.toFixed(2)}
+                    </span>
+                  ) : (
+                    <span className="text-gray-600">—</span>
+                  )}
+                </td>
+                <td className="px-4 py-3 text-sm text-gray-400 text-right font-mono hidden md:table-cell">
+                  {event.revenueEstimate != null ? (
+                    formatRevenue(event.revenueEstimate)
+                  ) : (
+                    <span className="text-gray-600">—</span>
+                  )}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
       </div>
     </div>
   )
+}
+
+function formatRevenue(val: number): string {
+  if (val >= 1e9) return `$${(val / 1e9).toFixed(1)}B`
+  if (val >= 1e6) return `$${(val / 1e6).toFixed(0)}M`
+  return `$${val.toLocaleString()}`
 }

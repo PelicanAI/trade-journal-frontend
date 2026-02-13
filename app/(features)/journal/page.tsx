@@ -81,18 +81,18 @@ Provide:
   }
 
   const handleLogTrade = async (data: Parameters<typeof logTrade>[0]) => {
+    // Let errors propagate to the modal's error handler
     await logTrade(data)
     refetch()
   }
 
   const handleCloseTrade = async (data: Parameters<typeof closeTrade>[1]) => {
     if (!selectedTrade) return
-    const success = await closeTrade(selectedTrade.id, data)
-    if (success) {
-      refetch()
-      setShowCloseTradeModal(false)
-      handleCloseDetailPanel()
-    }
+    // Let errors propagate to the modal's error handler
+    await closeTrade(selectedTrade.id, data)
+    refetch()
+    setShowCloseTradeModal(false)
+    handleCloseDetailPanel()
   }
 
   // Monitor Pelican panel state - close detail panel when Pelican opens

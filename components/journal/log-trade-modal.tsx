@@ -14,6 +14,7 @@ interface LogTradeModalProps {
 
 export function LogTradeModal({ open, onOpenChange, onSubmit, initialTicker = "" }: LogTradeModalProps) {
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [error, setError] = useState<string | null>(null)
   const [ticker, setTicker] = useState(initialTicker)
   const [direction, setDirection] = useState<'long' | 'short'>('long')
   const [quantity, setQuantity] = useState("")
@@ -29,8 +30,10 @@ export function LogTradeModal({ open, onOpenChange, onSubmit, initialTicker = ""
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+    setError(null)
 
     if (!ticker || !quantity || !entryPrice || !entryDate) {
+      setError("Please fill in all required fields (Ticker, Quantity, Entry Price, Entry Date)")
       return
     }
 
@@ -72,8 +75,9 @@ export function LogTradeModal({ open, onOpenChange, onSubmit, initialTicker = ""
       setIsPaper(false)
 
       onOpenChange(false)
-    } catch (error) {
-      console.error('Error logging trade:', error)
+    } catch (err) {
+      console.error('Error logging trade:', err)
+      setError(err instanceof Error ? err.message : 'Failed to log trade. Please try again.')
     } finally {
       setIsSubmitting(false)
     }
@@ -90,6 +94,13 @@ export function LogTradeModal({ open, onOpenChange, onSubmit, initialTicker = ""
         </DialogHeader>
 
         <form onSubmit={handleSubmit} className="space-y-4 mt-4">
+          {/* Error Message */}
+          {error && (
+            <div className="rounded-lg bg-red-500/10 border border-red-500/30 px-4 py-3 text-sm text-red-400">
+              {error}
+            </div>
+          )}
+
           {/* Ticker */}
           <div>
             <label className="text-sm font-medium text-foreground mb-1.5 block">

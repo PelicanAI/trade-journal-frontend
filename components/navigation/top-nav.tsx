@@ -1,10 +1,10 @@
 "use client"
 
-import React, { useState } from 'react'
+import React from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import Image from 'next/image'
-import { Flame, ChevronDown } from 'lucide-react'
+import { ChevronDown } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 import { useStreaks } from '@/hooks/use-streaks'
@@ -14,7 +14,6 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-  DropdownMenuSeparator,
 } from '@/components/ui/dropdown-menu'
 
 // =============================================================================
@@ -50,10 +49,7 @@ const NAV_TABS: NavTab[] = [
 export function TopNav({ className }: TopNavProps) {
   const pathname = usePathname()
   const { journalStreak } = useStreaks()
-  const { credits, hasAccess } = useCreditsContext()
-  const [creditsDropdownOpen, setCreditsDropdownOpen] = useState(false)
-
-  const plan = credits?.plan ?? 'free'
+  const { credits } = useCreditsContext()
 
   // Determine active tab based on pathname
   const getActiveTab = (): string => {
@@ -67,19 +63,9 @@ export function TopNav({ className }: TopNavProps) {
 
   const activeTab = getActiveTab()
 
-  // Format plan name
-  const formatPlan = (planType: string): string => {
-    if (planType === 'free') return 'Free'
-    if (planType === 'starter') return 'Starter'
-    if (planType === 'pro') return 'Pro'
-    if (planType === 'elite') return 'Elite'
-    return 'Free'
-  }
-
   return (
     <nav className={cn(
-      "border-b border-border bg-[#0a0a0f]/80 backdrop-blur-xl",
-      "sticky top-0 z-[var(--z-sticky)]",
+      "sticky top-0 z-40 w-full border-b border-[#1e1e2e]/60 bg-[#0a0a0f]/95 backdrop-blur-xl",
       className
     )}>
       <div className="flex items-center justify-between h-14 px-4">
@@ -112,14 +98,16 @@ export function TopNav({ className }: TopNavProps) {
                   key={tab.key}
                   href={tab.href}
                   className={cn(
-                    "px-4 py-2 text-sm font-medium rounded-md transition-colors",
-                    "border-b-2 -mb-[2px]",
+                    "relative px-3 py-4 text-sm font-medium transition-colors",
                     isActive
-                      ? "text-primary border-primary"
-                      : "text-muted-foreground border-transparent hover:text-foreground hover:bg-sidebar-accent/50"
+                      ? "text-white"
+                      : "text-gray-400 hover:text-gray-200"
                   )}
                 >
                   {tab.label}
+                  {isActive && (
+                    <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#8b5cf6] rounded-full" />
+                  )}
                 </Link>
               )
             })}
@@ -152,72 +140,21 @@ export function TopNav({ className }: TopNavProps) {
         </div>
 
         {/* Right: Streak + Credits */}
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-3 ml-auto">
           {/* Streak */}
-          <div
-            className="flex items-center gap-2 rounded-full border px-3 py-1.5"
-            style={{
-              backgroundColor: "oklch(0.60 0.25 280 / 0.12)",
-              borderColor: "oklch(0.60 0.25 280 / 0.25)",
-            }}
-            title={`${journalStreak} day journal streak`}
-          >
-            <Flame className="h-4 w-4" style={{ color: "oklch(0.60 0.25 280)" }} />
-            <span className="text-xs font-semibold uppercase tracking-wide text-foreground/75">
-              Streak
-            </span>
-            <span className="text-sm font-semibold tabular-nums" style={{ color: "oklch(0.60 0.25 280)" }}>
-              {journalStreak}
-            </span>
-            <span className="text-xs text-foreground/65">days</span>
+          <div className="flex items-center gap-1.5 text-sm text-gray-400">
+            <span className="text-orange-400">🔥</span>
+            <span className="font-mono font-medium text-white">{journalStreak}</span>
+            <span className="text-xs">days</span>
           </div>
 
-          {/* Credits Dropdown */}
-          <DropdownMenu open={creditsDropdownOpen} onOpenChange={setCreditsDropdownOpen}>
-            <DropdownMenuTrigger asChild>
-              <Button
-                variant="ghost"
-                size="sm"
-                className="h-9 rounded-full border border-white/10 bg-white/[0.04] px-3 hover:bg-white/[0.08]"
-              >
-                <span className="text-sm font-medium tabular-nums">
-                  {(credits?.balance ?? 0).toLocaleString()} credits
-                </span>
-                <ChevronDown className="ml-1 h-3 w-3 text-muted-foreground" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-56">
-              <div className="px-3 py-2">
-                <p className="text-xs text-muted-foreground">Current Plan</p>
-                <p className="text-sm font-semibold text-foreground mt-0.5">
-                  {formatPlan(plan)}
-                </p>
-              </div>
-              <DropdownMenuSeparator />
-              <div className="px-3 py-2">
-                <div className="flex justify-between items-center mb-1">
-                  <span className="text-xs text-muted-foreground">Balance</span>
-                  <span className="text-sm font-semibold text-foreground tabular-nums">
-                    {(credits?.balance ?? 0).toLocaleString()}
-                  </span>
-                </div>
-                {!hasAccess && (
-                  <p className="text-xs text-orange-500 mt-2">
-                    Out of credits
-                  </p>
-                )}
-              </div>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem asChild>
-                <Link
-                  href="/pricing"
-                  className="w-full cursor-pointer text-sm font-medium text-primary"
-                >
-                  Manage Plan
-                </Link>
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+          {/* Credits */}
+          <Link
+            href="/pricing"
+            className="px-3 py-1 rounded-full border border-[#1e1e2e] bg-[#13131a] text-sm font-mono text-white hover:border-[#8b5cf6]/30 hover:bg-[#1a1a24] transition-all"
+          >
+            {(credits?.balance ?? 0).toLocaleString()} credits
+          </Link>
         </div>
       </div>
     </nav>

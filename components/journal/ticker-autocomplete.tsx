@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, useEffect, useRef } from "react"
+import { createPortal } from "react-dom"
 import { Search } from "lucide-react"
 import { TickerSearchResult } from "@/app/api/tickers/search/route"
 
@@ -25,6 +26,7 @@ export function TickerAutocomplete({
   const [isOpen, setIsOpen] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const [selectedIndex, setSelectedIndex] = useState(0)
+  const [dropdownPosition, setDropdownPosition] = useState({ top: 0, left: 0, width: 0 })
   const inputRef = useRef<HTMLInputElement>(null)
   const resultsRef = useRef<HTMLDivElement>(null)
 
@@ -56,6 +58,29 @@ export function TickerAutocomplete({
 
     return () => clearTimeout(timer)
   }, [value])
+
+  // Update dropdown position when opened or window resizes
+  useEffect(() => {
+    const updatePosition = () => {
+      if (inputRef.current && isOpen) {
+        const rect = inputRef.current.getBoundingClientRect()
+        setDropdownPosition({
+          top: rect.bottom + window.scrollY,
+          left: rect.left + window.scrollX,
+          width: rect.width,
+        })
+      }
+    }
+
+    updatePosition()
+    window.addEventListener('resize', updatePosition)
+    window.addEventListener('scroll', updatePosition, true)
+
+    return () => {
+      window.removeEventListener('resize', updatePosition)
+      window.removeEventListener('scroll', updatePosition, true)
+    }
+  }, [isOpen])
 
   // Close dropdown when clicking outside
   useEffect(() => {
@@ -131,11 +156,16 @@ export function TickerAutocomplete({
         />
       </div>
 
-      {/* Results dropdown */}
-      {isOpen && results.length > 0 && (
+      {/* Results dropdown - rendered via portal to avoid z-index issues */}
+      {isOpen && results.length > 0 && typeof window !== 'undefined' && createPortal(
         <div
           ref={resultsRef}
-          className="absolute z-50 w-full mt-1 rounded-lg border border-border bg-surface-1 shadow-lg max-h-64 overflow-y-auto"
+          className="fixed z-[9999] max-h-64 overflow-y-auto rounded-lg border border-[#1e1e2e] bg-[#13131a] shadow-xl"
+          style={{
+            top: `${dropdownPosition.top}px`,
+            left: `${dropdownPosition.left}px`,
+            width: `${dropdownPosition.width}px`,
+          }}
         >
           {results.map((result, index) => (
             <button
@@ -160,7 +190,8 @@ export function TickerAutocomplete({
               <div className="text-[10px] text-foreground/40 uppercase">{result.type}</div>
             </button>
           ))}
-        </div>
+        </div>,
+        document.body
       )}
 
       {/* Loading indicator */}
