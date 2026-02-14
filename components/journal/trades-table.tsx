@@ -123,45 +123,45 @@ export function TradesTable({ trades, onSelectTrade, selectedTradeId, onScanTrad
             <th className="pb-3 px-4">
               <button
                 onClick={() => handleSort('ticker')}
-                className="flex items-center gap-1 text-xs font-semibold text-foreground/60 uppercase tracking-wide hover:text-foreground transition-colors"
+                className="flex items-center gap-1 text-[10px] font-semibold text-foreground/60 uppercase tracking-widest hover:text-foreground transition-colors"
               >
                 Ticker
                 <SortIcon field="ticker" />
               </button>
             </th>
             <th className="pb-3 px-4">
-              <span className="text-xs font-semibold text-foreground/60 uppercase tracking-wide">
+              <span className="text-[10px] font-semibold text-foreground/60 uppercase tracking-widest">
                 Direction
               </span>
             </th>
             <th className="pb-3 px-4">
               <button
                 onClick={() => handleSort('entry_date')}
-                className="flex items-center gap-1 text-xs font-semibold text-foreground/60 uppercase tracking-wide hover:text-foreground transition-colors"
+                className="flex items-center gap-1 text-[10px] font-semibold text-foreground/60 uppercase tracking-widest hover:text-foreground transition-colors"
               >
                 Entry Date
                 <SortIcon field="entry_date" />
               </button>
             </th>
             <th className="pb-3 px-4 text-right">
-              <span className="text-xs font-semibold text-foreground/60 uppercase tracking-wide">
+              <span className="text-[10px] font-semibold text-foreground/60 uppercase tracking-widest">
                 Entry
               </span>
             </th>
             <th className="pb-3 px-4 text-right">
-              <span className="text-xs font-semibold text-foreground/60 uppercase tracking-wide">
+              <span className="text-[10px] font-semibold text-foreground/60 uppercase tracking-widest">
                 Current
               </span>
             </th>
             <th className="pb-3 px-4 text-right">
-              <span className="text-xs font-semibold text-foreground/60 uppercase tracking-wide">
+              <span className="text-[10px] font-semibold text-foreground/60 uppercase tracking-widest">
                 Exit
               </span>
             </th>
             <th className="pb-3 px-4 text-right">
               <button
                 onClick={() => handleSort('pnl_amount')}
-                className="flex items-center gap-1 ml-auto text-xs font-semibold text-foreground/60 uppercase tracking-wide hover:text-foreground transition-colors"
+                className="flex items-center gap-1 ml-auto text-[10px] font-semibold text-foreground/60 uppercase tracking-widest hover:text-foreground transition-colors"
               >
                 P&L
                 <SortIcon field="pnl_amount" />
@@ -170,19 +170,19 @@ export function TradesTable({ trades, onSelectTrade, selectedTradeId, onScanTrad
             <th className="pb-3 px-4 text-right">
               <button
                 onClick={() => handleSort('pnl_percent')}
-                className="flex items-center gap-1 ml-auto text-xs font-semibold text-foreground/60 uppercase tracking-wide hover:text-foreground transition-colors"
+                className="flex items-center gap-1 ml-auto text-[10px] font-semibold text-foreground/60 uppercase tracking-widest hover:text-foreground transition-colors"
               >
                 %
                 <SortIcon field="pnl_percent" />
               </button>
             </th>
             <th className="pb-3 px-4">
-              <span className="text-xs font-semibold text-foreground/60 uppercase tracking-wide">
+              <span className="text-[10px] font-semibold text-foreground/60 uppercase tracking-widest">
                 Status
               </span>
             </th>
             <th className="pb-3 px-4 text-right">
-              <span className="text-xs font-semibold text-foreground/60 uppercase tracking-wide">
+              <span className="text-[10px] font-semibold text-foreground/60 uppercase tracking-widest">
                 Actions
               </span>
             </th>
@@ -231,10 +231,10 @@ export function TradesTable({ trades, onSelectTrade, selectedTradeId, onScanTrad
                 </td>
                 <td className="py-3 px-4">
                   <span
-                    className={`text-xs px-2 py-0.5 rounded font-medium uppercase ${
+                    className={`text-xs px-2 py-0.5 rounded border font-medium uppercase ${
                       trade.direction === 'long'
-                        ? 'bg-green-600/20 text-green-400'
-                        : 'bg-red-600/20 text-red-400'
+                        ? 'bg-green-500/15 text-green-400 border-green-500/20'
+                        : 'bg-red-500/15 text-red-400 border-red-500/20'
                     }`}
                   >
                     {trade.direction}
@@ -280,7 +280,7 @@ export function TradesTable({ trades, onSelectTrade, selectedTradeId, onScanTrad
                 </td>
                 <td className="py-3 px-4">
                   <span
-                    className={`inline-flex text-[10px] px-2 py-1 rounded-full font-medium uppercase ${
+                    className={`inline-flex items-center gap-1.5 text-[10px] px-2 py-1 rounded-full font-medium uppercase ${
                       trade.status === 'open'
                         ? 'bg-blue-600/20 text-blue-400'
                         : trade.status === 'closed'
@@ -288,6 +288,7 @@ export function TradesTable({ trades, onSelectTrade, selectedTradeId, onScanTrad
                         : 'bg-foreground/5 text-foreground/40'
                     }`}
                   >
+                    {trade.status === 'open' && <div className="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse" />}
                     {trade.status}
                   </span>
                 </td>
@@ -298,7 +299,7 @@ export function TradesTable({ trades, onSelectTrade, selectedTradeId, onScanTrad
                         e.stopPropagation()
                         onScanTrade(trade)
                       }}
-                      className="rounded border border-primary/30 bg-primary/20 px-3 py-1 text-[10px] font-bold text-primary transition-colors hover:bg-primary/30"
+                      className="rounded border border-[#8b5cf6]/20 bg-[#8b5cf6]/15 px-3 py-1 text-[10px] font-bold text-[#8b5cf6] transition-colors hover:bg-[#8b5cf6]/25"
                     >
                       SCAN
                     </button>

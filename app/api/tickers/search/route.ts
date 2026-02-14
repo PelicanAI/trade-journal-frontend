@@ -40,6 +40,22 @@ const COMMON_TICKERS: TickerSearchResult[] = [
   { ticker: 'CSCO', name: 'Cisco Systems Inc.', type: 'CS', market: 'stocks', active: true },
   { ticker: 'PYPL', name: 'PayPal Holdings Inc.', type: 'CS', market: 'stocks', active: true },
   { ticker: 'ORCL', name: 'Oracle Corporation', type: 'CS', market: 'stocks', active: true },
+  // Crypto
+  { ticker: 'BTC', name: 'Bitcoin', type: 'CRYPTO', market: 'crypto', active: true },
+  { ticker: 'ETH', name: 'Ethereum', type: 'CRYPTO', market: 'crypto', active: true },
+  { ticker: 'SOL', name: 'Solana', type: 'CRYPTO', market: 'crypto', active: true },
+  { ticker: 'XRP', name: 'Ripple', type: 'CRYPTO', market: 'crypto', active: true },
+  { ticker: 'DOGE', name: 'Dogecoin', type: 'CRYPTO', market: 'crypto', active: true },
+  { ticker: 'ADA', name: 'Cardano', type: 'CRYPTO', market: 'crypto', active: true },
+  { ticker: 'AVAX', name: 'Avalanche', type: 'CRYPTO', market: 'crypto', active: true },
+  { ticker: 'LINK', name: 'Chainlink', type: 'CRYPTO', market: 'crypto', active: true },
+  { ticker: 'DOT', name: 'Polkadot', type: 'CRYPTO', market: 'crypto', active: true },
+  { ticker: 'MATIC', name: 'Polygon', type: 'CRYPTO', market: 'crypto', active: true },
+  { ticker: 'ARB', name: 'Arbitrum', type: 'CRYPTO', market: 'crypto', active: true },
+  { ticker: 'OP', name: 'Optimism', type: 'CRYPTO', market: 'crypto', active: true },
+  { ticker: 'SUI', name: 'Sui', type: 'CRYPTO', market: 'crypto', active: true },
+  { ticker: 'APT', name: 'Aptos', type: 'CRYPTO', market: 'crypto', active: true },
+  { ticker: 'PEPE', name: 'Pepe', type: 'CRYPTO', market: 'crypto', active: true },
 ]
 
 export interface TickerSearchResult {

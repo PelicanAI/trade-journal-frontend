@@ -2,10 +2,9 @@
 
 export const dynamic = "force-dynamic"
 
-import { useMemo, useState } from "react"
+import { useMemo, useState, useEffect } from "react"
 import { useTrades } from "@/hooks/use-trades"
 import { useMorningBrief } from "@/hooks/use-morning-brief"
-import { useEarnings } from "@/hooks/use-earnings"
 import { usePelicanPanelContext } from "@/providers/pelican-panel-provider"
 import { PelicanCard } from "@/components/ui/pelican-card"
 import { Sparkles, RefreshCw, CalendarDays } from "lucide-react"
@@ -13,20 +12,61 @@ import { getMarketStatus } from "@/hooks/use-market-data"
 
 type MoversTab = "gainers" | "losers"
 
+interface EconomicEvent {
+  event: string
+  country: string
+  date: string
+  time: string
+  impact: "low" | "medium" | "high"
+  actual: number | null
+  estimate: number | null
+  prior: number | null
+  unit: string
+}
+
 export default function MorningPage() {
   const [moversTab, setMoversTab] = useState<MoversTab>("gainers")
   const [isGeneratingBrief, setIsGeneratingBrief] = useState(false)
+  const [economicEvents, setEconomicEvents] = useState<EconomicEvent[]>([])
+  const [economicLoading, setEconomicLoading] = useState(true)
 
   const { openTrades, isLoading: tradesLoading } = useTrades({ status: 'open' })
   const { movers, isLoading: moversLoading, refetch: refetchMovers } = useMorningBrief()
-  const { events: earningsEvents, isLoading: macroLoading } = useEarnings()
   const { isOpen: isPanelOpen, openWithPrompt } = usePelicanPanelContext()
 
   const marketStatus = getMarketStatus()
   const isMarketOpen = marketStatus === 'open'
 
-  const macroPulseEvents = useMemo(() => earningsEvents.slice(0, 6), [earningsEvents])
-  const currentMovers = moversTab === "gainers" ? movers.gainers : movers.losers
+  // Fetch economic calendar
+  useEffect(() => {
+    const today = new Date().toISOString().split('T')[0]
+    const nextWeek = new Date(Date.now() + 7 * 86400000).toISOString().split('T')[0]
+
+    setEconomicLoading(true)
+    fetch(`/api/economic-calendar?from=${today}&to=${nextWeek}`)
+      .then(r => r.json())
+      .then(data => {
+        setEconomicEvents(data.events || [])
+        setEconomicLoading(false)
+      })
+      .catch(() => {
+        setEconomicLoading(false)
+      })
+  }, [])
+
+  // Filter to only HIGH and MEDIUM impact events, sorted by date/time
+  const macroEvents = useMemo(() => {
+    return economicEvents
+      .filter(e => e.impact === 'high' || e.impact === 'medium')
+      .sort((a, b) => a.date.localeCompare(b.date) || a.time.localeCompare(b.time))
+      .slice(0, 6)
+  }, [economicEvents])
+
+  // Sort movers by price (highest first)
+  const currentMovers = useMemo(() => {
+    const moversToSort = moversTab === "gainers" ? movers.gainers : movers.losers
+    return [...moversToSort].sort((a, b) => (b.price || 0) - (a.price || 0))
+  }, [moversTab, movers.gainers, movers.losers])
 
   const handleAnalyzeTicker = async (ticker: string, name?: string) => {
     await openWithPrompt(
@@ -136,34 +176,46 @@ Please provide:
               Macro Pulse
             </h2>
           </div>
-          {macroLoading ? (
+          {economicLoading ? (
             <div className="flex items-center justify-center py-8">
               <div className="h-6 w-6 animate-spin rounded-full border-2 border-purple-500/30 border-t-purple-500" />
             </div>
-          ) : macroPulseEvents.length === 0 ? (
-            <p className="text-sm text-foreground/50">No economic/earnings dates found for this window.</p>
+          ) : macroEvents.length === 0 ? (
+            <p className="text-sm text-foreground/50">No major events this week</p>
           ) : (
             <div className="space-y-2">
-              {macroPulseEvents.map((event) => (
-                <button
-                  key={`${event.symbol}-${event.date}`}
-                  onClick={() => handleAnalyzeTicker(event.symbol)}
-                  className="flex w-full items-center justify-between rounded-lg border border-white/10 bg-white/[0.03] p-3 text-left transition-colors hover:bg-white/[0.06]"
+              {macroEvents.map((event, i) => (
+                <div
+                  key={i}
+                  className="flex items-center justify-between rounded-lg border border-[#1e1e2e] bg-[#13131a] p-3"
                 >
-                  <div>
-                    <div className="font-mono text-sm font-semibold text-foreground">{event.symbol}</div>
-                    <div className="text-xs text-foreground/60">{new Date(event.date).toLocaleDateString()}</div>
+                  <div className="flex flex-col">
+                    <span className="text-sm font-medium text-white">{event.event}</span>
+                    <span className="text-xs text-gray-500">
+                      {new Date(event.date + 'T12:00:00').toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' })}
+                      {event.time ? ` • ${event.time} ET` : ''}
+                    </span>
                   </div>
-                  <div className="text-right">
-                    <div
-                      className="text-[10px] font-semibold uppercase tracking-wide"
-                      style={{ color: "var(--destructive)" }}
-                    >
-                      High Impact
+                  <div className="flex items-center gap-3">
+                    {/* Estimate vs Prior */}
+                    <div className="text-right">
+                      {event.estimate != null && (
+                        <span className="text-xs text-gray-400 block">Est: {event.estimate}{event.unit}</span>
+                      )}
+                      {event.prior != null && (
+                        <span className="text-xs text-gray-500 block">Prior: {event.prior}{event.unit}</span>
+                      )}
                     </div>
-                    <div className="text-xs uppercase text-foreground/60">{event.hour ?? "time tbd"}</div>
+                    {/* Impact badge */}
+                    <span className={`text-[10px] font-semibold uppercase px-2 py-0.5 rounded ${
+                      event.impact === 'high'
+                        ? 'bg-red-500/15 text-red-400'
+                        : 'bg-amber-500/15 text-amber-400'
+                    }`}>
+                      {event.impact}
+                    </span>
                   </div>
-                </button>
+                </div>
               ))}
             </div>
           )}
@@ -198,7 +250,7 @@ Please provide:
                   <div className="font-mono text-sm font-semibold text-foreground">{mover.ticker}</div>
                   <div className="text-xs text-foreground/60">${mover.price.toFixed(2)}</div>
                 </div>
-                <div className={`font-mono text-sm ${mover.changePercent >= 0 ? "text-green-400" : "text-[var(--destructive)]"}`}>
+                <div className={`font-mono text-sm tabular-nums ${mover.changePercent >= 0 ? "stat-positive" : "stat-negative"}`}>
                   {mover.changePercent >= 0 ? "+" : ""}
                   {mover.changePercent.toFixed(2)}%
                 </div>
@@ -207,25 +259,33 @@ Please provide:
           </div>
         </PelicanCard>
 
-        <PelicanCard hover={false} className="animate-pulse border border-primary/60 p-5">
-          <div className="mb-4 flex items-center justify-between">
-            <h2 className="flex items-center gap-2 text-sm font-semibold text-foreground">
-              <Sparkles className="h-4 w-4 text-purple-300" />
-              The Daily Roast
-            </h2>
-            {isPanelOpen && <span className="text-xs text-purple-300">Live</span>}
+        <PelicanCard hover={false} className="relative overflow-hidden border border-primary/60 p-5">
+          <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-purple-500/10 via-transparent to-purple-500/10 opacity-50 pointer-events-none" />
+          <div className="relative">
+            <div className="mb-4 flex items-center justify-between">
+              <h2 className="flex items-center gap-2 text-sm font-semibold text-foreground">
+                <Sparkles className="h-4 w-4 text-purple-300" />
+                The Daily Roast
+              </h2>
+              {isPanelOpen && (
+                <div className="flex items-center gap-1.5">
+                  <div className="live-dot" />
+                  <span className="text-xs text-purple-300">Live</span>
+                </div>
+              )}
+            </div>
+            <p className="thinking-shimmer-text mb-4 text-sm text-foreground/85">
+              Generate AI context across your positions, movers, and macro setup for a high-signal briefing.
+            </p>
+            <button
+              onClick={handleGenerateBrief}
+              disabled={isGeneratingBrief}
+              className="inline-flex items-center gap-2 rounded-lg bg-purple-600 px-4 py-2 text-sm font-medium text-white transition-all hover:bg-purple-500 hover:shadow-[0_0_20px_rgba(139,92,246,0.3)] disabled:opacity-50"
+            >
+              <Sparkles className="h-4 w-4" />
+              {isGeneratingBrief ? "Generating..." : "Run Daily Roast"}
+            </button>
           </div>
-          <p className="thinking-shimmer-text mb-4 text-sm text-foreground/85">
-            Generate AI context across your positions, movers, and macro setup for a high-signal briefing.
-          </p>
-          <button
-            onClick={handleGenerateBrief}
-            disabled={isGeneratingBrief}
-            className="inline-flex items-center gap-2 rounded-lg bg-purple-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-purple-500 disabled:opacity-50"
-          >
-            <Sparkles className="h-4 w-4" />
-            {isGeneratingBrief ? "Generating..." : "Run Daily Roast"}
-          </button>
         </PelicanCard>
       </div>
     </div>

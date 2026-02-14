@@ -56,13 +56,13 @@ function FeaturesLayoutInner({ children }: { children: React.ReactNode }) {
         <TopNav className="backdrop-blur-xl bg-[#0a0a0f]/80" />
       </div>
 
-      <div className="relative z-10 flex flex-1 overflow-hidden">
+      <div className="relative z-10 flex h-[calc(100vh-3.5rem)] overflow-hidden">
         <motion.main
           layout
           initial={false}
           animate={{ width: panel.isOpen ? "70%" : "100%" }}
           transition={{ type: "spring", stiffness: 300, damping: 30 }}
-          className="min-w-0 flex-1 overflow-auto"
+          className="min-w-0 flex-1 overflow-y-auto"
         >
           {children}
         </motion.main>
@@ -74,7 +74,7 @@ function FeaturesLayoutInner({ children }: { children: React.ReactNode }) {
               animate={{ x: 0, opacity: 1 }}
               exit={{ x: 420, opacity: 0 }}
               transition={{ type: "spring", stiffness: 300, damping: 30 }}
-              className="hidden border-l border-white/[0.05] bg-[#0a0a0f]/80 shadow-[0_0_50px_rgba(139,92,246,0.05)] backdrop-blur-2xl md:flex"
+              className="hidden border-l border-white/[0.05] bg-[#0a0a0f]/80 shadow-[0_0_50px_rgba(139,92,246,0.05)] backdrop-blur-2xl md:flex overflow-y-auto"
               style={{ width: "30%", minWidth: "340px", maxWidth: "440px" }}
             >
               <PelicanChatPanel

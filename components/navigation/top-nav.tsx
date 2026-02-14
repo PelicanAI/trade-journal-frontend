@@ -65,7 +65,7 @@ export function TopNav({ className }: TopNavProps) {
 
   return (
     <nav className={cn(
-      "sticky top-0 z-40 w-full border-b border-[#1e1e2e]/60 bg-[#0a0a0f]/95 backdrop-blur-xl",
+      "sticky top-0 z-40 w-full border-b border-[#1e1e2e]/60 bg-[#0a0a0f]/95 backdrop-blur-xl shadow-[0_1px_3px_rgba(0,0,0,0.3)]",
       className
     )}>
       <div className="flex items-center justify-between h-14 px-4">
@@ -83,7 +83,7 @@ export function TopNav({ className }: TopNavProps) {
               height={24}
               className="w-6 h-6 object-contain"
             />
-            <span className="font-bold text-base text-primary hidden sm:inline">
+            <span className="font-bold text-base bg-gradient-to-r from-white to-purple-300 bg-clip-text text-transparent hidden sm:inline">
               Pelican AI
             </span>
           </Link>
@@ -100,13 +100,13 @@ export function TopNav({ className }: TopNavProps) {
                   className={cn(
                     "relative px-3 py-4 text-sm font-medium transition-colors",
                     isActive
-                      ? "text-white"
+                      ? "text-white brightness-110"
                       : "text-gray-400 hover:text-gray-200"
                   )}
                 >
                   {tab.label}
                   {isActive && (
-                    <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#8b5cf6] rounded-full" />
+                    <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#8b5cf6] rounded-full shadow-[0_0_8px_rgba(139,92,246,0.4)]" />
                   )}
                 </Link>
               )
@@ -143,15 +143,15 @@ export function TopNav({ className }: TopNavProps) {
         <div className="flex items-center gap-3 ml-auto">
           {/* Streak */}
           <div className="flex items-center gap-1.5 text-sm text-gray-400">
-            <span className="text-orange-400">🔥</span>
-            <span className="font-mono font-medium text-white">{journalStreak}</span>
+            <span className={`${journalStreak > 0 ? 'text-lg filter drop-shadow-[0_0_6px_rgba(251,146,60,0.4)]' : ''}`}>🔥</span>
+            <span className="font-mono font-medium text-white tabular-nums">{journalStreak}</span>
             <span className="text-xs">days</span>
           </div>
 
           {/* Credits */}
           <Link
             href="/pricing"
-            className="px-3 py-1 rounded-full border border-[#1e1e2e] bg-[#13131a] text-sm font-mono text-white hover:border-[#8b5cf6]/30 hover:bg-[#1a1a24] transition-all"
+            className="px-3 py-1 rounded-full border border-[#1e1e2e] bg-[#13131a] text-sm font-mono text-white hover:border-[#8b5cf6]/30 hover:bg-[#1a1a24] transition-all tabular-nums"
           >
             {(credits?.balance ?? 0).toLocaleString()} credits
           </Link>

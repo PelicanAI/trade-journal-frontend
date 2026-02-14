@@ -122,7 +122,7 @@ export default function EarningsPage() {
                 onClick={() => setSelectedDate(dateStr)}
                 className={`px-4 py-2 rounded-lg text-sm font-medium transition-all relative ${
                   active
-                    ? 'bg-[#8b5cf6] text-white'
+                    ? 'bg-[#8b5cf6] text-white shadow-inner'
                     : isToday(d)
                     ? 'bg-[#1e1e2e] text-[#8b5cf6] border border-[#8b5cf6]/30'
                     : 'bg-[#13131a] text-gray-400 hover:bg-[#1e1e2e] hover:text-white'
@@ -198,18 +198,20 @@ function EarningsSection({
   events: EarningsEvent[]
   onRowClick: (ticker: string) => void
 }) {
+  const borderColor = title === "Before Market Open" ? "border-amber-400/50" : title === "After Hours" ? "border-blue-400/50" : "border-gray-500/50"
+
   return (
     <div>
-      <div className="flex items-center gap-2 mb-3">
+      <div className={`flex items-center gap-2 mb-3 pl-3 border-l-2 ${borderColor}`}>
         {icon}
-        <h2 className="text-sm font-semibold text-gray-300 uppercase tracking-wider">{title}</h2>
+        <h2 className="text-xs font-semibold text-gray-400 uppercase tracking-wider">{title}</h2>
         <span className="text-xs text-gray-500">({events.length})</span>
       </div>
 
       <div className="rounded-xl border border-[#1e1e2e] overflow-hidden">
         <table className="w-full">
           <thead>
-            <tr className="bg-[#0d0d14] text-[10px] uppercase tracking-widest text-gray-500 font-semibold">
+            <tr className="section-header-gradient text-[10px] uppercase tracking-widest text-gray-500 font-semibold">
               <th className="text-left px-4 py-3">Symbol</th>
               <th className="text-right px-4 py-3">Quarter</th>
               <th className="text-right px-4 py-3">EPS Est.</th>
@@ -220,11 +222,11 @@ function EarningsSection({
             {events.map((event, i) => (
               <tr
                 key={`${event.symbol}-${i}`}
-                className="border-t border-[#1e1e2e]/50 hover:bg-[#1a1a24] cursor-pointer transition-colors group"
+                className="table-row-hover border-t border-[#1e1e2e]/50 cursor-pointer transition-colors group"
                 onClick={() => onRowClick(event.symbol)}
               >
                 <td className="px-4 py-3">
-                  <span className="font-mono font-bold text-[#8b5cf6] group-hover:text-[#a78bfa] transition-colors">
+                  <span className="font-mono font-bold text-sm text-[#8b5cf6] group-hover:text-[#a78bfa] transition-colors">
                     {event.symbol}
                   </span>
                 </td>

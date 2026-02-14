@@ -20,11 +20,6 @@ const DashboardTab = dynamicImport(
   { ssr: false }
 )
 
-const PelicanChatPanel = dynamicImport(
-  () => import("@/components/pelican-panel/pelican-chat-panel").then((m) => ({ default: m.PelicanChatPanel })),
-  { ssr: false }
-)
-
 type TabKey = 'dashboard' | 'trades'
 type ActivePanel = 'detail' | 'pelican' | null
 
@@ -38,7 +33,7 @@ export default function JournalPage() {
 
   const { trades, isLoading: tradesLoading, logTrade, closeTrade, refetch, updateTrade } = useTrades()
   const { stats, equityCurve, isLoading: statsLoading } = useTradeStats()
-  const { isOpen: panelOpen, openWithPrompt, close: closePelicanPanel } = usePelicanPanelContext()
+  const { openWithPrompt } = usePelicanPanelContext()
 
   // Get live quotes for all open positions
   const openTickers = trades
@@ -109,10 +104,8 @@ export default function JournalPage() {
       }
     })
 
-    // Send to Pelican chat
+    // Send to Pelican chat (panel managed by layout)
     await openWithPrompt(trade.ticker, prompt, "journal")
-    setActivePanel("pelican")
-    setSelectedTrade(trade)
   }
 
 
@@ -126,10 +119,6 @@ export default function JournalPage() {
   const handleSelectTrade = (trade: Trade) => {
     setSelectedTrade(trade)
     setActivePanel('detail')
-    // Close Pelican panel when opening detail
-    if (panelOpen) {
-      closePelicanPanel()
-    }
   }
 
   const handleCloseDetailPanel = () => {
@@ -155,13 +144,6 @@ export default function JournalPage() {
     refetch()
     setShowCloseTradeModal(false)
     handleCloseDetailPanel()
-  }
-
-  // Monitor Pelican panel state - close detail panel when Pelican opens
-  const showPelicanPanel = panelOpen
-  if (showPelicanPanel && activePanel === 'detail') {
-    setActivePanel('pelican')
-    setSelectedTrade(null)
   }
 
   const showDetailPanel = activePanel === 'detail' && selectedTrade !== null
@@ -267,12 +249,10 @@ export default function JournalPage() {
         </div>
       </div>
 
-      {/* Main Content Area with Dual Panel Support */}
+      {/* Main Content Area with Detail Panel Support */}
       <div className="flex-1 flex overflow-hidden">
         {/* Main Content */}
-        <div className={`flex-1 overflow-auto p-6 transition-all ${
-          showDetailPanel || showPelicanPanel ? 'mr-0' : ''
-        }`}>
+        <div className="flex-1 overflow-auto p-6">
           {activeTab === 'dashboard' && (
             <DashboardTab
               stats={stats}
@@ -308,13 +288,6 @@ export default function JournalPage() {
               onClose={handleCloseDetailPanel}
               onCloseTrade={handleOpenCloseTrade}
             />
-          </div>
-        )}
-
-        {/* Right Panel - Pelican AI (30%) */}
-        {showPelicanPanel && !showDetailPanel && (
-          <div className="flex-shrink-0 w-[min(420px,30%)] h-full">
-            <PelicanChatPanel />
           </div>
         )}
       </div>

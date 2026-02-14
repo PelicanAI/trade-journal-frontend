@@ -528,4 +528,69 @@
       transition: none;
     }
   }
+
+  /* ========== V2 Visual Polish Utilities ========== */
+
+  /* Card with subtle glow on hover */
+  .pelican-card {
+    background: #13131a;
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 12px;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  .pelican-card:hover {
+    border-color: rgba(255, 255, 255, 0.1);
+  }
+
+  /* Stat value that glows green or red */
+  .stat-positive {
+    color: #22c55e;
+    text-shadow: 0 0 8px rgba(34, 197, 94, 0.3);
+  }
+
+  .stat-negative {
+    color: #ef4444;
+    text-shadow: 0 0 8px rgba(239, 68, 68, 0.3);
+  }
+
+  /* Table row hover */
+  .table-row-hover {
+    transition: background-color 0.15s ease;
+  }
+
+  .table-row-hover:hover {
+    background-color: #1a1a24;
+  }
+
+  /* Subtle gradient backgrounds for section headers */
+  .section-header-gradient {
+    background: linear-gradient(135deg, rgba(139, 92, 246, 0.08) 0%, transparent 60%);
+  }
+
+  /* Animated skeleton for loading states */
+  .skeleton {
+    background: linear-gradient(90deg,
+      #13131a 25%,
+      #1a1a24 50%,
+      #13131a 75%
+    );
+    background-size: 200% 100%;
+    animation: shimmer 1.5s infinite;
+    border-radius: 6px;
+  }
+
+  /* Subtle pulse for live indicators */
+  @keyframes live-pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+  }
+
+  .live-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #22c55e;
+    animation: live-pulse 2s ease-in-out infinite;
+  }
 }

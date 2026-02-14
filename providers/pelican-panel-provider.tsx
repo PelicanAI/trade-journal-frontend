@@ -14,7 +14,7 @@ interface PelicanPanelContextValue {
   isStreaming: boolean
   ticker: string | null
   context: PelicanPanelContext
-  openWithPrompt: (ticker: string | null, prompt: string, context: PelicanPanelContext) => Promise<void>
+  openWithPrompt: (ticker: string | null, prompt: string | { visibleMessage: string; fullPrompt: string }, context: PelicanPanelContext) => Promise<void>
   sendMessage: (content: string) => Promise<void>
   close: () => void
   clearMessages: () => void

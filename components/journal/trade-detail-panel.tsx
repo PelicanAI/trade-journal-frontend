@@ -96,18 +96,18 @@ export function TradeDetailPanel({ trade, onClose, onCloseTrade }: TradeDetailPa
         )}
 
         {/* Entry Details */}
-        <div className="space-y-2">
-          <h3 className="text-xs font-semibold text-foreground/60 uppercase tracking-wide">Entry</h3>
+        <div className="space-y-2 pb-4 border-b border-border/50">
+          <h3 className="text-xs font-semibold text-foreground/60 uppercase tracking-wider">Entry</h3>
           <div className="space-y-2">
             <div className="flex items-center justify-between text-sm">
               <span className="text-foreground/60">Price</span>
-              <span className="font-mono font-medium text-foreground">
+              <span className="font-mono font-medium text-lg text-white">
                 ${trade.entry_price.toFixed(2)}
               </span>
             </div>
             <div className="flex items-center justify-between text-sm">
               <span className="text-foreground/60">Quantity</span>
-              <span className="font-mono font-medium text-foreground">{trade.quantity}</span>
+              <span className="font-mono font-medium text-foreground tabular-nums">{trade.quantity}</span>
             </div>
             <div className="flex items-center justify-between text-sm">
               <span className="text-foreground/60">Date</span>
@@ -117,8 +117,8 @@ export function TradeDetailPanel({ trade, onClose, onCloseTrade }: TradeDetailPa
             </div>
             <div className="flex items-center justify-between text-sm">
               <span className="text-foreground/60">Position Size</span>
-              <span className="font-mono font-medium text-foreground">
-                ${(trade.entry_price * trade.quantity).toFixed(2)}
+              <span className="font-mono font-medium text-foreground tabular-nums">
+                ${(trade.entry_price * trade.quantity).toLocaleString()}
               </span>
             </div>
           </div>
@@ -149,15 +149,15 @@ export function TradeDetailPanel({ trade, onClose, onCloseTrade }: TradeDetailPa
 
         {/* Risk Management */}
         {(trade.stop_loss || trade.take_profit) && (
-          <div className="space-y-2">
-            <h3 className="text-xs font-semibold text-foreground/60 uppercase tracking-wide">
+          <div className="space-y-2 pb-4 border-b border-border/50">
+            <h3 className="text-xs font-semibold text-foreground/60 uppercase tracking-wider">
               Risk Management
             </h3>
             <div className="space-y-2">
               {trade.stop_loss && (
                 <div className="flex items-center justify-between text-sm">
                   <span className="text-foreground/60">Stop Loss</span>
-                  <span className="font-mono font-medium text-red-400">
+                  <span className="font-mono font-medium text-red-400 tabular-nums">
                     ${trade.stop_loss.toFixed(2)}
                   </span>
                 </div>
@@ -165,7 +165,7 @@ export function TradeDetailPanel({ trade, onClose, onCloseTrade }: TradeDetailPa
               {trade.take_profit && (
                 <div className="flex items-center justify-between text-sm">
                   <span className="text-foreground/60">Take Profit</span>
-                  <span className="font-mono font-medium text-green-400">
+                  <span className="font-mono font-medium text-green-400 tabular-nums">
                     ${trade.take_profit.toFixed(2)}
                   </span>
                 </div>
@@ -212,17 +212,24 @@ export function TradeDetailPanel({ trade, onClose, onCloseTrade }: TradeDetailPa
         {/* Conviction */}
         {trade.conviction && (
           <div className="space-y-2">
-            <h3 className="text-xs font-semibold text-foreground/60 uppercase tracking-wide">
+            <h3 className="text-xs font-semibold text-foreground/60 uppercase tracking-wider">
               Conviction
             </h3>
             <div className="flex items-center gap-2">
               <div className="flex-1 h-2 bg-white/[0.06] rounded-full overflow-hidden">
                 <div
-                  className="h-full bg-purple-500 rounded-full"
-                  style={{ width: `${(trade.conviction / 10) * 100}%` }}
+                  className="h-full rounded-full transition-all"
+                  style={{
+                    width: `${(trade.conviction / 10) * 100}%`,
+                    background: trade.conviction <= 3
+                      ? 'linear-gradient(90deg, #ef4444, #f87171)'
+                      : trade.conviction <= 7
+                      ? 'linear-gradient(90deg, #eab308, #fbbf24)'
+                      : 'linear-gradient(90deg, #22c55e, #4ade80)'
+                  }}
                 />
               </div>
-              <span className="text-sm font-medium text-purple-400">{trade.conviction}/10</span>
+              <span className="text-sm font-medium text-purple-400 tabular-nums">{trade.conviction}/10</span>
             </div>
           </div>
         )}
@@ -233,7 +240,7 @@ export function TradeDetailPanel({ trade, onClose, onCloseTrade }: TradeDetailPa
         <div className="flex-shrink-0 p-4 border-t border-border">
           <button
             onClick={() => onCloseTrade(trade)}
-            className="w-full px-4 py-2 rounded-lg bg-purple-600 text-white hover:bg-purple-500 transition-colors font-medium"
+            className="w-full py-3 bg-red-500/15 text-red-400 border border-red-500/30 hover:bg-red-500/25 rounded-xl font-medium transition-colors"
           >
             Close Trade
           </button>

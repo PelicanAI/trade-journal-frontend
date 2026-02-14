@@ -45,7 +45,7 @@ interface UsePelicanPanelOptions {
 
 interface UsePelicanPanelReturn {
   state: PelicanPanelState
-  openWithPrompt: (ticker: string | null, prompt: string, context: PelicanPanelContext) => Promise<void>
+  openWithPrompt: (ticker: string | null, prompt: string | { visibleMessage: string; fullPrompt: string }, context: PelicanPanelContext) => Promise<void>
   sendMessage: (content: string) => Promise<void>
   close: () => void
   clearMessages: () => void
@@ -197,10 +197,14 @@ export function usePelicanPanel(options: UsePelicanPanelOptions = {}): UsePelica
 
   const openWithPrompt = useCallback(async (
     ticker: string | null,
-    prompt: string,
+    prompt: string | { visibleMessage: string; fullPrompt: string },
     context: PelicanPanelContext
   ): Promise<void> => {
-    logger.info('[PELICAN-PANEL] Opening with prompt', { ticker, context, promptLength: prompt.length })
+    // Handle both string and object prompt formats
+    const visibleMessage = typeof prompt === 'string' ? prompt : prompt.visibleMessage
+    const fullPrompt = typeof prompt === 'string' ? prompt : prompt.fullPrompt
+
+    logger.info('[PELICAN-PANEL] Opening with prompt', { ticker, context, promptLength: fullPrompt.length })
 
     // If panel is already open for same context, append to existing conversation
     const shouldAppend = state.isOpen && state.context === context && conversationIdRef.current
@@ -224,19 +228,19 @@ export function usePelicanPanel(options: UsePelicanPanelOptions = {}): UsePelica
       setState(prev => ({ ...prev, isOpen: true, ticker }))
     }
 
-    // Send the prompt
-    const userMessage = createUserMessage(prompt)
+    // Send the prompt - user sees visibleMessage, backend gets fullPrompt
+    const userMessage = createUserMessage(visibleMessage)
     const assistantMessage = createAssistantMessage('')
     const assistantMessageId = assistantMessage.id
 
     updateMessagesWithSync(prev => [...prev, userMessage, assistantMessage])
-    lastUserMessageRef.current = prompt
+    lastUserMessageRef.current = fullPrompt
 
     const conversationHistory = captureConversationHistory()
 
     try {
       await sendStreamingMessage(
-        prompt,
+        fullPrompt,
         conversationHistory,
         {
           onChunk: (chunk: string) => {

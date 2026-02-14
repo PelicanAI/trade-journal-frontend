@@ -85,7 +85,7 @@ export function LogTradeModal({ open, onOpenChange, onSubmit, initialTicker = ""
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto backdrop-blur-sm">
         <DialogHeader>
           <DialogTitle>Log New Trade</DialogTitle>
           <DialogDescription>
@@ -124,11 +124,11 @@ export function LogTradeModal({ open, onOpenChange, onSubmit, initialTicker = ""
                 type="button"
                 onClick={() => setDirection('long')}
                 className={`
-                  flex-1 py-2 px-4 rounded-lg font-medium text-sm transition-colors
+                  flex-1 py-2 px-4 rounded-lg font-medium text-sm transition-colors border
                   ${
                     direction === 'long'
-                      ? 'bg-green-600 text-white'
-                      : 'bg-white/[0.06] border border-border text-foreground/70 hover:bg-white/[0.08]'
+                      ? 'bg-green-500/20 border-green-500/40 text-green-400'
+                      : 'bg-transparent border-border text-foreground/70 hover:bg-white/[0.03]'
                   }
                 `}
               >
@@ -138,11 +138,11 @@ export function LogTradeModal({ open, onOpenChange, onSubmit, initialTicker = ""
                 type="button"
                 onClick={() => setDirection('short')}
                 className={`
-                  flex-1 py-2 px-4 rounded-lg font-medium text-sm transition-colors
+                  flex-1 py-2 px-4 rounded-lg font-medium text-sm transition-colors border
                   ${
                     direction === 'short'
-                      ? 'bg-red-600 text-white'
-                      : 'bg-white/[0.06] border border-border text-foreground/70 hover:bg-white/[0.08]'
+                      ? 'bg-red-500/20 border-red-500/40 text-red-400'
+                      : 'bg-transparent border-border text-foreground/70 hover:bg-white/[0.03]'
                   }
                 `}
               >
@@ -164,7 +164,7 @@ export function LogTradeModal({ open, onOpenChange, onSubmit, initialTicker = ""
                 step="any"
                 min="0"
                 required
-                className="w-full px-4 py-2 rounded-lg bg-white/[0.06] border border-border text-foreground focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500"
+                className="w-full px-4 py-2 rounded-lg bg-white/[0.06] border border-border text-foreground focus:outline-none focus:border-[#8b5cf6]/50 focus:ring-1 focus:ring-[#8b5cf6]/20"
                 placeholder="100"
               />
             </div>
@@ -320,7 +320,7 @@ export function LogTradeModal({ open, onOpenChange, onSubmit, initialTicker = ""
             <button
               type="submit"
               disabled={isSubmitting || !ticker || !quantity || !entryPrice}
-              className="flex-1 px-4 py-2 rounded-lg bg-purple-600 text-white hover:bg-purple-500 transition-colors disabled:opacity-50 disabled:cursor-not-allowed font-medium"
+              className="flex-1 py-3 rounded-xl bg-[#8b5cf6] text-white font-medium transition-all hover:bg-[#7c3aed] hover:shadow-[0_0_20px_rgba(139,92,246,0.3)] disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {isSubmitting ? 'Logging...' : 'Log Trade'}
             </button>
