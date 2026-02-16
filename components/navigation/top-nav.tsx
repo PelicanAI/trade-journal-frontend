@@ -30,7 +30,7 @@ const NAV_TABS: NavTab[] = [
   { key: 'brief', label: 'Brief', href: '/morning' },
   { key: 'chat', label: 'Chat', href: '/chat' },
   { key: 'heatmap', label: 'Heatmap', href: '/heatmap' },
-  { key: 'journal', label: 'Journal', href: '/journal' },
+  { key: 'journal', label: 'Positions', href: '/journal' },
   { key: 'earnings', label: 'Earnings', href: '/earnings' },
 ]
 

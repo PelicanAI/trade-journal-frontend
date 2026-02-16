@@ -22,6 +22,15 @@ export interface MoversResponse {
   active: Mover[]
 }
 
+function dedupeByTicker(movers: Mover[]): Mover[] {
+  const seen = new Set<string>()
+  return movers.filter(m => {
+    if (seen.has(m.ticker)) return false
+    seen.add(m.ticker)
+    return true
+  })
+}
+
 export async function GET() {
   try {
     const supabase = await createClient()
@@ -96,9 +105,53 @@ export async function GET() {
       volume: ticker.day?.v ?? 0,
     })
 
+    const gainers = (gainersData?.tickers || []).map(mapMover)
+    const losers = (losersData?.tickers || []).map(mapMover)
+
+    // Supplement with S&P 500 data for large-cap price tiers
+    const { data: sp500Cache } = await supabase
+      .from('cached_market_data')
+      .select('data, fetched_at')
+      .eq('data_type', 'sp500_prices')
+      .is('user_id', null)
+      .single()
+
+    let sp500Movers: Mover[] = []
+    if (sp500Cache?.data) {
+      interface HeatmapStock {
+        ticker: string
+        name: string
+        price: number | null
+        changePercent: number | null
+        volume: number | null
+      }
+
+      const heatmapData = sp500Cache.data as { stocks?: HeatmapStock[] }
+      sp500Movers = (heatmapData.stocks || [])
+        .filter((s) => s.price != null && s.price > 0 && s.changePercent != null && s.changePercent !== 0)
+        .map((s) => ({
+          ticker: s.ticker,
+          name: s.name || s.ticker,
+          price: s.price!,
+          changePercent: s.changePercent!,
+          volume: s.volume || 0,
+        }))
+    }
+
+    // Merge: Polygon movers (small/mid cap) + S&P 500 (large cap)
+    const allGainers = dedupeByTicker([
+      ...sp500Movers.filter(m => m.changePercent > 0),
+      ...gainers,
+    ]).sort((a, b) => b.changePercent - a.changePercent)
+
+    const allLosers = dedupeByTicker([
+      ...sp500Movers.filter(m => m.changePercent < 0),
+      ...losers,
+    ]).sort((a, b) => a.changePercent - b.changePercent)
+
     const response: MoversResponse = {
-      gainers: (gainersData?.tickers || []).slice(0, 10).map(mapMover),
-      losers: (losersData?.tickers || []).slice(0, 10).map(mapMover),
+      gainers: allGainers,
+      losers: allLosers,
       active: (activeData?.tickers || []).slice(0, 10).map(mapMover),
     }
 

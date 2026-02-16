@@ -7,6 +7,7 @@ import { Search, RefreshCw, ChevronLeft, ChevronRight } from "lucide-react"
 import { useEarnings, type EarningsEvent } from "@/hooks/use-earnings"
 import { usePelicanPanelContext } from "@/providers/pelican-panel-provider"
 import { cn } from "@/lib/utils"
+import { LogoImg } from "@/components/ui/logo-img"
 
 const MAX_VISIBLE = 8
 
@@ -59,23 +60,6 @@ function sortByImportance(events: EarningsEvent[]): EarningsEvent[] {
   })
 }
 
-// Logo component with fallback
-function LogoImg({ symbol }: { symbol: string }) {
-  const [hidden, setHidden] = useState(false)
-
-  if (hidden) return null
-
-  return (
-    <img
-      src={`https://api.elbstream.com/logos/symbol/${symbol}?format=png&size=50`}
-      alt=""
-      className="w-4 h-4 rounded-sm object-contain flex-shrink-0"
-      loading="lazy"
-      onError={() => setHidden(true)}
-    />
-  )
-}
-
 // Compact earnings card component
 function EarningsCard({
   event,
@@ -98,7 +82,7 @@ function EarningsCard({
     >
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-1.5 min-w-0">
-          <LogoImg symbol={event.symbol} />
+          <LogoImg symbol={event.symbol} size={16} />
           <span className="font-mono font-bold text-xs text-[#8b5cf6] group-hover:text-[#a78bfa] truncate">
             {event.symbol}
           </span>

@@ -154,9 +154,9 @@ export default function JournalPage() {
       <div className="flex-shrink-0 px-4 sm:px-6 py-4 border-b border-border">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-3">
           <div>
-            <h1 className="text-lg sm:text-xl font-semibold text-foreground">Trade Journal</h1>
+            <h1 className="text-lg sm:text-xl font-semibold text-foreground">Positions</h1>
             <p className="text-xs text-muted-foreground mt-0.5">
-              {trades.length} total trades • {stats?.win_rate.toFixed(1)}% win rate
+              {trades.length} total positions • {stats?.win_rate.toFixed(1)}% win rate
             </p>
           </div>
 
@@ -201,7 +201,7 @@ export default function JournalPage() {
                   }
                 `}
               >
-                Paper
+                Simulated
               </button>
             </div>
 

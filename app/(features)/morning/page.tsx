@@ -9,8 +9,24 @@ import { usePelicanPanelContext } from "@/providers/pelican-panel-provider"
 import { PelicanCard } from "@/components/ui/pelican-card"
 import { Sparkles, RefreshCw, CalendarDays } from "lucide-react"
 import { getMarketStatus } from "@/hooks/use-market-data"
+import { LogoImg } from "@/components/ui/logo-img"
 
 type MoversTab = "gainers" | "losers"
+
+interface PriceTier {
+  label: string
+  min: number
+  max: number
+}
+
+const PRICE_TIERS: PriceTier[] = [
+  { label: 'All', min: 0, max: Infinity },
+  { label: '$200+', min: 200, max: Infinity },
+  { label: '$100–$200', min: 100, max: 200 },
+  { label: '$50–$100', min: 50, max: 100 },
+  { label: '$10–$50', min: 10, max: 50 },
+  { label: 'Penny Stocks', min: 0, max: 10 },
+]
 
 interface EconomicEvent {
   event: string
@@ -26,6 +42,7 @@ interface EconomicEvent {
 
 export default function MorningPage() {
   const [moversTab, setMoversTab] = useState<MoversTab>("gainers")
+  const [priceTier, setPriceTier] = useState<PriceTier>(PRICE_TIERS[1]) // Default to $200+
   const [isGeneratingBrief, setIsGeneratingBrief] = useState(false)
   const [economicEvents, setEconomicEvents] = useState<EconomicEvent[]>([])
   const [economicLoading, setEconomicLoading] = useState(true)
@@ -62,18 +79,30 @@ export default function MorningPage() {
       .slice(0, 6)
   }, [economicEvents])
 
-  // Sort movers by price (highest first)
+  // Sort movers by price (highest first) and filter by price tier
   const currentMovers = useMemo(() => {
     const moversToSort = moversTab === "gainers" ? movers.gainers : movers.losers
-    return [...moversToSort].sort((a, b) => (b.price || 0) - (a.price || 0))
-  }, [moversTab, movers.gainers, movers.losers])
+    return [...moversToSort]
+      .filter(m => m.price >= priceTier.min && m.price < priceTier.max)
+      .sort((a, b) => (b.price || 0) - (a.price || 0))
+  }, [moversTab, movers.gainers, movers.losers, priceTier])
 
-  const handleAnalyzeTicker = async (ticker: string, name?: string) => {
-    await openWithPrompt(
-      ticker,
-      `Analyze this mover: ${ticker}${name ? ` (${name})` : ""}. Include setup quality, risk zones, and a trade plan with invalidation.`,
-      "morning"
-    )
+  const handleAnalyzeTicker = async (ticker: string, name?: string, price?: number, changePercent?: number) => {
+    let prompt = `Analyze ${ticker}${name ? ` (${name})` : ""}`
+
+    if (price !== undefined && changePercent !== undefined) {
+      const direction = changePercent >= 0 ? 'up' : 'down'
+      prompt = `Analyze ${ticker} — it's ${direction} ${Math.abs(changePercent).toFixed(2)}% today at $${price.toFixed(2)}. What's driving this move? Is there follow-through potential or is this a fade?`
+    } else {
+      prompt += `. Include setup quality, risk zones, and a trade plan with invalidation.`
+    }
+
+    await openWithPrompt(ticker, prompt, "morning")
+  }
+
+  const handleAnalyzePosition = async (trade: typeof openTrades[0]) => {
+    const prompt = `Analyze my ${trade.direction} position in ${trade.ticker}: Entry $${trade.entry_price.toFixed(2)}, Qty ${trade.quantity}. What's the current technical setup? Any upcoming catalysts or risks I should watch?`
+    await openWithPrompt(trade.ticker, prompt, "morning")
   }
 
   const handleGenerateBrief = async () => {
@@ -147,11 +176,14 @@ Please provide:
                 return (
                   <button
                     key={trade.id}
-                    onClick={() => handleAnalyzeTicker(trade.ticker)}
+                    onClick={() => handleAnalyzePosition(trade)}
                     className="w-full rounded-lg border border-white/10 bg-white/[0.03] p-3 text-left transition-colors hover:bg-white/[0.06] active:scale-[0.98] min-h-[44px]"
                   >
                     <div className="mb-1 flex items-center justify-between">
-                      <span className="font-mono text-sm font-semibold text-foreground">{trade.ticker}</span>
+                      <div className="flex items-center gap-2">
+                        <LogoImg symbol={trade.ticker} size={20} />
+                        <span className="font-mono text-sm font-semibold text-foreground">{trade.ticker}</span>
+                      </div>
                       <span className={`text-xs font-medium uppercase ${trade.direction === "long" ? "text-green-400" : "text-red-400"}`}>
                         {trade.direction}
                       </span>
@@ -181,7 +213,11 @@ Please provide:
               <div className="h-6 w-6 animate-spin rounded-full border-2 border-purple-500/30 border-t-purple-500" />
             </div>
           ) : macroEvents.length === 0 ? (
-            <p className="text-sm text-foreground/50">No major events this week</p>
+            <p className="text-sm text-foreground/50">
+              {economicEvents.length === 0
+                ? "Economic calendar unavailable. Check FINNHUB_API_KEY environment variable."
+                : "No high/medium impact US events in the next 7 days"}
+            </p>
           ) : (
             <div className="space-y-2">
               {macroEvents.map((event, i) => (
@@ -222,33 +258,55 @@ Please provide:
         </PelicanCard>
 
         <PelicanCard className="p-5">
-          <div className="mb-4 flex items-center justify-between">
-            <h2 className="text-sm font-semibold text-foreground">Market Movers</h2>
-            <div className="rounded-lg border border-border bg-white/[0.06] p-1">
-              <button
-                onClick={() => setMoversTab("gainers")}
-                className={`rounded px-2 py-1 text-xs ${moversTab === "gainers" ? "bg-purple-600 text-white" : "text-foreground/70"}`}
-              >
-                Gainers
-              </button>
-              <button
-                onClick={() => setMoversTab("losers")}
-                className={`rounded px-2 py-1 text-xs ${moversTab === "losers" ? "bg-purple-600 text-white" : "text-foreground/70"}`}
-              >
-                Losers
-              </button>
+          <div className="mb-4">
+            <div className="flex items-center justify-between mb-3">
+              <h2 className="text-sm font-semibold text-foreground">Market Movers</h2>
+              <div className="rounded-lg border border-border bg-white/[0.06] p-1">
+                <button
+                  onClick={() => setMoversTab("gainers")}
+                  className={`rounded px-2 py-1 text-xs ${moversTab === "gainers" ? "bg-purple-600 text-white" : "text-foreground/70"}`}
+                >
+                  Gainers
+                </button>
+                <button
+                  onClick={() => setMoversTab("losers")}
+                  className={`rounded px-2 py-1 text-xs ${moversTab === "losers" ? "bg-purple-600 text-white" : "text-foreground/70"}`}
+                >
+                  Losers
+                </button>
+              </div>
+            </div>
+
+            {/* Price Tier Filter */}
+            <div className="flex gap-1 flex-wrap">
+              {PRICE_TIERS.map(tier => (
+                <button
+                  key={tier.label}
+                  onClick={() => setPriceTier(tier)}
+                  className={`px-2.5 py-1 rounded-full text-[11px] font-medium transition-colors ${
+                    priceTier.label === tier.label
+                      ? "bg-[#8b5cf6] text-white"
+                      : "bg-white/5 text-gray-400 hover:bg-white/10"
+                  }`}
+                >
+                  {tier.label}
+                </button>
+              ))}
             </div>
           </div>
           <div className="space-y-2">
             {currentMovers.slice(0, 10).map((mover) => (
               <button
                 key={`${moversTab}-${mover.ticker}`}
-                onClick={() => handleAnalyzeTicker(mover.ticker, mover.name)}
+                onClick={() => handleAnalyzeTicker(mover.ticker, mover.name, mover.price, mover.changePercent)}
                 className="flex w-full items-center justify-between rounded-lg border border-white/10 bg-white/[0.03] p-3 transition-colors hover:bg-white/[0.06] active:scale-[0.98] min-h-[44px]"
               >
-                <div className="text-left">
-                  <div className="font-mono text-sm font-semibold text-foreground">{mover.ticker}</div>
-                  <div className="text-xs text-foreground/60">${mover.price.toFixed(2)}</div>
+                <div className="flex items-center gap-2 text-left">
+                  <LogoImg symbol={mover.ticker} size={18} />
+                  <div>
+                    <div className="font-mono text-sm font-semibold text-foreground">{mover.ticker}</div>
+                    <div className="text-xs text-foreground/60">${mover.price.toFixed(2)}</div>
+                  </div>
                 </div>
                 <div className={`font-mono text-sm tabular-nums ${mover.changePercent >= 0 ? "stat-positive" : "stat-negative"}`}>
                   {mover.changePercent >= 0 ? "+" : ""}
@@ -256,6 +314,11 @@ Please provide:
                 </div>
               </button>
             ))}
+            {currentMovers.length === 0 && !moversLoading && (
+              <p className="text-sm text-foreground/50 text-center py-4">
+                No {moversTab} in the {priceTier.label} range today
+              </p>
+            )}
           </div>
         </PelicanCard>
 

@@ -4,6 +4,7 @@ import { Trade } from "@/hooks/use-trades"
 import { ArrowUp, ArrowDown, ArrowUpDown } from "lucide-react"
 import { useState } from "react"
 import { useLiveQuotes, type Quote } from "@/hooks/use-live-quotes"
+import { LogoImg } from "@/components/ui/logo-img"
 
 interface TradesTableProps {
   trades: Trade[]
@@ -215,6 +216,7 @@ export function TradesTable({ trades, onSelectTrade, selectedTradeId, onScanTrad
               >
                 <td className="py-3 px-4">
                   <div className="flex items-center gap-2">
+                    <LogoImg symbol={trade.ticker} size={20} />
                     <button
                       onClick={(e) => {
                         e.stopPropagation()
