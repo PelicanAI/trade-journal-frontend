@@ -52,16 +52,18 @@ export async function GET(request: NextRequest) {
       const referralCode = cookieStore.get('pelican_ref')?.value
       if (referralCode) {
         try {
+          const trimmedCode = referralCode.toUpperCase().trim()
+
           // First validate the code
           const { data: validationData, error: validationError } = await supabase.rpc('validate_referral_code', {
-            p_code: referralCode.toUpperCase().trim(),
+            input_code: trimmedCode,
           })
 
-          if (!validationError && validationData?.valid && validationData.code_id) {
+          if (!validationError && validationData?.valid) {
             // Record the referral
             await supabase.rpc('record_referral', {
+              p_code: trimmedCode,
               p_user_id: user.id,
-              p_code_id: validationData.code_id,
             })
           }
         } catch (error) {

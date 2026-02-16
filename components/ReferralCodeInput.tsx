@@ -14,6 +14,7 @@ export function ReferralCodeInput({ onReferralReady }: ReferralCodeInputProps) {
   const [validationState, setValidationState] = useState<"idle" | "loading" | "valid" | "invalid">("idle");
   const [validatedInfo, setValidatedInfo] = useState<ReferralCodeInfo | null>(null);
 
+  // Load stored referral code on mount
   useEffect(() => {
     const stored = getStoredReferralCode();
     if (stored) {
@@ -22,21 +23,37 @@ export function ReferralCodeInput({ onReferralReady }: ReferralCodeInputProps) {
     }
   }, []);
 
+  // Provide record function to parent
   useEffect(() => {
     onReferralReady(async (userId: string) => {
-      if (!validatedInfo?.valid || !validatedInfo.code_id) return;
+      if (!validatedInfo?.valid || !code.trim()) return;
 
       const supabase = createClient();
       const { error } = await supabase.rpc("record_referral", {
+        p_code: code.toUpperCase().trim(),
         p_user_id: userId,
-        p_code_id: validatedInfo.code_id,
       });
 
       if (error) {
         console.error("Failed to record referral:", error);
       }
     });
-  }, [validatedInfo, onReferralReady]);
+  }, [validatedInfo, code, onReferralReady]);
+
+  // Debounced validation when code changes
+  useEffect(() => {
+    if (!code.trim()) {
+      setValidationState("idle");
+      setValidatedInfo(null);
+      return;
+    }
+
+    const timer = setTimeout(() => {
+      validateCode(code);
+    }, 500);
+
+    return () => clearTimeout(timer);
+  }, [code]);
 
   const validateCode = async (inputCode: string) => {
     const trimmed = inputCode.trim().toUpperCase();
@@ -50,7 +67,7 @@ export function ReferralCodeInput({ onReferralReady }: ReferralCodeInputProps) {
 
     const supabase = createClient();
     const { data, error } = await supabase.rpc("validate_referral_code", {
-      p_code: trimmed,
+      input_code: trimmed,
     });
 
     if (error || !data) {
@@ -70,18 +87,7 @@ export function ReferralCodeInput({ onReferralReady }: ReferralCodeInputProps) {
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
-    setCode(value);
-
-    if (!value.trim()) {
-      setValidationState("idle");
-      setValidatedInfo(null);
-      return;
-    }
-
-    // Debounce validation
-    const timer = setTimeout(() => validateCode(value), 500);
-    return () => clearTimeout(timer);
+    setCode(e.target.value);
   };
 
   return (
