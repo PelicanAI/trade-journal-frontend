@@ -177,7 +177,7 @@ Please provide:
                   <button
                     key={trade.id}
                     onClick={() => handleAnalyzePosition(trade)}
-                    className="w-full rounded-lg border border-white/10 bg-white/[0.03] p-3 text-left transition-colors hover:bg-white/[0.06] active:scale-[0.98] min-h-[44px]"
+                    className="w-full rounded-lg border border-white/[0.04] bg-white/[0.03] p-3 text-left transition-colors hover:bg-white/[0.06] active:scale-[0.98] min-h-[44px]"
                   >
                     <div className="mb-1 flex items-center justify-between">
                       <div className="flex items-center gap-2">
@@ -223,7 +223,7 @@ Please provide:
               {macroEvents.map((event, i) => (
                 <div
                   key={i}
-                  className="flex items-center justify-between rounded-lg border border-[#1e1e2e] bg-[#13131a] p-3"
+                  className="flex items-center justify-between rounded-lg border border-white/[0.04] bg-[#13131a] p-3"
                 >
                   <div className="flex flex-col">
                     <span className="text-sm font-medium text-white">{event.event}</span>
@@ -299,7 +299,7 @@ Please provide:
               <button
                 key={`${moversTab}-${mover.ticker}`}
                 onClick={() => handleAnalyzeTicker(mover.ticker, mover.name, mover.price, mover.changePercent)}
-                className="flex w-full items-center justify-between rounded-lg border border-white/10 bg-white/[0.03] p-3 transition-colors hover:bg-white/[0.06] active:scale-[0.98] min-h-[44px]"
+                className="flex w-full items-center justify-between rounded-lg border border-white/[0.04] bg-white/[0.03] p-3 transition-colors hover:bg-white/[0.06] active:scale-[0.98] min-h-[44px]"
               >
                 <div className="flex items-center gap-2 text-left">
                   <LogoImg symbol={mover.ticker} size={18} />

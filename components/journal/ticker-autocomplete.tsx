@@ -160,7 +160,7 @@ export function TickerAutocomplete({
       {isOpen && results.length > 0 && typeof window !== 'undefined' && createPortal(
         <div
           ref={resultsRef}
-          className="fixed z-[9999] max-h-64 overflow-y-auto rounded-lg border border-[#1e1e2e] bg-[#13131a] shadow-xl"
+          className="fixed z-[9999] max-h-64 overflow-y-auto rounded-lg border border-white/[0.04] bg-[#13131a] shadow-xl"
           style={{
             top: `${dropdownPosition.top}px`,
             left: `${dropdownPosition.left}px`,

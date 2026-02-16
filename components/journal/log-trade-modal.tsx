@@ -90,9 +90,9 @@ export function LogTradeModal({ open, onOpenChange, onSubmit, initialTicker = ""
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="w-[calc(100vw-2rem)] sm:max-w-2xl max-h-[90vh] overflow-y-auto backdrop-blur-sm">
         <DialogHeader>
-          <DialogTitle>Log New Trade</DialogTitle>
+          <DialogTitle>Log New Position</DialogTitle>
           <DialogDescription>
-            Record a trade entry with all relevant details
+            Record a new position with entry details
           </DialogDescription>
         </DialogHeader>
 
@@ -136,7 +136,14 @@ export function LogTradeModal({ open, onOpenChange, onSubmit, initialTicker = ""
               Asset Type
             </label>
             <div className="flex gap-1.5 flex-wrap">
-              {['stock', 'option', 'crypto', 'etf', 'forex', 'future'].map(type => (
+              {[
+                { type: 'stock', color: 'bg-[#8b5cf6]/20 border-[#8b5cf6]/40 text-purple-300' },
+                { type: 'option', color: 'bg-amber-500/20 border-amber-500/40 text-amber-300' },
+                { type: 'crypto', color: 'bg-cyan-500/20 border-cyan-500/40 text-cyan-300' },
+                { type: 'etf', color: 'bg-blue-500/20 border-blue-500/40 text-blue-300' },
+                { type: 'forex', color: 'bg-green-500/20 border-green-500/40 text-green-300' },
+                { type: 'future', color: 'bg-orange-500/20 border-orange-500/40 text-orange-300' },
+              ].map(({ type, color }) => (
                 <button
                   key={type}
                   type="button"
@@ -144,8 +151,8 @@ export function LogTradeModal({ open, onOpenChange, onSubmit, initialTicker = ""
                   className={`
                     px-3 py-1.5 rounded-lg text-xs font-medium transition-colors border
                     ${assetType === type
-                      ? 'bg-[#8b5cf6]/20 border-[#8b5cf6]/40 text-purple-300'
-                      : 'bg-transparent border-border text-foreground/50 hover:bg-white/[0.03]'
+                      ? color
+                      : 'bg-transparent border-white/[0.06] text-foreground/50 hover:bg-white/[0.03]'
                     }
                   `}
                 >
@@ -169,7 +176,7 @@ export function LogTradeModal({ open, onOpenChange, onSubmit, initialTicker = ""
                   ${
                     direction === 'long'
                       ? 'bg-green-500/20 border-green-500/40 text-green-400'
-                      : 'bg-transparent border-border text-foreground/70 hover:bg-white/[0.03]'
+                      : 'bg-transparent border-white/[0.06] text-foreground/70 hover:bg-white/[0.03]'
                   }
                 `}
               >
@@ -183,7 +190,7 @@ export function LogTradeModal({ open, onOpenChange, onSubmit, initialTicker = ""
                   ${
                     direction === 'short'
                       ? 'bg-red-500/20 border-red-500/40 text-red-400'
-                      : 'bg-transparent border-border text-foreground/70 hover:bg-white/[0.03]'
+                      : 'bg-transparent border-white/[0.06] text-foreground/70 hover:bg-white/[0.03]'
                   }
                 `}
               >
@@ -191,6 +198,9 @@ export function LogTradeModal({ open, onOpenChange, onSubmit, initialTicker = ""
               </button>
             </div>
           </div>
+
+          {/* Section Divider */}
+          <div className="border-t border-white/[0.04] my-2" />
 
           {/* Quantity & Entry Price */}
           <div className="grid grid-cols-2 gap-4">
@@ -205,7 +215,7 @@ export function LogTradeModal({ open, onOpenChange, onSubmit, initialTicker = ""
                 step="any"
                 min="0"
                 required
-                className="w-full px-4 py-2 rounded-lg bg-white/[0.06] border border-border text-base text-foreground focus:outline-none focus:ring-2 focus:ring-[#8b5cf6]/40 focus:border-[#8b5cf6]/60 min-h-[44px]"
+                className="w-full px-4 py-2 rounded-lg bg-white/[0.04] border border-white/[0.06] text-base text-foreground focus:outline-none focus:ring-2 focus:ring-[#8b5cf6]/40 focus:border-[#8b5cf6]/60 min-h-[44px]"
                 placeholder="100"
               />
             </div>
@@ -220,7 +230,7 @@ export function LogTradeModal({ open, onOpenChange, onSubmit, initialTicker = ""
                 step="any"
                 min="0"
                 required
-                className="w-full px-4 py-2 rounded-lg bg-white/[0.06] border border-border text-base text-foreground focus:outline-none focus:ring-2 focus:ring-[#8b5cf6]/40 focus:border-[#8b5cf6]/60 min-h-[44px]"
+                className="w-full px-4 py-2 rounded-lg bg-white/[0.04] border border-white/[0.06] text-base text-foreground focus:outline-none focus:ring-2 focus:ring-[#8b5cf6]/40 focus:border-[#8b5cf6]/60 min-h-[44px]"
                 placeholder="150.00"
               />
             </div>
@@ -238,6 +248,18 @@ export function LogTradeModal({ open, onOpenChange, onSubmit, initialTicker = ""
             </div>
           )}
 
+          {/* Risk at Stop Calculation */}
+          {quantity && entryPrice && stopLoss && (
+            <div className="flex items-center justify-between px-3 py-2 rounded-lg bg-red-500/5 border border-red-500/10">
+              <span className="text-xs text-foreground/60">Risk at Stop</span>
+              <span className="text-sm font-mono font-semibold text-red-400">
+                ${Math.abs(
+                  parseFloat(quantity) * (parseFloat(entryPrice) - parseFloat(stopLoss))
+                ).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+              </span>
+            </div>
+          )}
+
           {/* Stop Loss & Take Profit */}
           <div className="grid grid-cols-2 gap-4">
             <div>
@@ -250,7 +272,7 @@ export function LogTradeModal({ open, onOpenChange, onSubmit, initialTicker = ""
                 onChange={(e) => setStopLoss(e.target.value)}
                 step="any"
                 min="0"
-                className="w-full px-4 py-2 rounded-lg bg-white/[0.06] border border-border text-base text-foreground focus:outline-none focus:ring-2 focus:ring-[#8b5cf6]/40 focus:border-[#8b5cf6]/60 min-h-[44px]"
+                className="w-full px-4 py-2 rounded-lg bg-white/[0.04] border border-white/[0.06] text-base text-foreground focus:outline-none focus:ring-2 focus:ring-[#8b5cf6]/40 focus:border-[#8b5cf6]/60 min-h-[44px]"
                 placeholder="140.00"
               />
             </div>
@@ -264,11 +286,14 @@ export function LogTradeModal({ open, onOpenChange, onSubmit, initialTicker = ""
                 onChange={(e) => setTakeProfit(e.target.value)}
                 step="any"
                 min="0"
-                className="w-full px-4 py-2 rounded-lg bg-white/[0.06] border border-border text-base text-foreground focus:outline-none focus:ring-2 focus:ring-[#8b5cf6]/40 focus:border-[#8b5cf6]/60 min-h-[44px]"
+                className="w-full px-4 py-2 rounded-lg bg-white/[0.04] border border-white/[0.06] text-base text-foreground focus:outline-none focus:ring-2 focus:ring-[#8b5cf6]/40 focus:border-[#8b5cf6]/60 min-h-[44px]"
                 placeholder="160.00"
               />
             </div>
           </div>
+
+          {/* Section Divider */}
+          <div className="border-t border-white/[0.04] my-2" />
 
           {/* Entry Date */}
           <div>
@@ -280,9 +305,12 @@ export function LogTradeModal({ open, onOpenChange, onSubmit, initialTicker = ""
               value={entryDate}
               onChange={(e) => setEntryDate(e.target.value)}
               required
-              className="w-full px-4 py-2 rounded-lg bg-white/[0.06] border border-border text-base text-foreground focus:outline-none focus:ring-2 focus:ring-[#8b5cf6]/40 focus:border-[#8b5cf6]/60 min-h-[44px]"
+              className="w-full px-4 py-2 rounded-lg bg-white/[0.04] border border-white/[0.06] text-base text-foreground focus:outline-none focus:ring-2 focus:ring-[#8b5cf6]/40 focus:border-[#8b5cf6]/60 min-h-[44px]"
             />
           </div>
+
+          {/* Section Divider */}
+          <div className="border-t border-white/[0.04] my-2" />
 
           {/* Thesis */}
           <div>
@@ -293,7 +321,7 @@ export function LogTradeModal({ open, onOpenChange, onSubmit, initialTicker = ""
               value={thesis}
               onChange={(e) => setThesis(e.target.value)}
               rows={3}
-              className="w-full px-4 py-2 rounded-lg bg-white/[0.06] border border-border text-foreground focus:outline-none focus:ring-2 focus:ring-[#8b5cf6]/40 focus:border-[#8b5cf6]/60 resize-none"
+              className="w-full px-4 py-2 rounded-lg bg-white/[0.04] border border-white/[0.06] text-foreground focus:outline-none focus:ring-2 focus:ring-[#8b5cf6]/40 focus:border-[#8b5cf6]/60 resize-none"
               placeholder="Why are you taking this trade?"
             />
           </div>
@@ -307,7 +335,7 @@ export function LogTradeModal({ open, onOpenChange, onSubmit, initialTicker = ""
               value={notes}
               onChange={(e) => setNotes(e.target.value)}
               rows={2}
-              className="w-full px-4 py-2 rounded-lg bg-white/[0.06] border border-border text-foreground focus:outline-none focus:ring-2 focus:ring-[#8b5cf6]/40 focus:border-[#8b5cf6]/60 resize-none"
+              className="w-full px-4 py-2 rounded-lg bg-white/[0.04] border border-white/[0.06] text-foreground focus:outline-none focus:ring-2 focus:ring-[#8b5cf6]/40 focus:border-[#8b5cf6]/60 resize-none"
               placeholder="Additional notes"
             />
           </div>
@@ -321,7 +349,7 @@ export function LogTradeModal({ open, onOpenChange, onSubmit, initialTicker = ""
               type="text"
               value={setupTags}
               onChange={(e) => setSetupTags(e.target.value)}
-              className="w-full px-4 py-2 rounded-lg bg-white/[0.06] border border-border text-base text-foreground focus:outline-none focus:ring-2 focus:ring-[#8b5cf6]/40 focus:border-[#8b5cf6]/60 min-h-[44px]"
+              className="w-full px-4 py-2 rounded-lg bg-white/[0.04] border border-white/[0.06] text-base text-foreground focus:outline-none focus:ring-2 focus:ring-[#8b5cf6]/40 focus:border-[#8b5cf6]/60 min-h-[44px]"
               placeholder="breakout, momentum, swing (comma-separated)"
             />
           </div>

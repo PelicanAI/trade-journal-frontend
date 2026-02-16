@@ -87,7 +87,7 @@ function PanelMessage({ message, isStreaming = false, isAutoPrompt = false }: Pa
             className="w-6 h-6 object-contain"
           />
         </div>
-        <div className="flex-1 min-w-0 max-w-[90%]">
+        <div className="flex-1 min-w-0 max-w-[90%] select-text">
           <div className="text-[15px] leading-relaxed text-foreground">
             <MessageContent
               content={message.content}
@@ -211,7 +211,7 @@ function PelicanChatPanelInternal({
         {/* Messages */}
         <div
           ref={scrollContainerRef}
-          className="flex-1 overflow-y-auto px-4 pb-4"
+          className="flex-1 overflow-y-auto px-4 pb-4 select-text"
           style={{ height: 'calc(100vh - 140px)' }}
         >
           <div className="space-y-1">
@@ -302,7 +302,7 @@ function PelicanChatPanelInternal({
         {/* Messages */}
         <div
           ref={scrollContainerRef}
-          className="flex-1 overflow-y-auto px-4 pb-4 min-h-0"
+          className="flex-1 overflow-y-auto px-4 pb-4 min-h-0 select-text"
         >
           <div className="space-y-1">
             {messages.map((message, index) => (

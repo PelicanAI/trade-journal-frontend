@@ -121,7 +121,7 @@ export function TradesTable({ trades, onSelectTrade, selectedTradeId, onScanTrad
       {/* Desktop Table View */}
       <div className="hidden md:block overflow-x-auto">
         <table className="w-full">
-        <thead className="border-b border-border">
+        <thead className="border-b border-white/[0.04]">
           <tr className="text-left">
             <th className="pb-3 px-4">
               <button
@@ -209,7 +209,7 @@ export function TradesTable({ trades, onSelectTrade, selectedTradeId, onScanTrad
                 key={trade.id}
                 onClick={() => onSelectTrade(trade)}
                 className={`
-                  border-b border-border cursor-pointer transition-colors
+                  border-b border-white/[0.04] cursor-pointer transition-colors
                   ${isSelected ? 'bg-purple-600/10' : 'hover:bg-white/[0.03]'}
                   ${trade.is_paper ? 'border-dashed' : ''}
                 `}

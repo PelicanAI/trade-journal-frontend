@@ -101,7 +101,7 @@
   --surface-3: #252240;                  /* hover states pop */
 
   /* Purple-tinted borders - nearly invisible */
-  --border: 252 50% 50% / 0.04;          /* barely visible purple-tinted border */
+  --border: 252 20% 20%;                 /* subtle purple-gray border for Tailwind */
   --border-subtle: rgba(139, 92, 246, 0.04);
   --border-hover: rgba(139, 92, 246, 0.18);
   --border-active: rgba(139, 92, 246, 0.30);
@@ -638,5 +638,10 @@
   .scrollbar-hide {
     -ms-overflow-style: none;
     scrollbar-width: none;
+  }
+
+  /* Subtle border utility for professional UI */
+  .border-subtle {
+    border-color: rgba(139, 92, 246, 0.06);
   }
 }

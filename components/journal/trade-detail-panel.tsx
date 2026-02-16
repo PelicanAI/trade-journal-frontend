@@ -17,7 +17,7 @@ export function TradeDetailPanel({ trade, onClose, onCloseTrade }: TradeDetailPa
   return (
     <div className="w-full h-full flex flex-col bg-background md:border-l border-border">
       {/* Header */}
-      <div className="flex-shrink-0 px-4 py-3 border-b border-border flex items-center justify-between min-h-[60px]">
+      <div className="flex-shrink-0 px-4 py-3 border-b border-white/[0.04] flex items-center justify-between min-h-[60px]">
         <div className="flex items-center gap-2">
           <div className="font-mono font-bold text-lg text-foreground">{trade.ticker}</div>
           <span
@@ -149,7 +149,7 @@ export function TradeDetailPanel({ trade, onClose, onCloseTrade }: TradeDetailPa
 
         {/* Risk Management */}
         {(trade.stop_loss || trade.take_profit) && (
-          <div className="space-y-2 pb-4 border-b border-border/50">
+          <div className="space-y-2 pb-4 border-b border-white/[0.04]">
             <h3 className="text-xs font-semibold text-foreground/60 uppercase tracking-wider">
               Risk Management
             </h3>

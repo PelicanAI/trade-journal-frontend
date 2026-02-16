@@ -277,14 +277,14 @@ What are the key things to watch? Any whisper numbers or sentiment shifts? How h
               placeholder="Search ticker..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="pl-9 pr-4 py-2 w-full sm:w-48 rounded-lg bg-[#13131a] border border-[#1e1e2e] text-sm text-white placeholder-gray-500 focus:border-[#8b5cf6]/50 focus:outline-none min-h-[44px]"
+              className="pl-9 pr-4 py-2 w-full sm:w-48 rounded-lg bg-[#13131a] border border-white/[0.04] text-sm text-white placeholder-gray-500 focus:border-[#8b5cf6]/50 focus:outline-none min-h-[44px]"
             />
           </div>
 
           <button
             onClick={() => refetch()}
             disabled={isLoading}
-            className="p-2 rounded-lg bg-[#13131a] border border-[#1e1e2e] hover:bg-[#1a1a24] active:scale-95 transition-colors disabled:opacity-50 min-h-[44px] min-w-[44px] flex items-center justify-center"
+            className="p-2 rounded-lg bg-[#13131a] border border-white/[0.04] hover:bg-[#1a1a24] active:scale-95 transition-colors disabled:opacity-50 min-h-[44px] min-w-[44px] flex items-center justify-center"
           >
             <RefreshCw className={cn("h-4 w-4 text-gray-400", isLoading && "animate-spin")} />
           </button>
@@ -307,7 +307,7 @@ What are the key things to watch? Any whisper numbers or sentiment shifts? How h
                 <div key={i} className="bg-[var(--surface-0)] flex flex-col min-h-[400px]">
                   {/* Day header */}
                   <div className={cn(
-                    "p-3 text-center border-b border-[#1e1e2e]",
+                    "p-3 text-center border-b border-white/[0.04]",
                     isToday && "bg-[#8b5cf6]/10"
                   )}>
                     <div className="text-[10px] uppercase tracking-wider text-gray-500 font-semibold">
@@ -372,7 +372,7 @@ What are the key things to watch? Any whisper numbers or sentiment shifts? How h
                   <div key={i} className="w-[200px] flex-shrink-0 bg-[var(--surface-0)] flex flex-col min-h-[400px]">
                     {/* Day header */}
                     <div className={cn(
-                      "p-3 text-center border-b border-[#1e1e2e]",
+                      "p-3 text-center border-b border-white/[0.04]",
                       isToday && "bg-[#8b5cf6]/10"
                     )}>
                       <div className="text-[10px] uppercase tracking-wider text-gray-500 font-semibold">
