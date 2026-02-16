@@ -16,6 +16,7 @@ export function LogTradeModal({ open, onOpenChange, onSubmit, initialTicker = ""
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [ticker, setTicker] = useState(initialTicker)
+  const [assetType, setAssetType] = useState('stock')
   const [direction, setDirection] = useState<'long' | 'short'>('long')
   const [quantity, setQuantity] = useState("")
   const [entryPrice, setEntryPrice] = useState("")
@@ -47,6 +48,7 @@ export function LogTradeModal({ open, onOpenChange, onSubmit, initialTicker = ""
 
       await onSubmit({
         ticker,
+        asset_type: assetType,
         direction,
         quantity: parseFloat(quantity),
         entry_price: parseFloat(entryPrice),
@@ -62,6 +64,7 @@ export function LogTradeModal({ open, onOpenChange, onSubmit, initialTicker = ""
 
       // Reset form
       setTicker("")
+      setAssetType('stock')
       setDirection('long')
       setQuantity("")
       setEntryPrice("")
@@ -109,9 +112,47 @@ export function LogTradeModal({ open, onOpenChange, onSubmit, initialTicker = ""
             <TickerAutocomplete
               value={ticker}
               onChange={setTicker}
+              onSelect={(result) => {
+                if (result.type === 'CRYPTO' || result.market === 'crypto') {
+                  setAssetType('crypto')
+                } else if (result.type === 'FX' || result.market === 'fx') {
+                  setAssetType('forex')
+                } else if (result.type === 'FUTURE' || result.market === 'futures') {
+                  setAssetType('future')
+                } else if (result.type === 'ETF') {
+                  setAssetType('etf')
+                } else {
+                  setAssetType('stock')
+                }
+              }}
               placeholder="Search ticker (e.g., AAPL)"
               autoFocus
             />
+          </div>
+
+          {/* Asset Type */}
+          <div>
+            <label className="text-sm font-medium text-foreground mb-1.5 block">
+              Asset Type
+            </label>
+            <div className="flex gap-1.5 flex-wrap">
+              {['stock', 'option', 'crypto', 'etf', 'forex', 'future'].map(type => (
+                <button
+                  key={type}
+                  type="button"
+                  onClick={() => setAssetType(type)}
+                  className={`
+                    px-3 py-1.5 rounded-lg text-xs font-medium transition-colors border
+                    ${assetType === type
+                      ? 'bg-[#8b5cf6]/20 border-[#8b5cf6]/40 text-purple-300'
+                      : 'bg-transparent border-border text-foreground/50 hover:bg-white/[0.03]'
+                    }
+                  `}
+                >
+                  {type.charAt(0).toUpperCase() + type.slice(1)}
+                </button>
+              ))}
+            </div>
           </div>
 
           {/* Direction */}
@@ -164,7 +205,7 @@ export function LogTradeModal({ open, onOpenChange, onSubmit, initialTicker = ""
                 step="any"
                 min="0"
                 required
-                className="w-full px-4 py-2 rounded-lg bg-white/[0.06] border border-border text-base text-foreground focus:outline-none focus:border-[#8b5cf6]/50 focus:ring-1 focus:ring-[#8b5cf6]/20 min-h-[44px]"
+                className="w-full px-4 py-2 rounded-lg bg-white/[0.06] border border-border text-base text-foreground focus:outline-none focus:ring-2 focus:ring-[#8b5cf6]/40 focus:border-[#8b5cf6]/60 min-h-[44px]"
                 placeholder="100"
               />
             </div>
@@ -179,11 +220,23 @@ export function LogTradeModal({ open, onOpenChange, onSubmit, initialTicker = ""
                 step="any"
                 min="0"
                 required
-                className="w-full px-4 py-2 rounded-lg bg-white/[0.06] border border-border text-base text-foreground focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500 min-h-[44px]"
+                className="w-full px-4 py-2 rounded-lg bg-white/[0.06] border border-border text-base text-foreground focus:outline-none focus:ring-2 focus:ring-[#8b5cf6]/40 focus:border-[#8b5cf6]/60 min-h-[44px]"
                 placeholder="150.00"
               />
             </div>
           </div>
+
+          {/* Position Size Calculation */}
+          {quantity && entryPrice && (
+            <div className="flex items-center justify-between px-3 py-2 rounded-lg bg-purple-500/5 border border-purple-500/10">
+              <span className="text-xs text-foreground/60">Position Size</span>
+              <span className="text-sm font-mono font-semibold text-purple-300">
+                ${(parseFloat(quantity) * parseFloat(entryPrice)).toLocaleString(
+                  'en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }
+                )}
+              </span>
+            </div>
+          )}
 
           {/* Stop Loss & Take Profit */}
           <div className="grid grid-cols-2 gap-4">
@@ -197,7 +250,7 @@ export function LogTradeModal({ open, onOpenChange, onSubmit, initialTicker = ""
                 onChange={(e) => setStopLoss(e.target.value)}
                 step="any"
                 min="0"
-                className="w-full px-4 py-2 rounded-lg bg-white/[0.06] border border-border text-base text-foreground focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500 min-h-[44px]"
+                className="w-full px-4 py-2 rounded-lg bg-white/[0.06] border border-border text-base text-foreground focus:outline-none focus:ring-2 focus:ring-[#8b5cf6]/40 focus:border-[#8b5cf6]/60 min-h-[44px]"
                 placeholder="140.00"
               />
             </div>
@@ -211,7 +264,7 @@ export function LogTradeModal({ open, onOpenChange, onSubmit, initialTicker = ""
                 onChange={(e) => setTakeProfit(e.target.value)}
                 step="any"
                 min="0"
-                className="w-full px-4 py-2 rounded-lg bg-white/[0.06] border border-border text-base text-foreground focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500 min-h-[44px]"
+                className="w-full px-4 py-2 rounded-lg bg-white/[0.06] border border-border text-base text-foreground focus:outline-none focus:ring-2 focus:ring-[#8b5cf6]/40 focus:border-[#8b5cf6]/60 min-h-[44px]"
                 placeholder="160.00"
               />
             </div>
@@ -227,7 +280,7 @@ export function LogTradeModal({ open, onOpenChange, onSubmit, initialTicker = ""
               value={entryDate}
               onChange={(e) => setEntryDate(e.target.value)}
               required
-              className="w-full px-4 py-2 rounded-lg bg-white/[0.06] border border-border text-base text-foreground focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500 min-h-[44px]"
+              className="w-full px-4 py-2 rounded-lg bg-white/[0.06] border border-border text-base text-foreground focus:outline-none focus:ring-2 focus:ring-[#8b5cf6]/40 focus:border-[#8b5cf6]/60 min-h-[44px]"
             />
           </div>
 
@@ -240,7 +293,7 @@ export function LogTradeModal({ open, onOpenChange, onSubmit, initialTicker = ""
               value={thesis}
               onChange={(e) => setThesis(e.target.value)}
               rows={3}
-              className="w-full px-4 py-2 rounded-lg bg-white/[0.06] border border-border text-foreground focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500 resize-none"
+              className="w-full px-4 py-2 rounded-lg bg-white/[0.06] border border-border text-foreground focus:outline-none focus:ring-2 focus:ring-[#8b5cf6]/40 focus:border-[#8b5cf6]/60 resize-none"
               placeholder="Why are you taking this trade?"
             />
           </div>
@@ -254,7 +307,7 @@ export function LogTradeModal({ open, onOpenChange, onSubmit, initialTicker = ""
               value={notes}
               onChange={(e) => setNotes(e.target.value)}
               rows={2}
-              className="w-full px-4 py-2 rounded-lg bg-white/[0.06] border border-border text-foreground focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500 resize-none"
+              className="w-full px-4 py-2 rounded-lg bg-white/[0.06] border border-border text-foreground focus:outline-none focus:ring-2 focus:ring-[#8b5cf6]/40 focus:border-[#8b5cf6]/60 resize-none"
               placeholder="Additional notes"
             />
           </div>
@@ -268,7 +321,7 @@ export function LogTradeModal({ open, onOpenChange, onSubmit, initialTicker = ""
               type="text"
               value={setupTags}
               onChange={(e) => setSetupTags(e.target.value)}
-              className="w-full px-4 py-2 rounded-lg bg-white/[0.06] border border-border text-base text-foreground focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500 min-h-[44px]"
+              className="w-full px-4 py-2 rounded-lg bg-white/[0.06] border border-border text-base text-foreground focus:outline-none focus:ring-2 focus:ring-[#8b5cf6]/40 focus:border-[#8b5cf6]/60 min-h-[44px]"
               placeholder="breakout, momentum, swing (comma-separated)"
             />
           </div>
@@ -313,14 +366,14 @@ export function LogTradeModal({ open, onOpenChange, onSubmit, initialTicker = ""
               type="button"
               onClick={() => onOpenChange(false)}
               disabled={isSubmitting}
-              className="flex-1 px-4 py-2 rounded-lg bg-white/[0.06] border border-border text-foreground hover:bg-white/[0.08] active:scale-95 transition-colors disabled:opacity-50 min-h-[44px]"
+              className="flex-1 px-4 py-2.5 rounded-lg bg-white/[0.06] border border-border text-foreground hover:bg-white/[0.08] active:scale-95 transition-colors disabled:opacity-50 min-h-[44px]"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={isSubmitting || !ticker || !quantity || !entryPrice}
-              className="flex-1 py-3 rounded-xl bg-[#8b5cf6] text-white font-medium transition-all hover:bg-[#7c3aed] hover:shadow-[0_0_20px_rgba(139,92,246,0.3)] active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed min-h-[44px]"
+              className="flex-1 py-2.5 rounded-lg bg-[#8b5cf6] text-white font-medium transition-all hover:bg-[#7c3aed] hover:shadow-[0_0_20px_rgba(139,92,246,0.3)] active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed min-h-[44px]"
             >
               {isSubmitting ? 'Logging...' : 'Log Trade'}
             </button>

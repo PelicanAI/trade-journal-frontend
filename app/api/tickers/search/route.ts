@@ -56,6 +56,27 @@ const COMMON_TICKERS: TickerSearchResult[] = [
   { ticker: 'SUI', name: 'Sui', type: 'CRYPTO', market: 'crypto', active: true },
   { ticker: 'APT', name: 'Aptos', type: 'CRYPTO', market: 'crypto', active: true },
   { ticker: 'PEPE', name: 'Pepe', type: 'CRYPTO', market: 'crypto', active: true },
+  // Forex
+  { ticker: 'EUR/USD', name: 'Euro / US Dollar', type: 'FX', market: 'fx', active: true },
+  { ticker: 'GBP/USD', name: 'British Pound / US Dollar', type: 'FX', market: 'fx', active: true },
+  { ticker: 'USD/JPY', name: 'US Dollar / Japanese Yen', type: 'FX', market: 'fx', active: true },
+  { ticker: 'USD/CAD', name: 'US Dollar / Canadian Dollar', type: 'FX', market: 'fx', active: true },
+  { ticker: 'AUD/USD', name: 'Australian Dollar / US Dollar', type: 'FX', market: 'fx', active: true },
+  { ticker: 'USD/CHF', name: 'US Dollar / Swiss Franc', type: 'FX', market: 'fx', active: true },
+  { ticker: 'NZD/USD', name: 'New Zealand Dollar / US Dollar', type: 'FX', market: 'fx', active: true },
+  { ticker: 'EUR/GBP', name: 'Euro / British Pound', type: 'FX', market: 'fx', active: true },
+  { ticker: 'EUR/JPY', name: 'Euro / Japanese Yen', type: 'FX', market: 'fx', active: true },
+  { ticker: 'GBP/JPY', name: 'British Pound / Japanese Yen', type: 'FX', market: 'fx', active: true },
+  // Futures
+  { ticker: 'ES', name: 'E-mini S&P 500 Futures', type: 'FUTURE', market: 'futures', active: true },
+  { ticker: 'NQ', name: 'E-mini Nasdaq 100 Futures', type: 'FUTURE', market: 'futures', active: true },
+  { ticker: 'YM', name: 'E-mini Dow Futures', type: 'FUTURE', market: 'futures', active: true },
+  { ticker: 'RTY', name: 'E-mini Russell 2000 Futures', type: 'FUTURE', market: 'futures', active: true },
+  { ticker: 'CL', name: 'Crude Oil Futures', type: 'FUTURE', market: 'futures', active: true },
+  { ticker: 'GC', name: 'Gold Futures', type: 'FUTURE', market: 'futures', active: true },
+  { ticker: 'SI', name: 'Silver Futures', type: 'FUTURE', market: 'futures', active: true },
+  { ticker: 'ZB', name: '30-Year Treasury Bond Futures', type: 'FUTURE', market: 'futures', active: true },
+  { ticker: 'NG', name: 'Natural Gas Futures', type: 'FUTURE', market: 'futures', active: true },
 ]
 
 export interface TickerSearchResult {
@@ -117,8 +138,8 @@ export async function GET(request: NextRequest) {
       })
     }
 
-    // Search using Polygon.io reference tickers endpoint
-    const url = `https://api.polygon.io/v3/reference/tickers?search=${encodeURIComponent(query)}&active=true&market=stocks&limit=${limit}&apiKey=${POLYGON_API_KEY}`
+    // Search using Polygon.io reference tickers endpoint (all markets)
+    const url = `https://api.polygon.io/v3/reference/tickers?search=${encodeURIComponent(query)}&active=true&limit=${limit}&apiKey=${POLYGON_API_KEY}`
 
     const response = await fetch(url)
 
@@ -171,10 +192,21 @@ export async function GET(request: NextRequest) {
       active: ticker.active,
     }))
 
+    // Merge static matches for crypto/fx/futures coverage
+    const upperQuery = query.toUpperCase()
+    const staticMatches = COMMON_TICKERS.filter(
+      t => t.ticker.includes(upperQuery) || t.name.toUpperCase().includes(upperQuery)
+    )
+    const existingTickers = new Set(results.map(r => r.ticker))
+    const merged = [
+      ...staticMatches.filter(s => !existingTickers.has(s.ticker)),
+      ...results,
+    ].slice(0, limit)
+
     return NextResponse.json(
       {
-        results,
-        count: data.count || results.length,
+        results: merged,
+        count: merged.length,
       },
       {
         headers: {
