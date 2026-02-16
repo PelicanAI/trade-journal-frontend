@@ -43,12 +43,12 @@ export function TradesTable({ trades, onSelectTrade, selectedTradeId, onScanTrad
   const [sortDirection, setSortDirection] = useState<SortDirection>('desc')
 
   // Get live quotes for open positions
-  const openTickers = trades
+  const openTickersWithTypes = trades
     .filter(t => t.status === 'open')
-    .map(t => t.ticker)
+    .map(t => `${t.ticker}:${t.asset_type}`)
     .filter((v, i, a) => a.indexOf(v) === i) // dedupe
 
-  const { quotes } = useLiveQuotes(openTickers)
+  const { quotes } = useLiveQuotes(openTickersWithTypes)
 
   const handleSort = (field: SortField) => {
     if (sortField === field) {

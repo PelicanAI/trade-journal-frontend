@@ -19,6 +19,32 @@ export interface Quote {
   updatedAt?: string
 }
 
+interface TickerWithType {
+  ticker: string
+  assetType: string
+}
+
+function parseTickersParam(tickersParam: string): TickerWithType[] {
+  // Format: "AAPL:stock,BTCUSD:crypto,EURUSD:forex" or just "AAPL,MSFT" (default to stock)
+  return tickersParam.split(',').map(item => {
+    const parts = item.trim().split(':')
+    const ticker = parts[0] || ''
+    const assetType = parts[1] || 'stock'
+    return { ticker: ticker.toUpperCase(), assetType }
+  })
+}
+
+function getPolygonTicker(ticker: string, assetType: string): string {
+  switch (assetType) {
+    case 'crypto':
+      return ticker.startsWith('X:') ? ticker : `X:${ticker}`
+    case 'forex':
+      return ticker.startsWith('C:') ? ticker : `C:${ticker}`
+    default:
+      return ticker
+  }
+}
+
 export async function GET(request: NextRequest) {
   try {
     const supabase = await createClient()
@@ -31,75 +57,132 @@ export async function GET(request: NextRequest) {
     if (!success) return rateLimitResponse()
 
     const { searchParams } = request.nextUrl
-    const tickers = searchParams.get('tickers')
+    const tickersParam = searchParams.get('tickers')
 
-    if (!tickers) {
+    if (!tickersParam) {
       return NextResponse.json({ error: 'tickers parameter required' }, { status: 400 })
     }
 
-    const tickerList = tickers.split(',').map(t => t.trim().toUpperCase()).slice(0, 50)
+    const tickersWithTypes = parseTickersParam(tickersParam).slice(0, 50)
 
     if (!POLYGON_API_KEY) {
       return NextResponse.json({ error: 'Market data unavailable' }, { status: 503 })
     }
 
     try {
-      // Use Polygon's snapshot endpoint for multiple tickers
-      // This is 1 API call regardless of how many tickers
-      const response = await fetch(
-        `https://api.polygon.io/v2/snapshot/locale/us/markets/stocks/tickers?tickers=${tickerList.join(',')}&apiKey=${POLYGON_API_KEY}`,
-        { next: { revalidate: 30 } } // Cache for 30 seconds
-      )
-
-      if (!response.ok) {
-        // Fallback: try individual previous close endpoints
-        const quotes: Record<string, Quote> = {}
-
-        for (const ticker of tickerList.slice(0, 10)) {
-          try {
-            const prevClose = await fetch(
-              `https://api.polygon.io/v2/aggs/ticker/${ticker}/prev?adjusted=true&apiKey=${POLYGON_API_KEY}`,
-              { next: { revalidate: 60 } }
-            )
-            if (prevClose.ok) {
-              const data = await prevClose.json()
-              const result = data.results?.[0]
-              if (result) {
-                quotes[ticker] = {
-                  price: result.c, // close price
-                  change: result.c - result.o,
-                  changePercent: ((result.c - result.o) / result.o) * 100,
-                }
-              }
-            }
-          } catch {
-            // Skip failed tickers
-          }
-        }
-
-        return NextResponse.json({ quotes })
-      }
-
-      const data = await response.json()
       const quotes: Record<string, Quote> = {}
 
-      for (const ticker of data.tickers || []) {
-        const day = ticker.day || {}
-        const prevDay = ticker.prevDay || {}
-        const lastTrade = ticker.lastTrade || {}
-        const currentPrice = lastTrade.p || day.c || prevDay.c
+      // Group tickers by asset type for efficient API calls
+      const tickersByType: Record<string, string[]> = {}
+      const tickerToOriginal: Record<string, string> = {}
 
-        if (currentPrice) {
-          const prevClose = prevDay.c || currentPrice
-          quotes[ticker.ticker] = {
-            price: currentPrice,
-            change: currentPrice - prevClose,
-            changePercent: prevClose > 0 ? ((currentPrice - prevClose) / prevClose) * 100 : 0,
-            dayHigh: day.h || currentPrice,
-            dayLow: day.l || currentPrice,
-            volume: day.v || 0,
-            prevClose,
-            updatedAt: new Date(ticker.updated / 1e6).toISOString(),
+      for (const { ticker, assetType } of tickersWithTypes) {
+        if (!tickersByType[assetType]) {
+          tickersByType[assetType] = []
+        }
+        const polygonTicker = getPolygonTicker(ticker, assetType)
+        tickersByType[assetType].push(polygonTicker)
+        tickerToOriginal[polygonTicker] = ticker
+      }
+
+      // Fetch stocks
+      if (tickersByType['stock']?.length) {
+        const stockTickers = tickersByType['stock']
+        const response = await fetch(
+          `https://api.polygon.io/v2/snapshot/locale/us/markets/stocks/tickers?tickers=${stockTickers.join(',')}&apiKey=${POLYGON_API_KEY}`,
+          { next: { revalidate: 30 } }
+        )
+
+        if (response.ok) {
+          const data = await response.json()
+          for (const ticker of data.tickers || []) {
+            const day = ticker.day || {}
+            const prevDay = ticker.prevDay || {}
+            const lastTrade = ticker.lastTrade || {}
+            const currentPrice = lastTrade.p || day.c || prevDay.c
+
+            if (currentPrice) {
+              const prevClose = prevDay.c || currentPrice
+              const originalTicker = tickerToOriginal[ticker.ticker] || ticker.ticker
+              quotes[originalTicker] = {
+                price: currentPrice,
+                change: currentPrice - prevClose,
+                changePercent: prevClose > 0 ? ((currentPrice - prevClose) / prevClose) * 100 : 0,
+                dayHigh: day.h || currentPrice,
+                dayLow: day.l || currentPrice,
+                volume: day.v || 0,
+                prevClose,
+                updatedAt: new Date(ticker.updated / 1e6).toISOString(),
+              }
+            }
+          }
+        }
+      }
+
+      // Fetch crypto
+      if (tickersByType['crypto']?.length) {
+        const cryptoTickers = tickersByType['crypto']
+        const response = await fetch(
+          `https://api.polygon.io/v2/snapshot/locale/global/markets/crypto/tickers?tickers=${cryptoTickers.join(',')}&apiKey=${POLYGON_API_KEY}`,
+          { next: { revalidate: 30 } }
+        )
+
+        if (response.ok) {
+          const data = await response.json()
+          for (const ticker of data.tickers || []) {
+            const day = ticker.day || {}
+            const prevDay = ticker.prevDay || {}
+            const lastTrade = ticker.lastTrade || {}
+            const currentPrice = lastTrade.p || day.c || prevDay.c
+
+            if (currentPrice) {
+              const prevClose = prevDay.c || currentPrice
+              const originalTicker = tickerToOriginal[ticker.ticker] || ticker.ticker.replace('X:', '')
+              quotes[originalTicker] = {
+                price: currentPrice,
+                change: currentPrice - prevClose,
+                changePercent: prevClose > 0 ? ((currentPrice - prevClose) / prevClose) * 100 : 0,
+                dayHigh: day.h,
+                dayLow: day.l,
+                volume: day.v || 0,
+                prevClose,
+                updatedAt: new Date(ticker.updated / 1e6).toISOString(),
+              }
+            }
+          }
+        }
+      }
+
+      // Fetch forex
+      if (tickersByType['forex']?.length) {
+        const forexTickers = tickersByType['forex']
+        const response = await fetch(
+          `https://api.polygon.io/v2/snapshot/locale/global/markets/forex/tickers?tickers=${forexTickers.join(',')}&apiKey=${POLYGON_API_KEY}`,
+          { next: { revalidate: 30 } }
+        )
+
+        if (response.ok) {
+          const data = await response.json()
+          for (const ticker of data.tickers || []) {
+            const day = ticker.day || {}
+            const prevDay = ticker.prevDay || {}
+            const lastTrade = ticker.lastTrade || {}
+            const currentPrice = lastTrade.p || day.c || prevDay.c
+
+            if (currentPrice) {
+              const prevClose = prevDay.c || currentPrice
+              const originalTicker = tickerToOriginal[ticker.ticker] || ticker.ticker.replace('C:', '')
+              quotes[originalTicker] = {
+                price: currentPrice,
+                change: currentPrice - prevClose,
+                changePercent: prevClose > 0 ? ((currentPrice - prevClose) / prevClose) * 100 : 0,
+                dayHigh: day.h,
+                dayLow: day.l,
+                volume: day.v || 0,
+                prevClose,
+                updatedAt: new Date(ticker.updated / 1e6).toISOString(),
+              }
+            }
           }
         }
       }
