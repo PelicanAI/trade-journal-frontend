@@ -150,8 +150,8 @@ export default function JournalPage() {
 
   return (
     <div className="flex flex-col h-full overflow-hidden">
-      {/* Header */}
-      <div className="flex-shrink-0 px-4 sm:px-6 py-4 border-b border-white/[0.04]">
+      {/* Header with subtle elevation */}
+      <div className="flex-shrink-0 px-4 sm:px-6 py-4 bg-gradient-to-b from-white/[0.03] to-transparent border-b border-white/[0.04]">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-3">
           <div>
             <h1 className="text-lg sm:text-xl font-semibold text-foreground">Positions</h1>

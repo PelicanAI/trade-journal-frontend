@@ -75,8 +75,8 @@ export default function HeatmapPage() {
 
   return (
     <div className="flex flex-col h-full overflow-hidden">
-      {/* Header */}
-      <div className="flex-shrink-0 px-6 py-4 border-b border-white/[0.04]">
+      {/* Header with subtle elevation */}
+      <div className="flex-shrink-0 px-6 py-4 bg-gradient-to-b from-white/[0.03] to-transparent border-b border-white/[0.04]">
         <div className="flex items-center justify-between mb-3">
           <div>
             <h1 className="text-xl font-semibold text-foreground">S&P 500 Heatmap</h1>

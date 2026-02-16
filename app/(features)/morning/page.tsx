@@ -242,13 +242,15 @@ Please provide:
 
   return (
     <div className="h-full overflow-auto p-4 sm:p-6">
-      <div className="mb-4 sm:mb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-        <div>
-          <h1 className="text-lg sm:text-xl font-semibold text-foreground">Morning Brief</h1>
-          <p className="mt-0.5 text-xs text-muted-foreground">
-            {new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' })}
-          </p>
-        </div>
+      {/* Header with subtle elevation */}
+      <div className="mb-6 pb-5 rounded-xl bg-gradient-to-b from-white/[0.03] to-transparent px-4 pt-4 border-b border-white/[0.04]">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+          <div>
+            <h1 className="text-lg sm:text-xl font-semibold text-foreground">Morning Brief</h1>
+            <p className="mt-0.5 text-xs text-muted-foreground">
+              {new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' })}
+            </p>
+          </div>
         <div className="flex items-center gap-2">
           <div className="flex items-center gap-2 rounded-lg border border-border bg-white/[0.03] px-2 sm:px-3 py-1.5">
             <div className={`h-2 w-2 rounded-full ${isMarketOpen ? "bg-green-500" : "bg-yellow-500"}`} />
@@ -262,6 +264,7 @@ Please provide:
           >
             <RefreshCw className={`h-4 w-4 text-foreground/70 ${moversLoading ? "animate-spin" : ""}`} />
           </button>
+        </div>
         </div>
       </div>
 

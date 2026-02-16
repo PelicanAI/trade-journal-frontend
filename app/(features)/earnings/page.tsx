@@ -9,7 +9,8 @@ import { usePelicanPanelContext } from "@/providers/pelican-panel-provider"
 import { cn } from "@/lib/utils"
 import { LogoImg } from "@/components/ui/logo-img"
 
-const MAX_VISIBLE = 8
+const MAX_VISIBLE_BMO = 3  // Cap Before Open at 3 rows
+const MAX_VISIBLE_AMC = 8  // After Close shows 8 rows initially
 
 // Revenue formatting helper
 function formatRevenue(value: number | null): string {
@@ -70,7 +71,7 @@ function sortByImportance(events: EarningsEvent[]): EarningsEvent[] {
   })
 }
 
-// Compact earnings card component with horizontal single-line layout
+// Enlarged earnings card component with horizontal single-line layout
 function EarningsCard({
   event,
   onClick,
@@ -84,17 +85,17 @@ function EarningsCard({
     <button
       onClick={() => onClick(event)}
       className={cn(
-        "w-full px-2 py-1.5 rounded-md border transition-colors text-left group",
+        "w-full rounded-md border transition-colors text-left group px-3 py-2.5",
         highlighted
           ? "bg-[#8b5cf6]/10 border-[#8b5cf6]/40 ring-1 ring-[#8b5cf6]/20"
-          : "bg-[var(--surface-1)] border-[rgba(139,92,246,0.08)] hover:border-[#8b5cf6]/30 hover:bg-[var(--surface-2)]"
+          : "bg-[var(--surface-1)] border-[rgba(139,92,246,0.08)] hover:border-[#8b5cf6]/30 hover:bg-white/[0.04]"
       )}
     >
       <div className="flex items-center gap-2">
         {/* Left: logo + ticker */}
         <div className="flex items-center gap-1.5 min-w-0 flex-1">
-          <LogoImg symbol={event.symbol} size={16} />
-          <span className="font-mono font-bold text-xs text-[#8b5cf6] group-hover:text-[#a78bfa] truncate">
+          <LogoImg symbol={event.symbol} size={20} />
+          <span className="font-mono font-bold text-sm font-semibold text-[#8b5cf6] group-hover:text-[#a78bfa] truncate">
             {event.symbol}
           </span>
         </div>
@@ -102,7 +103,7 @@ function EarningsCard({
         {/* Center-right: EPS */}
         {(event.epsActual !== null || event.epsEstimate !== null) && (
           <div className={cn(
-            "text-xs font-mono tabular-nums whitespace-nowrap",
+            "font-mono tabular-nums whitespace-nowrap text-xs",
             event.epsActual !== null
               ? event.epsActual > (event.epsEstimate || 0)
                 ? "text-green-400"
@@ -111,7 +112,9 @@ function EarningsCard({
                   : "text-foreground/50"
               : "text-foreground/40"
           )}>
-            <span className="text-foreground/25 mr-1">EPS:</span>
+            <span className="text-foreground/25 mr-1">
+              {event.epsActual !== null ? 'EPS:' : 'Est. EPS:'}
+            </span>
             {event.epsActual !== null
               ? event.epsActual.toFixed(2)
               : event.epsEstimate?.toFixed(2)}
@@ -127,14 +130,16 @@ function EarningsCard({
         {/* Far right: Revenue */}
         {(event.revenueActual !== null || event.revenueEstimate !== null) && (
           <div className={cn(
-            "text-xs font-mono tabular-nums whitespace-nowrap",
+            "font-mono tabular-nums whitespace-nowrap text-xs",
             event.revenueActual !== null
               ? event.revenueActual > (event.revenueEstimate || 0)
                 ? "text-green-400/70"
                 : "text-red-400/70"
               : "text-foreground/25"
           )}>
-            <span className="text-foreground/25 mr-1">Rev:</span>
+            <span className="text-foreground/25 mr-1">
+              {event.revenueActual !== null ? 'Rev:' : 'Est. Rev:'}
+            </span>
             {formatRevenue(event.revenueActual ?? event.revenueEstimate)}
             {event.revenueActual !== null && event.revenueEstimate !== null && (
               <span className="ml-0.5 text-[10px]">
@@ -153,22 +158,24 @@ function EarningsCard({
 function EarningsSection({
   events,
   label,
-  icon,
   onClick,
   searchTerm,
   autoExpand
 }: {
   events: EarningsEvent[]
   label: 'bmo' | 'amc'
-  icon: string
   onClick: (e: EarningsEvent) => void
   searchTerm?: string
   autoExpand?: boolean
 }) {
   const [expanded, setExpanded] = useState(false)
   const shouldExpand = autoExpand || expanded
-  const visible = shouldExpand ? events : events.slice(0, MAX_VISIBLE)
-  const hasMore = events.length > MAX_VISIBLE
+
+  // Before Open caps at 3, After Close at 8
+  const maxVisible = label === 'bmo' ? MAX_VISIBLE_BMO : MAX_VISIBLE_AMC
+
+  const visible = shouldExpand ? events : events.slice(0, maxVisible)
+  const hasMore = events.length > maxVisible
 
   const searchMatch = (event: EarningsEvent) => {
     if (!searchTerm) return false
@@ -180,15 +187,15 @@ function EarningsSection({
       <div className="flex items-center gap-1 mb-1.5 px-1">
         <span
           className={cn(
-            "text-[9px] font-semibold uppercase tracking-wider",
-            label === 'bmo' ? 'text-amber-400' : 'text-blue-400'
+            "text-[10px] font-semibold uppercase tracking-wider",
+            label === 'bmo' ? 'text-yellow-500/70' : 'text-purple-400/70'
           )}
         >
-          {icon} {label === 'bmo' ? 'Before Open' : 'After Close'}
+          {label === 'bmo' ? '☀' : '🌙'} {label === 'bmo' ? 'Before Open' : 'After Close'}
         </span>
-        <span className="text-[9px] text-gray-600">({events.length})</span>
+        <span className="text-[10px] text-foreground/20">({events.length})</span>
       </div>
-      <div className="space-y-1">
+      <div className="space-y-1.5">
         {visible.map(event => (
           <EarningsCard
             key={event.symbol}
@@ -201,9 +208,9 @@ function EarningsSection({
       {hasMore && (
         <button
           onClick={() => setExpanded(!expanded)}
-          className="w-full mt-1 py-1 text-[10px] text-gray-500 hover:text-gray-300 transition-colors"
+          className="w-full mt-1 py-1 text-[10px] text-foreground/20 hover:text-foreground/40 transition-colors"
         >
-          {expanded ? 'Show less' : `+${events.length - MAX_VISIBLE} more`}
+          {expanded ? '− collapse' : `+${events.length - maxVisible} more`}
         </button>
       )}
     </div>
@@ -281,12 +288,13 @@ What are the key things to watch? Any whisper numbers or sentiment shifts? How h
 
   return (
     <div className="h-full overflow-y-auto p-4 sm:p-6">
-      {/* Header */}
-      <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 mb-6">
-        <div>
-          <h1 className="text-xl font-bold text-white">Earnings Calendar</h1>
-          <p className="text-sm text-gray-400 mt-1">{totalReports} reports this week</p>
-        </div>
+      {/* Header with subtle elevation */}
+      <div className="mb-6 pb-5 rounded-xl bg-gradient-to-b from-white/[0.03] to-transparent px-4 pt-4 border-b border-white/[0.04]">
+        <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+          <div>
+            <h1 className="text-xl font-bold text-white">Earnings Calendar</h1>
+            <p className="text-sm text-gray-400 mt-1">{totalReports} reports this week</p>
+          </div>
 
         <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3">
           {/* Week navigator */}
@@ -336,14 +344,27 @@ What are the key things to watch? Any whisper numbers or sentiment shifts? How h
             <RefreshCw className={cn("h-4 w-4 text-gray-400", isLoading && "animate-spin")} />
           </button>
         </div>
+        </div>
       </div>
 
       {isLoading ? (
         <EarningsGridSkeleton />
       ) : (
-        <>
-          {/* Desktop: 5-column grid */}
-          <div className="hidden md:grid grid-cols-5 gap-px bg-[rgba(139,92,246,0.08)] rounded-xl overflow-hidden border border-[rgba(139,92,246,0.08)]">
+        <div className="relative">
+          {/* Pelican watermark for brand exposure in screenshots */}
+          <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-0 overflow-hidden">
+            <img
+              src="/pelican-logo-transparent.webp"
+              alt=""
+              className="w-[400px] h-[400px] object-contain opacity-[0.05] select-none"
+              aria-hidden="true"
+            />
+          </div>
+
+          {/* Earnings grid */}
+          <div className="relative z-10">
+            {/* Desktop: 5-column grid */}
+            <div className="hidden md:grid grid-cols-5 gap-px bg-[rgba(139,92,246,0.08)] rounded-xl overflow-hidden border border-[rgba(139,92,246,0.08)]">
             {weekDays.map((day, i) => {
               const dayEvents = getEventsForDate(day.dateStr)
               const bmo = sortByImportance(dayEvents.filter(e => e.hour === 'bmo'))
@@ -376,19 +397,22 @@ What are the key things to watch? Any whisper numbers or sentiment shifts? How h
                     <EarningsSection
                       events={bmo}
                       label="bmo"
-                      icon="☀"
                       onClick={handleClick}
                       searchTerm={search}
                       autoExpand={!!search}
                     />
                   )}
 
-                  {/* AMC Section */}
+                  {/* Divider between sections */}
+                  {bmo.length > 0 && amc.length > 0 && (
+                    <div className="border-t border-white/[0.04] my-2 mx-2" />
+                  )}
+
+                  {/* AMC Section - The main event */}
                   {amc.length > 0 && (
                     <EarningsSection
                       events={amc}
                       label="amc"
-                      icon="🌙"
                       onClick={handleClick}
                       searchTerm={search}
                       autoExpand={!!search}
@@ -441,19 +465,22 @@ What are the key things to watch? Any whisper numbers or sentiment shifts? How h
                       <EarningsSection
                         events={bmo}
                         label="bmo"
-                        icon="☀"
                         onClick={handleClick}
                         searchTerm={search}
                         autoExpand={!!search}
                       />
                     )}
 
-                    {/* AMC Section */}
+                    {/* Divider between sections */}
+                    {bmo.length > 0 && amc.length > 0 && (
+                      <div className="border-t border-white/[0.04] my-2 mx-2" />
+                    )}
+
+                    {/* AMC Section - The main event */}
                     {amc.length > 0 && (
                       <EarningsSection
                         events={amc}
                         label="amc"
-                        icon="🌙"
                         onClick={handleClick}
                         searchTerm={search}
                         autoExpand={!!search}
@@ -471,7 +498,8 @@ What are the key things to watch? Any whisper numbers or sentiment shifts? How h
               })}
             </div>
           </div>
-        </>
+          </div>
+        </div>
       )}
 
       {/* Attribution for Parqet logos */}
