@@ -576,7 +576,7 @@ export default function ChatPage() {
       </Sheet>
 
       <div className="flex-1 flex flex-col h-full min-w-0">
-        <div className="xl:hidden border-b p-4 flex items-center justify-between bg-background border-border touch-manipulation">
+        <div className="xl:hidden border-b border-white/[0.04] p-4 flex items-center justify-between bg-background touch-manipulation">
           <Sheet open={mobileSheetOpen} onOpenChange={setMobileSheetOpen}>
             <SheetTrigger asChild>
               <Button
@@ -620,7 +620,7 @@ export default function ChatPage() {
           </div>
 
           <div className={cn(
-            "bg-background border-t border-border",
+            "bg-background border-t border-white/[0.04]",
             "fixed bottom-0 left-0 right-0 md:relative md:bottom-auto",
             "chat-input-fixed md:pb-4",
             "z-40"
@@ -704,7 +704,7 @@ export default function ChatPage() {
 
       {/* Show expand button when trading panel is collapsed */}
       {tradingPanelCollapsed && (
-        <div className="hidden lg:flex items-start p-2 bg-background border-l border-border">
+        <div className="hidden lg:flex items-start p-2 bg-background border-l border-white/[0.04]">
           <Button
             variant="ghost"
             size="sm"

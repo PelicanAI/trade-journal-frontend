@@ -308,7 +308,7 @@ export function ConversationSidebar({
     <div
       className={cn(
         "relative z-20",
-        isMobileSheet ? "w-full h-full" : "w-[280px] h-screen border-r",
+        isMobileSheet ? "w-full h-full" : "w-[280px] h-screen border-r border-white/[0.04]",
         "flex flex-col bg-sidebar",
         className,
       )}

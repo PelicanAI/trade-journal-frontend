@@ -82,9 +82,9 @@ function EarningsCard({
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-1.5 min-w-0">
           <img
-            src={`https://eodhd.com/img/logos/US/${event.symbol}.png`}
+            src={`https://assets.parqet.com/logos/symbol/${event.symbol}?format=png&size=50`}
             alt=""
-            className="w-4 h-4 rounded-sm object-contain flex-shrink-0 bg-white/5"
+            className="w-4 h-4 rounded-sm object-contain flex-shrink-0"
             loading="lazy"
             onError={(e) => { (e.target as HTMLImageElement).style.display = 'none' }}
           />
@@ -431,6 +431,18 @@ What are the key things to watch? Any whisper numbers or sentiment shifts? How h
           </div>
         </>
       )}
+
+      {/* Attribution for Parqet logos */}
+      <div className="text-center py-3 mt-2">
+        <a
+          href="https://www.parqet.com/api/logos"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-[10px] text-gray-600 hover:text-gray-400 transition-colors"
+        >
+          Logos provided by Parqet
+        </a>
+      </div>
     </div>
   )
 }
