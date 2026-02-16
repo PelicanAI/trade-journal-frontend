@@ -62,7 +62,7 @@ function formatIPODate(dateStr: string): string {
 
 export default function MorningPage() {
   const [moversTab, setMoversTab] = useState<MoversTab>("gainers")
-  const [priceTier, setPriceTier] = useState<PriceTier>(PRICE_TIERS[1]!) // Default to $200+
+  const [priceTier, setPriceTier] = useState<PriceTier>(PRICE_TIERS[0]!) // Default to All
   const [economicEvents, setEconomicEvents] = useState<EconomicEvent[]>([])
   const [economicLoading, setEconomicLoading] = useState(true)
   const [ipos, setIpos] = useState<IPOEntry[]>([])

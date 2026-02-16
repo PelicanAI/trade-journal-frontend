@@ -351,18 +351,8 @@ What are the key things to watch? Any whisper numbers or sentiment shifts? How h
         <EarningsGridSkeleton />
       ) : (
         <div className="relative">
-          {/* Pelican watermark for brand exposure in screenshots */}
-          <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-0 overflow-hidden">
-            <img
-              src="/pelican-logo-transparent.webp"
-              alt=""
-              className="w-[400px] h-[400px] object-contain opacity-[0.05] select-none"
-              aria-hidden="true"
-            />
-          </div>
-
           {/* Earnings grid */}
-          <div className="relative z-10">
+          <div>
             {/* Desktop: 5-column grid */}
             <div className="hidden md:grid grid-cols-5 gap-px bg-[rgba(139,92,246,0.08)] rounded-xl overflow-hidden border border-[rgba(139,92,246,0.08)]">
             {weekDays.map((day, i) => {
@@ -498,6 +488,15 @@ What are the key things to watch? Any whisper numbers or sentiment shifts? How h
               })}
             </div>
           </div>
+
+          {/* Watermark - renders on top of grid content */}
+          <img
+            src="/pelican-logo-transparent.webp"
+            alt=""
+            className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] object-contain opacity-[0.07] select-none pointer-events-none invert brightness-200"
+            draggable={false}
+            aria-hidden="true"
+          />
           </div>
         </div>
       )}
