@@ -85,9 +85,9 @@
   /* ===== PELICAN DESIGN SYSTEM V3 TOKENS ===== */
 
   /* Backgrounds — deep indigo DNA, perceptibly lifted */
-  --bg-base: #131318;
-  --bg-surface: #1a1a24;
-  --bg-elevated: #242430;
+  --bg-base: #15151e;
+  --bg-surface: #1c1c28;
+  --bg-elevated: #272735;
   --bg-overlay: rgba(10, 8, 16, 0.75);
 
   /* Borders — indigo tint on hover ties to accent */
@@ -140,15 +140,15 @@
 .dark {
   /* Indigo-tinted dark mode — more pop, indigo undertone through layers */
   /* HSL format for shadcn/Tailwind compatibility */
-  --background: 235 20% 8%;             /* matches --bg-base #131318 */
+  --background: 240 18% 7%;             /* matches --bg-base #15151e */
   --foreground: 245 10% 95%;             /* bright, almost white */
-  --muted: 245 20% 16%;                  /* indigo-tinted muted backgrounds */
+  --muted: 240 14% 14%;                  /* indigo-tinted muted backgrounds */
   --muted-foreground: 245 8% 55%;        /* muted text */
 
   /* Layered surfaces - indigo undertone, clear separation */
-  --surface-0: #131318;                  /* = bg-base */
-  --surface-1: #1a1a24;                  /* = bg-surface */
-  --surface-2: #242430;                  /* = bg-elevated */
+  --surface-0: #15151e;                  /* = bg-base */
+  --surface-1: #1c1c28;                  /* = bg-surface */
+  --surface-2: #272735;                  /* = bg-elevated */
   --surface-3: #332f45;                  /* extra step for deep nesting */
 
   /* Borders — indigo accent on interaction */
@@ -167,7 +167,7 @@
   /* Accent indigo */
   --accent-indigo: #4F46E5;
   --accent-indigo-hover: #818CF8;
-  --bg-sidebar: #111118;
+  --bg-sidebar: #13131c;
   --accent-indigo-muted: rgba(79, 70, 229, 0.15);
   --accent-indigo-subtle: rgba(79, 70, 229, 0.12);
 
@@ -703,7 +703,7 @@
   }
 
   .table-row-hover:hover {
-    background-color: #1a1a24;
+    background-color: #1c1c28;
   }
 
   /* Subtle gradient backgrounds for section headers */
