@@ -54,7 +54,7 @@ export function UpgradeModal({ isOpen, onClose, required, balance }: UpgradeModa
           <div className="inline-flex items-center justify-center w-14 h-14 rounded-full bg-amber-500/10 mb-4">
             <Zap className="w-7 h-7 text-amber-400" />
           </div>
-          <h2 className="text-xl font-bold text-white">Not Enough Credits</h2>
+          <h2 className="text-xl font-bold text-[var(--text-primary)]">Not Enough Credits</h2>
           <p className="text-gray-400 text-sm mt-1">
             You need more credits to run this query
           </p>
@@ -63,7 +63,7 @@ export function UpgradeModal({ isOpen, onClose, required, balance }: UpgradeModa
         <div className="bg-[var(--bg-surface)]/50 border border-[var(--border-default)] rounded-lg p-4 mb-6">
           <div className="flex justify-between items-center text-sm mb-3">
             <span className="text-gray-400">Query cost</span>
-            <span className="text-white font-medium">{required} credits</span>
+            <span className="text-[var(--text-primary)] font-medium">{required} credits</span>
           </div>
           <div className="flex justify-between items-center text-sm mb-3">
             <span className="text-gray-400">Your balance</span>

@@ -93,7 +93,7 @@ export default function AcceptTermsPage() {
                 className="object-contain drop-shadow-[0_0_15px_rgba(67,56,202,0.5)]"
               />
             </div>
-            <h1 className="text-2xl font-bold tracking-tight text-white">
+            <h1 className="text-2xl font-bold tracking-tight text-[var(--text-primary)]">
               Terms of Service
             </h1>
             <p className="text-sm text-gray-400 mt-2">

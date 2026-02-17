@@ -96,14 +96,14 @@ export function Treemap({ stocks, width, height, onStockClick }: TreemapProps) {
 
   if (stocks.length === 0) {
     return (
-      <div className="flex items-center justify-center rounded-lg border border-white/[0.04] bg-surface-1" style={{ width, height }}>
+      <div className="flex items-center justify-center rounded-lg border border-[var(--border-subtle)] bg-surface-1" style={{ width, height }}>
         <p className="text-sm text-foreground/50">No data available</p>
       </div>
     )
   }
 
   return (
-    <div className="relative overflow-hidden rounded-lg border border-white/[0.04]" style={{ width, height }}>
+    <div className="relative overflow-hidden rounded-lg border border-[var(--border-subtle)]" style={{ width, height }}>
       {nodes.map((node) => {
         if (node.depth === 1) {
           const sector = String((node.data as { name?: string }).name ?? "")

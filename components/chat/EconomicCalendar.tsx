@@ -58,7 +58,7 @@ function EconomicCalendarInner({ onClose }: EconomicCalendarProps) {
 
   return (
     <div className="flex flex-col h-full">
-      <div className="flex items-center gap-2 px-3 py-2 border-b border-white/5">
+      <div className="flex items-center gap-2 px-3 py-2 border-b border-[var(--border-subtle)]">
         <Button
           variant="ghost"
           size="icon"

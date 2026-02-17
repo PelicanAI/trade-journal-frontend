@@ -82,46 +82,77 @@
   --sidebar-accent-foreground: oklch(0.98 0.002 240);
   --sidebar-border: oklch(0.9 0.002 240);
   --sidebar-ring: oklch(0.45 0.01 240 / 0.3);
-  /* ===== PELICAN DESIGN SYSTEM V3 TOKENS ===== */
+  /* ===== PELICAN DESIGN SYSTEM V3 TOKENS — LIGHT MODE ===== */
 
-  /* Backgrounds — deep indigo DNA, perceptibly lifted */
-  --bg-base: #15151e;
-  --bg-surface: #1c1c28;
-  --bg-elevated: #272735;
-  --bg-overlay: rgba(10, 8, 16, 0.75);
+  /* Backgrounds — warm neutral whites with subtle cool undertone */
+  --bg-base: #ffffff;
+  --bg-surface: #f8f8fb;
+  --bg-elevated: #f0f0f5;
+  --bg-overlay: rgba(0, 0, 0, 0.4);
+  --bg-sidebar: #f5f5fa;
+  --bg-input: #ffffff;
 
-  /* Borders — indigo tint on hover ties to accent */
-  --border-subtle: rgba(255, 255, 255, 0.09);
-  --border-default: rgba(255, 255, 255, 0.13);
+  /* Interaction surfaces */
+  --surface-hover: rgba(0, 0, 0, 0.04);
+  --surface-active: rgba(79, 70, 229, 0.08);
+  --surface-code-block: #f5f5fa;
+
+  /* Borders — subtle structural dividers */
+  --border-subtle: rgba(0, 0, 0, 0.08);
+  --border-default: rgba(0, 0, 0, 0.12);
   --border-hover: rgba(79, 70, 229, 0.25);
+  --border-active: rgba(79, 70, 229, 0.40);
+  --border-input: rgba(0, 0, 0, 0.12);
 
-  /* Text — bright enough to pop on any surface */
-  --text-primary: #f4f4f8;
-  --text-secondary: #b0b0c0;
-  --text-muted: #6e6e88;
-  --text-disabled: #44445a;
+  /* Text — clear hierarchy on white */
+  --text-primary: #111827;
+  --text-secondary: #4b5563;
+  --text-muted: #9ca3af;
+  --text-disabled: #d1d5db;
+  --text-ghost: #c0c0c8;
 
   /* Accent */
   --accent-primary: #4F46E5;
-  --accent-hover: #9d74f7;
-  --accent-muted: rgba(79, 70, 229, 0.15);
-  --accent-glow: rgba(79, 70, 229, 0.12);
+  --accent-hover: #4338CA;
+  --accent-muted: rgba(79, 70, 229, 0.10);
+  --accent-glow: rgba(79, 70, 229, 0.05);
+  --accent-indigo: #4F46E5;
+  --accent-indigo-hover: #4338CA;
+  --accent-indigo-muted: rgba(79, 70, 229, 0.10);
+  --accent-indigo-subtle: rgba(79, 70, 229, 0.05);
 
-  /* Data Colors — ONLY for financial data */
-  --data-positive: #22c55e;
-  --data-negative: #ef4444;
+  /* Data Colors — darker for white bg readability */
+  --data-positive: #059669;
+  --data-negative: #dc2626;
   --data-neutral: #6b7280;
-  --data-warning: #f59e0b;
+  --data-warning: #d97706;
+  --accent-green: #059669;
+  --accent-red: #dc2626;
 
   /* Status */
-  --status-open: #22c55e;
+  --status-open: #059669;
   --status-closed: #6b7280;
-  --status-cancelled: #ef4444;
+  --status-cancelled: #dc2626;
 
-  /* Shadows — visible depth + purple glow on hover */
-  --shadow-card: 0 2px 8px rgba(0,0,0,0.3), 0 0 0 1px rgba(255,255,255,0.05);
-  --shadow-card-hover: 0 8px 32px rgba(0,0,0,0.5), 0 0 0 1px rgba(79,70,229,0.15), 0 0 30px rgba(79,70,229,0.08);
-  --shadow-elevated: 0 4px 12px rgba(0,0,0,0.5), 0 20px 60px rgba(0,0,0,0.3);
+  /* Shadows — critical for light mode depth */
+  --shadow-card: 0 1px 3px rgba(0,0,0,0.06), 0 0 0 1px rgba(0,0,0,0.04);
+  --shadow-card-hover: 0 8px 24px rgba(0,0,0,0.10), 0 0 0 1px rgba(0,0,0,0.06);
+  --shadow-elevated: 0 4px 12px rgba(0,0,0,0.08), 0 2px 4px rgba(0,0,0,0.04);
+  --shadow-input: 0 1px 3px rgba(0,0,0,0.06), 0 0 0 1px rgba(0,0,0,0.08);
+  --shadow-input-focus: 0 0 0 2px rgba(79, 70, 229, 0.25), 0 1px 3px rgba(0,0,0,0.06);
+  --shadow-sidebar: 1px 0 4px rgba(0,0,0,0.06);
+  --shadow-panel: -1px 0 4px rgba(0,0,0,0.06);
+
+  /* Glows — disabled in light mode */
+  --glow-indigo-soft: 0 0 0 transparent;
+  --glow-indigo-medium: 0 0 0 transparent;
+
+  /* Scrollbar */
+  --scrollbar-thumb: rgba(0, 0, 0, 0.15);
+  --scrollbar-thumb-hover: rgba(0, 0, 0, 0.25);
+
+  /* Gradient fades */
+  --fade-color: 255, 255, 255;
 
   /* Spacing */
   --space-page-x: 2rem;
@@ -151,29 +182,79 @@
   --surface-2: #272735;                  /* = bg-elevated */
   --surface-3: #332f45;                  /* extra step for deep nesting */
 
+  /* ===== PELICAN DESIGN SYSTEM V3 TOKENS — DARK MODE ===== */
+
+  /* Backgrounds — deep indigo DNA */
+  --bg-base: #15151e;
+  --bg-surface: #1c1c28;
+  --bg-elevated: #272735;
+  --bg-overlay: rgba(10, 8, 16, 0.75);
+  --bg-sidebar: #13131c;
+  --bg-input: #272735;
+
+  /* Interaction surfaces */
+  --surface-hover: rgba(255, 255, 255, 0.05);
+  --surface-active: rgba(79, 70, 229, 0.12);
+  --surface-code-block: #1a1a26;
+
   /* Borders — indigo accent on interaction */
   --border: 235 18% 24%;                 /* subtle indigo-gray border for Tailwind */
   --border-subtle: rgba(79, 70, 229, 0.10);
+  --border-default: rgba(255, 255, 255, 0.13);
   --border-hover: rgba(79, 70, 229, 0.25);
   --border-active: rgba(79, 70, 229, 0.35);
+  --border-input: rgba(255, 255, 255, 0.10);
   --ring: 235 50% 50% / 0.5;             /* indigo focus ring */
 
   /* Text colors - bright for pop */
   --text-primary: #f4f4f8;
   --text-secondary: #b0b0c0;
   --text-muted: #6a6a8c;
+  --text-disabled: #44445a;
   --text-ghost: #46465e;
 
-  /* Accent indigo */
+  /* Accent */
+  --accent-primary: #4F46E5;
+  --accent-hover: #9d74f7;
+  --accent-muted: rgba(79, 70, 229, 0.15);
+  --accent-glow: rgba(79, 70, 229, 0.12);
   --accent-indigo: #4F46E5;
   --accent-indigo-hover: #818CF8;
-  --bg-sidebar: #13131c;
   --accent-indigo-muted: rgba(79, 70, 229, 0.15);
   --accent-indigo-subtle: rgba(79, 70, 229, 0.12);
+
+  /* Data colors — brighter for dark bg */
+  --data-positive: #22c55e;
+  --data-negative: #ef4444;
+  --data-neutral: #6b7280;
+  --data-warning: #f59e0b;
+  --accent-green: #22c55e;
+  --accent-red: #ef4444;
+
+  /* Status */
+  --status-open: #22c55e;
+  --status-closed: #6b7280;
+  --status-cancelled: #ef4444;
+
+  /* Shadows — visible depth + purple glow on hover */
+  --shadow-card: 0 2px 8px rgba(0,0,0,0.3), 0 0 0 1px rgba(255,255,255,0.05);
+  --shadow-card-hover: 0 8px 32px rgba(0,0,0,0.5), 0 0 0 1px rgba(79,70,229,0.15), 0 0 30px rgba(79,70,229,0.08);
+  --shadow-elevated: 0 4px 12px rgba(0,0,0,0.5), 0 20px 60px rgba(0,0,0,0.3);
+  --shadow-input: 0 1px 2px rgba(0,0,0,0.3), 0 0 0 1px rgba(255,255,255,0.05);
+  --shadow-input-focus: 0 0 0 2px rgba(79, 70, 229, 0.4), 0 0 20px rgba(79, 70, 229, 0.08);
+  --shadow-sidebar: 1px 0 4px rgba(0,0,0,0.3);
+  --shadow-panel: -1px 0 4px rgba(0,0,0,0.3);
 
   /* Glows — stronger for more pop */
   --glow-indigo-soft: 0 0 20px rgba(79, 70, 229, 0.12);
   --glow-indigo-medium: 0 0 30px rgba(79, 70, 229, 0.18);
+
+  /* Scrollbar */
+  --scrollbar-thumb: rgba(255, 255, 255, 0.10);
+  --scrollbar-thumb-hover: rgba(255, 255, 255, 0.20);
+
+  /* Gradient fades */
+  --fade-color: 21, 21, 30;
 
   /* Brand - Vibrant Purple */
   --primary: oklch(0.60 0.25 280);
@@ -482,8 +563,8 @@
 
   /* Enhanced selection styles with indigo theme */
   ::selection {
-    background-color: rgba(99, 102, 241, 0.2);
-    color: inherit;
+    background-color: rgba(79, 70, 229, 0.15);
+    color: #111827;
   }
 
   .dark ::selection {
@@ -548,7 +629,13 @@
     }
   }
 
-  /* Chat background gradient - VISIBLE indigo aurora pool of light */
+  /* Chat background gradient — subtle in light, aurora in dark */
+  .chat-background-gradient {
+    background:
+      radial-gradient(ellipse at 50% 20%, rgba(79, 70, 229, 0.04) 0%, transparent 55%),
+      radial-gradient(ellipse at 80% 80%, rgba(79, 70, 229, 0.02) 0%, transparent 40%);
+  }
+
   .dark .chat-background-gradient {
     background:
       radial-gradient(ellipse at 50% 20%, rgba(79, 70, 229, 0.12) 0%, transparent 55%),
@@ -634,7 +721,7 @@
   .pelican-card {
     position: relative;
     background: var(--bg-surface);
-    border: 1px solid rgba(255, 255, 255, 0.08);
+    border: 1px solid var(--border-subtle);
     border-radius: var(--radius-card);
     box-shadow: var(--shadow-card);
     padding: var(--space-card);
@@ -642,7 +729,7 @@
     transition: border-color 200ms ease, box-shadow 200ms ease, transform 200ms ease;
   }
 
-  .pelican-card::before {
+  .dark .pelican-card::before {
     content: '';
     position: absolute;
     inset-inline: 0;
@@ -661,7 +748,7 @@
   }
 
   .pelican-card:hover {
-    border-color: rgba(79, 70, 229, 0.25);
+    border-color: rgba(79, 70, 229, 0.20);
     box-shadow: var(--shadow-card-hover);
     transform: translateY(-1px);
   }
@@ -675,8 +762,12 @@
     transform: scale(0.99);
   }
 
-  /* Pelican logo breathing glow */
+  /* Pelican logo — static shadow in light, breathing glow in dark */
   .pelican-logo-glow {
+    filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.10));
+  }
+
+  .dark .pelican-logo-glow {
     filter: drop-shadow(0 0 20px rgba(79, 70, 229, 0.15));
     animation: logo-breathe 4s ease-in-out infinite;
   }
@@ -686,14 +777,20 @@
     50% { filter: drop-shadow(0 0 30px rgba(79, 70, 229, 0.20)); }
   }
 
-  /* Stat value that glows green or red */
+  /* Stat value — glow in dark, clean in light */
   .stat-positive {
-    color: #22c55e;
+    color: var(--data-positive);
+  }
+
+  .dark .stat-positive {
     text-shadow: 0 0 8px rgba(34, 197, 94, 0.3);
   }
 
   .stat-negative {
-    color: #ef4444;
+    color: var(--data-negative);
+  }
+
+  .dark .stat-negative {
     text-shadow: 0 0 8px rgba(239, 68, 68, 0.3);
   }
 
@@ -703,7 +800,7 @@
   }
 
   .table-row-hover:hover {
-    background-color: #1c1c28;
+    background-color: var(--bg-elevated);
   }
 
   /* Subtle gradient backgrounds for section headers */

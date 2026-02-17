@@ -131,7 +131,7 @@ export function EducationChat({ selectedTerm, onClear }: EducationChatProps) {
   return (
     <div className="flex flex-col h-full">
       {/* Header */}
-      <div className="flex items-center justify-between px-4 py-2.5 border-b border-white/5">
+      <div className="flex items-center justify-between px-4 py-2.5 border-b border-[var(--border-subtle)]">
         <div className="flex items-center gap-2">
           <GraduationCap className="h-4 w-4 text-indigo-500" />
           <span className="text-xs font-medium text-foreground">
@@ -169,7 +169,7 @@ export function EducationChat({ selectedTerm, onClear }: EducationChatProps) {
                   'max-w-[90%] px-3 py-2 text-xs leading-relaxed rounded-lg',
                   msg.type === 'user'
                     ? 'bg-indigo-600 text-white rounded-br-sm'
-                    : 'bg-[var(--surface-2)] border border-white/5 text-foreground rounded-bl-sm'
+                    : 'bg-[var(--bg-elevated)] border border-[var(--border-subtle)] text-foreground rounded-bl-sm'
                 )}
                 dangerouslySetInnerHTML={{
                   __html: DOMPurify.sanitize(
@@ -188,7 +188,7 @@ export function EducationChat({ selectedTerm, onClear }: EducationChatProps) {
             animate={{ opacity: 1, y: 0 }}
             className="flex justify-start"
           >
-            <div className="bg-[var(--surface-2)] border border-white/5 rounded-lg rounded-bl-sm px-3 py-2">
+            <div className="bg-[var(--bg-elevated)] border border-[var(--border-subtle)] rounded-lg rounded-bl-sm px-3 py-2">
               <div className="flex gap-1">
                 {[0, 1, 2].map((i) => (
                   <div
@@ -206,7 +206,7 @@ export function EducationChat({ selectedTerm, onClear }: EducationChatProps) {
       </div>
 
       {/* Input */}
-      <div className="border-t border-white/5 p-3">
+      <div className="border-t border-[var(--border-subtle)] p-3">
         <form onSubmit={sendMessage} className="flex gap-2">
           <input
             ref={inputRef}
@@ -216,7 +216,7 @@ export function EducationChat({ selectedTerm, onClear }: EducationChatProps) {
             placeholder={selectedTerm ? `Ask about ${selectedTerm.term}...` : 'Ask a question...'}
             disabled={isLoading}
             onKeyDown={(e) => e.stopPropagation()}
-            className="flex-1 bg-[var(--surface-2)] border border-white/10 rounded-md px-3 py-2 text-xs text-foreground placeholder:text-muted-foreground outline-none focus:border-indigo-500/50 transition-colors"
+            className="flex-1 bg-[var(--bg-elevated)] border border-[var(--border-default)] rounded-md px-3 py-2 text-xs text-foreground placeholder:text-muted-foreground outline-none focus:border-indigo-500/50 transition-colors"
           />
           <button
             type="submit"

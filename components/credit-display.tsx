@@ -47,7 +47,7 @@ export function CreditDisplay({ variant = 'default', className = '' }: CreditDis
         </span>
         <Link
           href="/pricing"
-          className="text-xs text-muted-foreground hover:text-white hover:underline"
+          className="text-xs text-muted-foreground hover:text-[var(--text-primary)] hover:underline"
         >
           Upgrade
         </Link>

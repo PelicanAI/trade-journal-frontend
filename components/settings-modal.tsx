@@ -41,7 +41,7 @@ export function SettingsModal({ open, onOpenChange }: SettingsModalProps) {
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[425px] bg-[var(--surface-2)] border border-white/8">
+      <DialogContent className="sm:max-w-[425px] bg-[var(--bg-elevated)] border border-[var(--border-subtle)]">
         <DialogHeader>
           <DialogTitle className="text-[var(--foreground)]">Settings</DialogTitle>
         </DialogHeader>
@@ -55,7 +55,7 @@ export function SettingsModal({ open, onOpenChange }: SettingsModalProps) {
                 <Label htmlFor="pro-dark" className="text-sm font-medium text-[var(--foreground)]">
                   Pro Dark
                 </Label>
-                <p className="text-xs text-white/55">Enhanced dark theme with refined contrast and borders</p>
+                <p className="text-xs text-[var(--text-secondary)]">Enhanced dark theme with refined contrast and borders</p>
               </div>
               <Switch
                 id="pro-dark"
@@ -66,14 +66,14 @@ export function SettingsModal({ open, onOpenChange }: SettingsModalProps) {
               />
             </div>
 
-            {!isDarkMode && <p className="text-xs text-white/40">Pro Dark is only available in dark mode</p>}
+            {!isDarkMode && <p className="text-xs text-[var(--text-muted)]">Pro Dark is only available in dark mode</p>}
           </div>
 
-          <Separator className="bg-white/10" />
+          <Separator className="bg-[var(--border-subtle)]" />
 
           <div className="space-y-4">
             <h3 className="text-sm font-medium text-[var(--foreground)]">About</h3>
-            <p className="text-xs text-white/55">Pelican AI - Your intelligent trading assistant</p>
+            <p className="text-xs text-[var(--text-secondary)]">Pelican AI - Your intelligent trading assistant</p>
           </div>
         </div>
       </DialogContent>

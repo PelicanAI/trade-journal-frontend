@@ -117,7 +117,7 @@ const ConversationItem = React.memo(function ConversationItem({
       className={cn(
         "w-full text-left px-3 py-2 rounded-lg transition-all duration-150 group relative mx-2",
         isActive && "bg-[rgba(79,70,229,0.10)] border-l-2 border-l-[var(--accent-indigo)] border-y border-r border-y-transparent border-r-transparent",
-        !isActive && "hover:bg-white/[0.05] border border-transparent",
+        !isActive && "hover:bg-[var(--surface-hover)] border border-transparent",
         isNavigatingToThis && "opacity-50 cursor-wait",
       )}
       onClick={() => {
@@ -190,7 +190,7 @@ function ThemeRow() {
   return (
     <button
       onClick={() => setTheme(isDark ? 'light' : 'dark')}
-      className="flex items-center gap-2.5 w-full px-2 py-1.5 rounded-md text-xs text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-white/[0.05] transition-colors"
+      className="flex items-center gap-2.5 w-full px-2 py-1.5 rounded-md text-xs text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--surface-hover)] transition-colors"
     >
       {isDark ? <Sun size={14} weight="regular" /> : <Moon size={14} weight="regular" />}
       {isDark ? 'Light Mode' : 'Dark Mode'}
@@ -586,7 +586,7 @@ export function ConversationSidebar({
         {/* User profile row */}
         <Link
           href="/settings"
-          className="flex items-center gap-2.5 px-2 py-1.5 rounded-md hover:bg-white/[0.05] transition-colors cursor-pointer group"
+          className="flex items-center gap-2.5 px-2 py-1.5 rounded-md hover:bg-[var(--surface-hover)] transition-colors cursor-pointer group"
         >
           <div className="w-7 h-7 rounded-full bg-[var(--accent-indigo-muted)] flex items-center justify-center text-xs font-medium text-[var(--accent-indigo-hover)]">
             <User size={14} weight="regular" />
@@ -600,7 +600,7 @@ export function ConversationSidebar({
         {/* Sign out */}
         <button
           onClick={() => setShowSignOutDialog(true)}
-          className="flex items-center gap-2.5 w-full px-2 py-1.5 rounded-md text-xs text-[var(--text-muted)] hover:text-[var(--text-secondary)] hover:bg-white/[0.05] transition-colors"
+          className="flex items-center gap-2.5 w-full px-2 py-1.5 rounded-md text-xs text-[var(--text-muted)] hover:text-[var(--text-secondary)] hover:bg-[var(--surface-hover)] transition-colors"
         >
           <SignOut size={14} weight="regular" />
           Sign out

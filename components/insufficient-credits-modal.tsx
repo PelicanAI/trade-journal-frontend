@@ -51,7 +51,7 @@ export function InsufficientCreditsModal({
           <div className="inline-flex items-center justify-center w-14 h-14 rounded-full bg-amber-500/10 mb-4">
             <Zap className="w-7 h-7 text-amber-400" />
           </div>
-          <h2 className="text-xl font-bold text-white">Not enough credits</h2>
+          <h2 className="text-xl font-bold text-[var(--text-primary)]">Not enough credits</h2>
           <p className="text-gray-400 text-sm mt-1">
             {message || `This query requires ${required ?? 0} credits. You have ${balance ?? 0}.`}
           </p>

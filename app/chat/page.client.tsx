@@ -41,13 +41,13 @@ const TradingContextPanel = dynamic(() => import("@/components/chat/trading-cont
 // Loading screen component for chat page
 function ChatLoadingScreen() {
   return (
-    <div className="flex h-screen items-center justify-center bg-gradient-to-br from-indigo-950/20 via-black to-indigo-950/20">
+    <div className="flex h-screen items-center justify-center bg-[var(--bg-base)]">
       <div className="flex flex-col items-center gap-4">
         <div className="relative">
           <div className="animate-spin h-12 w-12 border-4 border-indigo-500 border-t-transparent rounded-full" />
           <div className="absolute inset-0 animate-ping h-12 w-12 border-4 border-indigo-500 border-t-transparent rounded-full opacity-20" />
         </div>
-        <span className="text-gray-400 text-sm font-medium">Loading Pelican AI...</span>
+        <span className="text-[var(--text-muted)] text-sm font-medium">Loading Pelican AI...</span>
       </div>
     </div>
   )
@@ -538,7 +538,7 @@ export default function ChatPage() {
           <div className="w-12 h-full flex flex-col items-center pt-3 gap-3 border-r border-[var(--border-subtle)] bg-sidebar">
             <button
               onClick={handleSidebarToggle}
-              className="h-8 w-8 flex items-center justify-center rounded-md text-[var(--text-muted)] hover:text-[var(--text-secondary)] hover:bg-white/[0.05] transition-colors"
+              className="h-8 w-8 flex items-center justify-center rounded-md text-[var(--text-muted)] hover:text-[var(--text-secondary)] hover:bg-[var(--surface-hover)] transition-colors"
               title="Open sidebar"
             >
               <CaretRight size={16} weight="regular" />
@@ -595,7 +595,7 @@ export default function ChatPage() {
       </Sheet>
 
       <div className="flex-1 flex flex-col h-full min-w-0">
-        <div className="xl:hidden border-b border-white/[0.04] p-4 flex items-center justify-between bg-background touch-manipulation">
+        <div className="xl:hidden border-b border-[var(--border-subtle)] p-4 flex items-center justify-between bg-background touch-manipulation">
           <Sheet open={mobileSheetOpen} onOpenChange={setMobileSheetOpen}>
             <SheetTrigger asChild>
               <Button
@@ -639,7 +639,7 @@ export default function ChatPage() {
           </div>
 
           <div className={cn(
-            "bg-background border-t border-white/[0.04]",
+            "bg-background border-t border-[var(--border-subtle)]",
             "fixed bottom-0 left-0 right-0 md:relative md:bottom-auto",
             "chat-input-fixed md:pb-4",
             "z-40"
@@ -723,7 +723,7 @@ export default function ChatPage() {
 
       {/* Show expand button when trading panel is collapsed */}
       {tradingPanelCollapsed && (
-        <div className="hidden lg:flex items-start p-2 bg-background border-l border-white/[0.04]">
+        <div className="hidden lg:flex items-start p-2 bg-background border-l border-[var(--border-subtle)]">
           <Button
             variant="ghost"
             size="sm"
