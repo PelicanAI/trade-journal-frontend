@@ -30,6 +30,7 @@ const NAV_TABS: NavTab[] = [
   { key: 'brief', label: 'Brief', href: '/morning' },
   { key: 'chat', label: 'Chat', href: '/chat' },
   { key: 'heatmap', label: 'Heatmap', href: '/heatmap' },
+  { key: 'correlations', label: 'Correlations', href: '/correlations' },
   { key: 'journal', label: 'Positions', href: '/journal' },
   { key: 'earnings', label: 'Earnings', href: '/earnings' },
 ]
@@ -48,6 +49,7 @@ export function TopNav({ className }: TopNavProps) {
     if (pathname.startsWith('/morning')) return 'brief'
     if (pathname.startsWith('/chat')) return 'chat'
     if (pathname.startsWith('/heatmap')) return 'heatmap'
+    if (pathname.startsWith('/correlations')) return 'correlations'
     if (pathname.startsWith('/journal')) return 'journal'
     if (pathname.startsWith('/earnings')) return 'earnings'
     return 'chat' // Default
