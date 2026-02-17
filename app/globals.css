@@ -83,6 +83,59 @@
   --sidebar-border: oklch(0.9 0.002 240);
   --sidebar-ring: oklch(0.45 0.01 240 / 0.3);
   --font-inter: "Inter", sans-serif;
+
+  /* ===== PELICAN DESIGN SYSTEM V3 TOKENS ===== */
+
+  /* Backgrounds — layered depth */
+  --bg-base: #0a0a0f;
+  --bg-surface: #111118;
+  --bg-elevated: #16161f;
+  --bg-overlay: rgba(0, 0, 0, 0.6);
+
+  /* Borders */
+  --border-subtle: rgba(255, 255, 255, 0.06);
+  --border-default: rgba(255, 255, 255, 0.1);
+  --border-hover: rgba(255, 255, 255, 0.15);
+
+  /* Text */
+  --text-primary: #e8e8ed;
+  --text-secondary: #9898a6;
+  --text-muted: #5a5a6e;
+  --text-disabled: #3a3a4a;
+
+  /* Accent */
+  --accent-primary: #8b5cf6;
+  --accent-hover: #9d74f7;
+  --accent-muted: rgba(139, 92, 246, 0.15);
+  --accent-glow: rgba(139, 92, 246, 0.08);
+
+  /* Data Colors — ONLY for financial data */
+  --data-positive: #22c55e;
+  --data-negative: #ef4444;
+  --data-neutral: #6b7280;
+  --data-warning: #f59e0b;
+
+  /* Status */
+  --status-open: #22c55e;
+  --status-closed: #6b7280;
+  --status-cancelled: #ef4444;
+
+  /* Shadows */
+  --shadow-card: 0 1px 2px rgba(0,0,0,0.3), 0 4px 12px rgba(0,0,0,0.1);
+  --shadow-card-hover: 0 2px 4px rgba(0,0,0,0.4), 0 8px 24px rgba(0,0,0,0.15);
+  --shadow-elevated: 0 4px 6px rgba(0,0,0,0.4), 0 12px 32px rgba(0,0,0,0.2);
+
+  /* Spacing */
+  --space-page-x: 2rem;
+  --space-page-y: 1.5rem;
+  --space-section: 2rem;
+  --space-card: 1.25rem;
+  --space-card-gap: 1rem;
+
+  /* Radius */
+  --radius-card: 12px;
+  --radius-button: 8px;
+  --radius-modal: 16px;
 }
 
 /* Fixed dark mode selector to work properly with next-themes */
@@ -164,8 +217,32 @@
 }
 
 @theme inline {
-  --font-sans: var(--font-inter);
-  --font-mono: var(--font-geist-mono);
+  --font-sans: var(--font-geist-sans), system-ui, sans-serif;
+  --font-mono: var(--font-geist-mono), monospace;
+
+  /* Design system colors */
+  --color-surface: var(--bg-surface);
+  --color-elevated: var(--bg-elevated);
+  --color-border-subtle: var(--border-subtle);
+  --color-border-default: var(--border-default);
+  --color-accent-primary: var(--accent-primary);
+  --color-accent-hover: var(--accent-hover);
+  --color-accent-muted: var(--accent-muted);
+  --color-accent-glow: var(--accent-glow);
+  --color-data-positive: var(--data-positive);
+  --color-data-negative: var(--data-negative);
+  --color-data-neutral: var(--data-neutral);
+  --color-data-warning: var(--data-warning);
+
+  /* Design system shadows */
+  --shadow-card: var(--shadow-card);
+  --shadow-card-hover: var(--shadow-card-hover);
+  --shadow-elevated: var(--shadow-elevated);
+
+  /* Design system border radius */
+  --radius-card: 12px;
+  --radius-button: 8px;
+  --radius-modal: 16px;
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-card: var(--card);
@@ -556,16 +633,27 @@
 
   /* Card with subtle glow on hover */
   .pelican-card {
-    background: var(--surface-1);
-    border: 1px solid rgba(139, 92, 246, 0.08);
-    border-radius: 12px;
-    transition: all 0.2s ease-out;
+    background: var(--bg-surface);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-card);
+    box-shadow: var(--shadow-card);
+    padding: var(--space-card);
+    transition: box-shadow 0.15s ease-out, border-color 0.15s ease-out, transform 0.15s ease-out;
   }
 
   .pelican-card:hover {
-    border-color: rgba(139, 92, 246, 0.20);
+    box-shadow: var(--shadow-card-hover);
+    border-color: var(--border-hover);
     transform: translateY(-1px);
-    box-shadow: var(--glow-purple-soft);
+  }
+
+  /* Interactive card (clickable) */
+  .pelican-card-interactive {
+    cursor: pointer;
+  }
+
+  .pelican-card-interactive:active {
+    transform: scale(0.99);
   }
 
   /* Pelican logo breathing glow */
@@ -606,15 +694,32 @@
 
   /* Animated skeleton for loading states */
   .skeleton {
-    background: linear-gradient(90deg,
-      #13131a 25%,
-      #1a1a24 50%,
-      #13131a 75%
+    background: linear-gradient(
+      90deg,
+      var(--bg-surface) 0%,
+      var(--bg-elevated) 50%,
+      var(--bg-surface) 100%
     );
     background-size: 200% 100%;
-    animation: shimmer 1.5s infinite;
-    border-radius: 6px;
+    animation: skeleton-pulse 1.5s ease-in-out infinite;
+    border-radius: var(--radius-button);
   }
+
+  @keyframes skeleton-pulse {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+  }
+
+  /* Utility: Apply to any element displaying financial numbers */
+  .data-value {
+    font-family: var(--font-geist-mono), monospace;
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* Utility: Positive/negative data coloring */
+  .data-positive { color: var(--data-positive); }
+  .data-negative { color: var(--data-negative); }
+  .data-neutral { color: var(--data-neutral); }
 
   /* Subtle pulse for live indicators */
   @keyframes live-pulse {
