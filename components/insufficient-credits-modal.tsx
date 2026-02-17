@@ -37,7 +37,7 @@ export function InsufficientCreditsModal({
       <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" />
 
       <div
-        className="relative bg-gray-900 border border-gray-700 rounded-xl p-6 max-w-md w-full mx-4 shadow-2xl"
+        className="relative bg-[var(--bg-elevated)] border border-[var(--border-default)] rounded-xl p-6 max-w-md w-full mx-4 shadow-2xl"
         onClick={(e) => e.stopPropagation()}
       >
         <button
@@ -68,7 +68,7 @@ export function InsufficientCreditsModal({
 
           <button
             onClick={onClose}
-            className="w-full bg-gray-800 hover:bg-gray-700 text-gray-300 font-medium py-3 px-4 rounded-lg transition-colors"
+            className="w-full bg-[var(--bg-surface)] hover:bg-[var(--bg-elevated)] text-[var(--text-secondary)] font-medium py-3 px-4 rounded-lg transition-colors"
           >
             Maybe Later
           </button>

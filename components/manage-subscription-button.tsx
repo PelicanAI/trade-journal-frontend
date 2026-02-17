@@ -64,7 +64,7 @@ export function ManageSubscriptionButton({
     <button
       onClick={handleManageSubscription}
       disabled={loading}
-      className={`flex items-center gap-2 px-4 py-2 bg-gray-800 hover:bg-gray-700 text-gray-300 rounded-lg transition-colors disabled:opacity-50 ${className}`}
+      className={`flex items-center gap-2 px-4 py-2 bg-[var(--bg-surface)] hover:bg-[var(--bg-elevated)] text-[var(--text-secondary)] rounded-lg transition-colors disabled:opacity-50 ${className}`}
     >
       {loading ? (
         <Loader2 className="w-4 h-4 animate-spin" />

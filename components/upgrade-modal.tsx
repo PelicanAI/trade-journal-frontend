@@ -40,7 +40,7 @@ export function UpgradeModal({ isOpen, onClose, required, balance }: UpgradeModa
       <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" />
       
       <div 
-        className="relative bg-gray-900 border border-gray-700 rounded-xl p-6 max-w-md w-full mx-4 shadow-2xl"
+        className="relative bg-[var(--bg-elevated)] border border-[var(--border-default)] rounded-xl p-6 max-w-md w-full mx-4 shadow-2xl"
         onClick={e => e.stopPropagation()}
       >
         <button
@@ -60,7 +60,7 @@ export function UpgradeModal({ isOpen, onClose, required, balance }: UpgradeModa
           </p>
         </div>
 
-        <div className="bg-gray-800/50 border border-gray-700 rounded-lg p-4 mb-6">
+        <div className="bg-[var(--bg-surface)]/50 border border-[var(--border-default)] rounded-lg p-4 mb-6">
           <div className="flex justify-between items-center text-sm mb-3">
             <span className="text-gray-400">Query cost</span>
             <span className="text-white font-medium">{required} credits</span>
@@ -69,7 +69,7 @@ export function UpgradeModal({ isOpen, onClose, required, balance }: UpgradeModa
             <span className="text-gray-400">Your balance</span>
             <span className="text-red-400 font-medium">{balance} credits</span>
           </div>
-          <div className="border-t border-gray-700 my-3" />
+          <div className="border-t border-[var(--border-subtle)] my-3" />
           <div className="flex justify-between items-center text-sm">
             <span className="text-gray-400">You need</span>
             <span className="text-amber-400 font-semibold">{shortfall} more credits</span>
@@ -87,7 +87,7 @@ export function UpgradeModal({ isOpen, onClose, required, balance }: UpgradeModa
           
           <button
             onClick={onClose}
-            className="w-full bg-gray-800 hover:bg-gray-700 text-gray-300 font-medium py-3 px-4 rounded-lg transition-colors"
+            className="w-full bg-[var(--bg-surface)] hover:bg-[var(--bg-elevated)] text-[var(--text-secondary)] font-medium py-3 px-4 rounded-lg transition-colors"
           >
             Maybe Later
           </button>

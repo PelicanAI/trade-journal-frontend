@@ -73,7 +73,7 @@ export function AttachmentDisplay({ attachments }: AttachmentDisplayProps) {
                 transition={{ duration: 0.3, delay: 0.1 }}
               >
                 <div
-                  className="max-w-[320px] rounded-xl overflow-hidden border border-[#1e1e2e] cursor-pointer hover:scale-[1.02] hover:brightness-110 transition-all duration-200"
+                  className="max-w-[320px] rounded-xl overflow-hidden border border-[var(--border-default)] cursor-pointer hover:scale-[1.02] hover:brightness-110 transition-all duration-200"
                   onClick={() => setLightboxUrl({ url: attachment.url, alt: attachment.name || "Image" })}
                 >
                   <Image

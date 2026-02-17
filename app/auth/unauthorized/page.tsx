@@ -13,7 +13,7 @@ export default function UnauthorizedPage() {
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gray-950">
+    <div className="flex min-h-screen items-center justify-center bg-[var(--bg-base)]">
       <div className="max-w-md text-center px-6">
         <div className="text-6xl mb-6">🦩</div>
         <h1 className="text-2xl font-bold text-white mb-4">
