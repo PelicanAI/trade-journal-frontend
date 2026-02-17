@@ -79,7 +79,7 @@ export function CloseTradeModal({ open, onOpenChange, trade, onSubmit }: CloseTr
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-md bg-[var(--bg-elevated)] border-[var(--border-default)]">
+      <DialogContent className="max-w-md bg-[var(--bg-elevated)] border-[var(--border-subtle)] rounded-2xl shadow-[0_4px_8px_rgba(0,0,0,0.5),0_16px_48px_rgba(0,0,0,0.25)]">
         <DialogHeader>
           <DialogTitle className="text-[var(--text-primary)]">Close Trade</DialogTitle>
           <DialogDescription className="text-[var(--text-secondary)]">

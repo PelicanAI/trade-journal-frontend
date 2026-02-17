@@ -82,8 +82,6 @@
   --sidebar-accent-foreground: oklch(0.98 0.002 240);
   --sidebar-border: oklch(0.9 0.002 240);
   --sidebar-ring: oklch(0.45 0.01 240 / 0.3);
-  --font-inter: "Inter", sans-serif;
-
   /* ===== PELICAN DESIGN SYSTEM V3 TOKENS ===== */
 
   /* Backgrounds — layered depth */
@@ -120,10 +118,10 @@
   --status-closed: #6b7280;
   --status-cancelled: #ef4444;
 
-  /* Shadows */
-  --shadow-card: 0 1px 2px rgba(0,0,0,0.3), 0 4px 12px rgba(0,0,0,0.1);
-  --shadow-card-hover: 0 2px 4px rgba(0,0,0,0.4), 0 8px 24px rgba(0,0,0,0.15);
-  --shadow-elevated: 0 4px 6px rgba(0,0,0,0.4), 0 12px 32px rgba(0,0,0,0.2);
+  /* Shadows — depth through shadow, NOT borders */
+  --shadow-card: 0 1px 3px rgba(0,0,0,0.4), 0 4px 16px rgba(0,0,0,0.15);
+  --shadow-card-hover: 0 2px 8px rgba(0,0,0,0.5), 0 8px 32px rgba(0,0,0,0.2);
+  --shadow-elevated: 0 4px 8px rgba(0,0,0,0.5), 0 16px 48px rgba(0,0,0,0.25);
 
   /* Spacing */
   --space-page-x: 2rem;
@@ -638,7 +636,7 @@
     border-radius: var(--radius-card);
     box-shadow: var(--shadow-card);
     padding: var(--space-card);
-    transition: box-shadow 0.15s ease-out, border-color 0.15s ease-out, transform 0.15s ease-out;
+    transition: box-shadow 0.2s ease-out, border-color 0.2s ease-out, transform 0.2s ease-out;
   }
 
   .pelican-card:hover {

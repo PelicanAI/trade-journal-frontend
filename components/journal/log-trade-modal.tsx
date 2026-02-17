@@ -116,7 +116,7 @@ export function LogTradeModal({ open, onOpenChange, onSubmit, initialTicker = ""
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="w-[calc(100vw-2rem)] sm:max-w-2xl max-h-[90vh] overflow-y-auto bg-[var(--bg-elevated)] border-[var(--border-default)] backdrop-blur-sm">
+      <DialogContent className="w-[calc(100vw-2rem)] sm:max-w-2xl max-h-[90vh] overflow-y-auto bg-[var(--bg-elevated)] border-[var(--border-subtle)] rounded-2xl shadow-[0_4px_8px_rgba(0,0,0,0.5),0_16px_48px_rgba(0,0,0,0.25)]">
         <DialogHeader>
           <DialogTitle className="text-[var(--text-primary)]">Log New Position</DialogTitle>
           <DialogDescription className="text-[var(--text-secondary)]">

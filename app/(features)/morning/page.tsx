@@ -20,7 +20,6 @@ import {
   ArrowsClockwise,
   CalendarBlank,
   RocketLaunch,
-  Sparkle,
   Lightning,
 } from "@phosphor-icons/react"
 import { getMarketStatus } from "@/hooks/use-market-data"
@@ -283,7 +282,7 @@ Please provide:
         variants={staggerContainer}
         initial="hidden"
         animate="visible"
-        className="grid grid-cols-1 gap-4 sm:gap-6 p-0 lg:grid-cols-2"
+        className="grid grid-cols-1 gap-6 mt-6 lg:grid-cols-2"
       >
         {/* Active Exposure */}
         <motion.div variants={staggerItem}>
@@ -565,7 +564,7 @@ Please provide:
         </motion.div>
 
         {/* Pelican Brief */}
-        <motion.div variants={staggerItem} className="lg:col-span-2">
+        <motion.div variants={staggerItem} className="lg:col-span-2 mt-4">
           <PelicanCard accentGlow className="p-6">
             {/* Header */}
             <div className="flex items-center justify-between mb-3">
@@ -592,9 +591,10 @@ Please provide:
                   AI-generated morning intelligence across your positions, movers, and macro setup.
                 </p>
                 <PelicanButton
+                  variant="primary"
                   onClick={handleGenerateBrief}
                 >
-                  <Sparkle className="h-4 w-4" weight="bold" />
+                  <Lightning className="h-4 w-4" weight="bold" />
                   Generate Brief
                 </PelicanButton>
               </>

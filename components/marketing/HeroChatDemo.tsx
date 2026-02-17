@@ -126,7 +126,7 @@ export default function HeroChatDemo() {
       borderRadius: 16, overflow: 'hidden', background: '#0a0b0f',
       border: '1px solid rgba(168,85,247,0.25)',
       boxShadow: '0 0 80px rgba(168,85,247,0.12), 0 25px 50px rgba(0,0,0,0.5)',
-      fontFamily: 'Inter, system-ui, -apple-system, sans-serif',
+      fontFamily: 'var(--font-geist-sans), system-ui, -apple-system, sans-serif',
     }}>
       {/* Cursor */}
       <div style={{
