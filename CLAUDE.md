@@ -1,36 +1,53 @@
+# CLAUDE.md — Pelican Trading AI V3 Frontend
+
 ## Workflow Orchestration
+
 ### 1. Plan Mode Default
 - Enter plan mode for ANY non-trivial task (3+ steps or architectural decisions)
 - If something goes sideways, STOP and re-plan immediately
 - Write detailed specs upfront to reduce ambiguity
+
 ### 2. Agent Strategy
 - **Agent Teams**: Use freely for parallel workstreams. No limits on agent count.
 - **Subagents**: Spawn as many as needed. Nest freely.
 - Maximize parallelism. Speed over conservation.
+
 ### 3. Self-Improvement Loop
 - After ANY correction: update `tasks/lessons.md` with the pattern
 - Write rules that prevent the same mistake
 - Review lessons at session start
+
 ### 4. Verification Before Done
 - Never mark complete without proving it works
 - `npm run build` must pass before any commit
 - Ask: "Would a staff engineer approve this?"
+
 ### 5. Autonomous Bug Fixing
 - When given a bug: just fix it. Don't ask for hand-holding.
 - Point at logs/errors, then resolve them.
 
+---
+
 ## Core Principles
+
 - **Simplicity First**: Minimal changes, minimal code touched.
 - **No Laziness**: Root causes only. No temporary fixes.
 - **Security First**: Every feature needs RLS, input validation, auth checks. Never client-only enforcement.
 - **Don't Touch Streaming**: `hooks/use-chat.ts` and `hooks/use-streaming-chat.ts` work. Don't modify unless explicitly asked.
+- **Chat is the Hub**: Every feature connects back to chat. Trade journal → Pelican scan. Heatmap → click to analyze. Earnings → click to ask. This creates the data flywheel.
+- **The Moat is Accumulated Intelligence**: After 6 months, leaving Pelican means losing hundreds of analyzed trades and an AI that knows your patterns.
 
 ---
 
 ## Project Context: Pelican Trading AI
 
 ### What This Is
-AI-powered trading assistant. Users ask questions about markets in plain English, get institutional-grade analysis. Think Bloomberg Terminal for retail traders.
+AI-powered trading platform. Users ask questions about markets in plain English, get institutional-grade analysis. The platform includes chat, trade journaling, market heatmap, morning briefings, earnings calendar, and AI coaching. Think Bloomberg Terminal meets modern fintech for retail traders.
+
+### Team
+- **Nick** — Founder. Product vision, architecture decisions, built V2/V3 features in Claude Code.
+- **Jack** — Technical co-founder. Owns frontend development. Responsible for production readiness, polish, deployment.
+- **Ray** — Database admin. Supabase access, Python backend API on Fly.io.
 
 ### Tech Stack
 | Layer | Technology |
@@ -39,18 +56,187 @@ AI-powered trading assistant. Users ask questions about markets in plain English
 | Language | TypeScript (strict) |
 | Auth/DB | Supabase (project: `ewcqmsfaostcwmgybbub`, us-east-2) |
 | Payments | Stripe (Starter $29, Pro $99, Elite $249) |
-| UI | Radix UI + shadcn/ui + Tailwind CSS |
+| Styling | Tailwind CSS + CSS custom properties in globals.css |
+| Icons | **Phosphor Icons** (`@phosphor-icons/react`) — use weight system for hierarchy |
+| Fonts | **Geist Sans** (UI) + **Geist Mono** (numbers/data) via `next/font` |
+| Animations | **Framer Motion** (`framer-motion`) for transitions, hovers, entrances |
 | State | SWR + React Context |
-| Charts | TradingView widgets |
+| Charts | recharts + TradingView widgets |
 | Backend API | Python on Fly.io (SSE streaming) |
 | LLM | GPT-5 (primary), GPT-4o-mini (education, classification) |
 | Market Data | Polygon.io |
+| Rate Limiting | Upstash Redis (`@upstash/ratelimit`) |
 | Hosting | Vercel |
 | Email | Resend |
 | i18n | Custom useTranslation hook (30 languages) |
 | Domain | pelicantrading.ai (prod), pelicantrading.org (staging) |
 
-### Database — Core Tables (actively used)
+---
+
+## Design System
+
+### Philosophy
+Cinematic, minimal, premium dark mode. Inspired by Infracorp Global and Lightweight (Awwwards references). Depth through light and negative space, not decoration. Two-color discipline for UI chrome, with data colors (green/red) reserved strictly for financial data.
+
+### NOT Allowed
+- Flat, outlined boxes everywhere. Cards should feel elevated, not caged.
+- Color noise — purple, cyan, orange, white all competing. UI chrome is quiet; data colors speak.
+- Dense, cramped layouts. Premium means breathing room.
+- Generic icon usage. Phosphor weight system creates hierarchy (thin = decorative, regular = UI, bold = actions).
+- Static, lifeless interactions. Every clickable element needs a micro-interaction.
+
+### Color Palette
+```
+/* Backgrounds — layered depth, NOT flat */
+--bg-base: #0a0a0f;           /* Deepest layer */
+--bg-surface: #111118;         /* Cards, panels */
+--bg-elevated: #16161f;        /* Modals, popovers, hover states */
+--bg-overlay: rgba(0,0,0,0.6); /* Backdrops */
+
+/* Borders — subtle, NOT prominent */
+--border-subtle: rgba(255,255,255,0.06);
+--border-default: rgba(255,255,255,0.1);
+--border-hover: rgba(255,255,255,0.15);
+
+/* Text — clear hierarchy */
+--text-primary: #e8e8ed;       /* Headings, important content */
+--text-secondary: #9898a6;     /* Body text, descriptions */
+--text-muted: #5a5a6e;         /* Labels, captions, timestamps */
+--text-disabled: #3a3a4a;
+
+/* Purple accent — used sparingly for interactive elements */
+--accent-primary: #8b5cf6;
+--accent-hover: #9d74f7;
+--accent-muted: rgba(139,92,246,0.15);
+--accent-glow: rgba(139,92,246,0.08);
+
+/* Data colors — ONLY for financial data, never for UI decoration */
+--data-positive: #22c55e;      /* Profit, gains, bullish */
+--data-negative: #ef4444;      /* Loss, drops, bearish */
+--data-neutral: #6b7280;       /* Unchanged, flat */
+--data-warning: #f59e0b;       /* Alerts, caution */
+
+/* Status */
+--status-open: #22c55e;
+--status-closed: #6b7280;
+--status-cancelled: #ef4444;
+```
+
+### Typography
+```
+/* Font stacks — loaded via next/font */
+--font-sans: 'Geist Sans', system-ui, sans-serif;  /* All UI text */
+--font-mono: 'Geist Mono', monospace;               /* ALL numbers: prices, P&L, percentages, quantities */
+
+/* Scale */
+--text-xs: 0.75rem;     /* 12px — timestamps, captions */
+--text-sm: 0.875rem;    /* 14px — body, table cells */
+--text-base: 1rem;      /* 16px — primary content */
+--text-lg: 1.125rem;    /* 18px — section headers */
+--text-xl: 1.25rem;     /* 20px — page subtitles */
+--text-2xl: 1.5rem;     /* 24px — page titles */
+--text-3xl: 1.875rem;   /* 30px — hero text */
+
+/* RULE: Every number on every page uses font-mono + tabular-nums */
+/* Prices, P&L, quantities, dates, credits — ALL mono */
+```
+
+### Spacing & Layout
+```
+/* Generous spacing — premium = breathing room */
+--space-page-x: 2rem;         /* Page horizontal padding */
+--space-page-y: 1.5rem;       /* Page vertical padding */
+--space-section: 2rem;         /* Between major sections */
+--space-card: 1.25rem;         /* Card internal padding */
+--space-card-gap: 1rem;        /* Between cards in a grid */
+
+/* Cards — elevated, not boxed */
+Cards use: bg-surface + subtle border + shadow, NOT thick visible borders
+Hover: slight translateY(-1px) + shadow increase + border brightens
+Active/selected: accent-muted bg tint
+```
+
+### Animation Standards (Framer Motion)
+```
+/* Page transitions */
+Entrance: opacity 0→1, y 8→0, duration 0.3s, ease [0.25, 0.1, 0.25, 1]
+Exit: opacity 1→0, duration 0.15s
+
+/* Card/element hover */
+Scale: 1 → 1.01 (subtle, NOT 1.05)
+TranslateY: 0 → -1px
+Shadow: increase spread by 2px
+Duration: 0.15s
+Ease: ease-out
+
+/* Tab switching / content swap */
+Cross-fade: opacity 0.2s
+Slide: x ±12px → 0, duration 0.25s
+
+/* Skeleton loaders */
+Pulse animation on bg-surface → bg-elevated, duration 1.5s, infinite
+
+/* Reduced motion: respect prefers-reduced-motion — already implemented */
+```
+
+### Phosphor Icons Usage
+```
+/* Weight system for visual hierarchy */
+Thin (weight 16): Decorative, watermarks, large display icons
+Light (weight 24): Secondary actions, nav items in inactive state
+Regular (weight 32): Default UI icons, form icons, status indicators
+Bold (weight 48): Primary actions, CTAs, important states
+Fill: Active/selected states (e.g., active tab icon)
+
+/* Trading-specific icons */
+ChartLineUp, ChartBar, TrendUp, TrendDown — charts/performance
+CurrencyDollar, Wallet, Bank, Coins — financial
+ArrowUpRight, ArrowDownRight — P&L direction
+Lightning — AI/Pelican actions
+MagnifyingGlass — search
+Gear — settings
+Plus, X, Check — CRUD actions
+```
+
+### Component Patterns
+```
+/* Cards */
+- Subtle bg gradient (bg-surface with slight radial gradient at top for "light")
+- Border: 1px solid var(--border-subtle)
+- Border-radius: 12px (rounded-xl)
+- Shadow: 0 1px 2px rgba(0,0,0,0.3), 0 4px 12px rgba(0,0,0,0.1)
+- Hover: shadow increases, border brightens, slight lift
+- NO thick borders. NO colored borders unless accent/status.
+
+/* Tables */
+- No visible row borders. Use alternating bg or hover highlight.
+- Header row: text-muted, font-medium, uppercase text-xs tracking-wider
+- All numeric cells: font-mono tabular-nums text-right
+- Hover row: bg-elevated transition 0.15s
+
+/* Buttons */
+- Primary: bg-accent, text-white, hover:bg-accent-hover, shadow
+- Secondary: bg-transparent, border border-subtle, hover:bg-elevated
+- Ghost: no border, hover:bg-elevated
+- All: rounded-lg, transition-all 0.15s, active:scale-[0.98]
+
+/* Modals */
+- Backdrop: bg-overlay with backdrop-blur-sm
+- Content: bg-elevated, rounded-2xl, shadow-2xl
+- Entrance: scale 0.96→1, opacity 0→1, duration 0.2s
+- Exit: scale 1→0.96, opacity 1→0, duration 0.15s
+
+/* Sidebar */
+- Slide in from right with framer-motion
+- Content cross-fades on tab switch
+- Tabs use Fill variant of Phosphor icon when active
+```
+
+---
+
+## Database Schema
+
+### Core Tables (Actively Used)
 ```
 user_credits: user_id (PK), credits_balance, credits_used_this_month, plan_type,
   plan_credits_monthly, stripe_customer_id, stripe_subscription_id,
@@ -59,17 +245,13 @@ user_credits: user_id (PK), credits_balance, credits_used_this_month, plan_type,
 conversations: id, user_id, title, created_at, updated_at, is_active,
   metadata, last_message_preview, message_count
 
-messages: id, conversation_id, user_id, role (user/assistant/syem),
+messages: id, conversation_id, user_id, role (user/assistant/system),
   content, timestamp, metadata (JSONB — may contain images array),
   intent, tickers[], emotional_state
 
-files: id, user_id, storage_path, mime_type, name, size
-```
-
-### Database — Future Feature Tables (exist in Supabase, no frontend yet)
-```
-trades: id, user_id, ticker, asset_type, direction, quantity, entry_price,
-  exit_price, stop_loss, take_profit, status (open/closed/cancelled),
+trades: id, user_id, ticker, asset_type (stock/option/future/forex/crypto/etf/other),
+  direction (long/short), quantity, entry_price, exit_price,
+  stop_loss, take_profit, status (open/closed/cancelled),
   pnl_amount, pnl_percent, r_multiple, entry_date, exit_date,
   thesis, notes, setup_tags[], conviction (1-10), ai_grade (jsonb)
 
@@ -82,291 +264,144 @@ playbooks: id, user_id, name, setup_type, entry_rules, exit_rules,
 watchlist: id, user_id, ticker, notes, alert_price_above, alert_price_below
 ```
 
-### RPC Functions (exist in Supabase, for future trade journal)
+**IMPORTANT:** An old `trade_journal` table exists with a different schema. IGNORE IT. Use `trades` exclusively.
+
+### RPC Functions
 ```
-close_trade, get_trade_stats, get_stats_by_setup, get_pnl_by_day_of_week, get_equity_curve
+close_trade() → { success, pnl_amount, pnl_percent, r_multiple }
+get_trade_stats() → aggregate stats (win rate, profit factor, etc.)
+get_stats_by_setup() → performance by setup type
+get_pnl_by_day_of_week() → P&L by weekday
+get_equity_curve() → cumulative P&L over time
+get_popular_tickers() → trending tickers from message content
 ```
 
-### RPC Function for Admin (actively used)
-```
-get_popular_tickers(p_days INTEGER, p_limit INTEGER) → [{ ticker TEXT, mention_count BIGINT }]
-  -- Extracts tickers from user message content via regex against known ticker whitelist
-```
+### RLS Rules
+- Every user-facing SELECT: `user_id = (SELECT auth.uid())` — no exceptions
+- NO `OR is_admin()` on user-facing policies. Service role handles admin access.
+- All RPC functions: `SECURITY DEFINER` + `SET search_path = public`
 
 ---
 
-## What's Built (V2 Features — Complete)
+## Architecture
 
-### Chat Interface
-- SSE streaming with GPT-5 via Fly.io backend
-- Ticker highlighting (purple, clickable → pre-fills chat)
-- Learning Mode toggle (GraduationCap icon, 120+ terms, hover tooltips, education sidebar chat)
-- Regenerate response button
-- Message actions (copy, etc.)
-- 30-language support
-
-### Right Sidebar Tabs
-- **Market**: Live indices (SPX, IXIC, DJI), VIX, sector performance, watchlist with prices
-- **Calendar**: TradingView economic calendar widget
-- **Learn**: Education chat (GPT-4o-mini) for Learning Mode
-
-### Morning Brief (`/morning`) — COMPLETE ✓
-- **Market Movers**: Gainers/Losers with price tier filters (All, $200+, $100-$200, etc.)
-  - Default: "All" tier (shows all tickers)
-  - Live price data via Polygon.io
-  - Click ticker → pre-fills chat
-- **Active Exposure**: Open positions with unrealized P&L calculated from live prices
-  - Formula: `(currentPrice - entryPrice) × quantity × direction`
-  - Color-coded: green (profit), red (loss), gray (unavailable)
-- **Earnings Today**: Today's earnings with EPS/Rev estimates and actuals
-  - Pre-report: "Est. EPS:" / "Est. Rev:" labels (muted)
-  - Post-report: "EPS:" / "Rev:" with beat/miss indicators (▲/▼)
-- **IPO Watch**: Upcoming IPOs with ticker, company, date, price range
-  - Smart date formatting (Today, Tomorrow, or date)
-  - Click → opens Pelican chat with IPO context
-- **Economic Calendar**: Key events for the day
-- Subtle header elevation with gradient background
-
-### Earnings Calendar (`/earnings`) — COMPLETE ✓
-- **5-Column Week Grid**: Monday-Friday layout with day headers
-- **Before Open Section**: ☀ Capped at 3 rows (small caps)
-  - "+N more" expands to show all
-  - "− collapse" to hide extras
-- **After Close Section**: 🌙 Shows 8 rows initially (big names like NVDA, AAPL, META)
-  - Same "+N more" expansion behavior
-- **Uniform Row Sizing**: ALL rows enlarged for better readability
-  - Logo: 20px, Ticker: text-sm font-semibold
-  - EPS/Rev: text-xs, Padding: px-3 py-2.5
-  - Hover: `hover:bg-white/[0.04]`
-- **Visual Divider**: Subtle border between Before Open and After Close
-- **Pelican Watermark**: Pure white logo at 3% opacity
-  - Overlays ON TOP of grid (not behind)
-  - CSS filter: `brightness(0) invert(1)` for pure white
-  - Brands every screenshot for social media exposure
-- **Consistent Background**: Uniform `#0a0a0f` top to bottom (no gradient)
-- **Header Polish**: Subtle border divider, clean spacing
-
-### Trade Journal (`/journal`) — COMPLETE ✓
-- **Positions Table**: Open/closed trades with live P&L tracking
-  - Multi-endpoint price fetching (stocks, crypto, forex)
-  - Ticker format: `ticker:assetType` for proper Polygon routing
-- **Log Trade Modal**: Full trade entry with validation
-  - Auto-appends "USD" for crypto/forex (BTC → BTCUSD, EUR → EURUSD)
-  - Company name search (not just ticker symbols)
-  - Position size, Risk at Stop, Profit at Target calculations
-  - Risk/Reward ratio with color coding (green ≥2:1, yellow 1-2:1, red <1:1)
-  - Asset type auto-detection from search results
-- **Crypto/Forex Support**: Polygon ticker prefixes
-  - Crypto: `X:BTCUSD`, Forex: `C:EURUSD`, Stocks: `AAPL`
-  - Logo mapping for crypto pairs (BTCUSD → BTC)
-- **Mobile Responsive**: Card layouts, bottom sheets, safe area padding
-
-### Market Heatmap (`/heatmap`) — COMPLETE ✓
-- Custom squarified treemap (no d3 dependency)
-- S&P 500 stocks with live price data
-- Sector filtering with horizontal pills on mobile
-- Click stock → pre-fills chat with analysis prompt
-- Auto-refresh: 60s market hours, 5m after hours
-- Mobile: sorted list view with color coding
-
-### Admin Dashboard (`/admin`)
-- User list with search/filter
-- Recent signups table
-- Recent conversations with expandable previews
-- Credit management
-- Analytics: messages/day, conversations/day, signups/day, credit consumption, conversion funnel, plan distribution, MRR
-
-### Security (Hardened)
-- Stripe checkout: authenticated endpoints, validated price IDs, server-controlled credits
-- Terms of Service: server-side enforcement for Google OAuth
-- RLS on all tables
-- Secure RPC with SECURITY DEFINER
-
----
-
-## Architecture Patterns
+### Feature Pages
+```
+app/(features)/morning/    — Morning Brief (Pelican Brief)
+app/(features)/earnings/   — Earnings Calendar
+app/(features)/journal/    — Positions / Trade Journal
+app/(features)/heatmap/    — Market Heatmap
+```
 
 ### Chat ↔ Feature Integration
-Features use a "chat pre-fill" pattern: clicking elements composes messages in chat input.
-Look for `prefillChatMessage` or similar — should be a shared utility.
+Look for `prefillChatMessage` — shared utility, NOT reimplemented per feature.
+- Trade journal → "Pelican scan" pre-fills chat with trade context
+- Heatmap → click stock pre-fills analysis prompt
+- Earnings → click row pre-fills earnings question
+- IPO Watch → click IPO pre-fills research question
+- Morning Brief → "Discuss with Pelican" button
 
-### Data Fetching
-- **SWR Hooks**: Used for live data (prices, earnings, movers)
-  - `useLiveQuotes` - Multi-endpoint price fetching with asset type routing
-  - `useEarnings` - Earnings calendar with 60s refresh
-  - `useHeatmap` - Heatmap data with auto-refresh
-- **Format**: `ticker:assetType` for price fetching (`AAPL:stock`, `BTCUSD:crypto`, `EURUSD:forex`)
+### Pelican Brief Architecture
+Streams SSE directly into a card on the page — report, NOT chat. Cached in localStorage by date. "Regenerate" button costs credits. Auto-expires at midnight.
 
-### Polygon.io API Integration
-- **Different endpoints per asset class**:
-  - Stocks: `/v2/snapshot/locale/us/markets/stocks/tickers`
-  - Crypto: `/v2/snapshot/locale/global/markets/crypto/tickers`
-  - Forex: `/v2/snapshot/locale/global/markets/forex/tickers`
-- **Ticker Prefixes**:
-  - Crypto: `X:BTCUSD` (must include prefix)
-  - Forex: `C:EURUSD` (must include prefix)
-  - Stocks: `AAPL` (no prefix)
-- **Multi-endpoint routing**: Group tickers by asset type, fetch in parallel
+### Polygon Ticker Formats
+```
+Stocks:  AAPL     → /v2/snapshot/locale/us/markets/stocks/tickers/AAPL
+Crypto:  X:BTCUSD → /v2/snapshot/locale/global/markets/crypto/tickers/X:BTCUSD
+Forex:   C:EURUSD → /v2/snapshot/locale/global/markets/forex/tickers/C:EURUSD
+```
+Forex uses bid/ask midpoint. Shared utility in `lib/polygon.ts`.
 
-### Supabase Client
-- Client-side: `createClient` or `createBrowserClient` (search lib/supabase/)
-- Server-side API routes: different client. Search for `createServerClient`.
+### Right Sidebar Tabs
+- **Market** — Live indices, VIX, sectors, watchlist with prices
+- **Calendar** — TradingView economic calendar
+- **Learn** — Education chat (GPT-4o-mini, Learning Mode)
 
-### Mobile Responsiveness Strategy
-- **Breakpoints**: sm: 640px, md: 768px, lg: 1024px
-- **Desktop ≥1024px**: Must look identical, no layout changes
-- **Mobile/Tablet**: Bottom sheets, card layouts, horizontal scrolling
-- **Safe Area**: `.pb-safe`, `.pt-safe` utilities for notch/bottom bar
-- **Pattern**: Desktop-first design, then mobile adaptations
-
-### Visual Branding
-- **Watermarks**: Overlay ON TOP of content (not background-image)
-  - Use `filter: brightness(0) invert(1)` for pure white
-  - `pointer-events-none` for click-through
-  - 3-5% opacity for subtle effect
-  - Positioned LAST in DOM for natural stacking order
-- **Consistency**: Uniform backgrounds, no gradients unless intentional hierarchy
+### Learning Mode
+Toggle in chat header. 120+ terms in `lib/glossary/trading-terms.json`. Purple dotted underlines, hover tooltips, click opens Learn tab. Sidebar auto-expands when collapsed.
 
 ---
 
-## Key Learnings & Best Practices
+## Security
 
-### Polygon.io Integration Lessons
-1. **Asset Type Routing is Critical**
-   - MUST use different endpoints per asset class (stocks, crypto, forex)
-   - MUST include prefixes for crypto (`X:`) and forex (`C:`)
-   - Group tickers by asset type before fetching to minimize API calls
-   - Pass `ticker:assetType` format from frontend to API routes
-
-2. **Logo Mapping for Crypto**
-   - Crypto pairs (BTCUSD) need mapping to base symbol (BTC) for logos
-   - Map in frontend: `getLogoSymbol()` function strips prefixes and maps pairs
-
-3. **Auto-normalization**
-   - Auto-append "USD" for bare crypto/forex symbols (BTC → BTCUSD, EUR → EURUSD)
-   - Prevents user errors when logging trades
-   - Apply normalization in form submission AND autocomplete selection
-
-### Visual Design Patterns
-1. **Watermarks for Screenshot Branding**
-   - Position LAST in DOM to overlay ON TOP of all content
-   - Use `filter: brightness(0) invert(1)` for pure white (regardless of original color)
-   - `pointer-events-none` for click-through behavior
-   - 3-5% opacity is sweet spot (visible but not distracting)
-   - Marketing hack: Every screenshot shared = free brand exposure
-
-2. **Background Consistency**
-   - Avoid gradients that create color shifts between sections
-   - Use borders (`border-white/[0.04]`) for visual separation, not background changes
-   - Keep entire page one uniform background (`#0a0a0f`)
-   - Let grid glows and content spacing create hierarchy
-
-3. **Visual Hierarchy with Data Density**
-   - Cap less important sections (Before Open earnings at 3 rows)
-   - Give more space to important data (After Close earnings at 8 rows)
-   - Use uniform sizing when differentiation isn't meaningful
-   - "+N more" expansion for overflow prevents overwhelming users
-
-### Form UX Enhancements
-1. **Progressive Reveal with Calculations**
-   - Show calculated metrics as form fields are filled (Position Size, Risk at Stop, Profit at Target)
-   - Color-code Risk/Reward ratios (green ≥2:1, yellow 1-2:1, red <1:1)
-   - Gamification through discipline: visible metrics encourage better trade planning
-
-2. **Smart Defaults**
-   - Market movers default to "All" tier (not $200+) - users can filter down
-   - Company name search, not just ticker symbols (more user-friendly)
-   - Asset type auto-detection from search results
-
-3. **Estimate vs Actual Clarity**
-   - Pre-report: "Est. EPS:" / "Est. Rev:" (muted color)
-   - Post-report: "EPS:" / "Rev:" with beat/miss indicators (▲/▼, colored)
-   - Label change makes transition from estimate to result obvious at a glance
-
-### Mobile Responsiveness Strategy
-1. **Desktop-First, Then Adapt**
-   - Desktop ≥1024px must remain pixel-perfect
-   - Mobile gets: bottom sheets, card layouts, horizontal scrolling
-   - Safe area utilities for notches/home bars
-
-2. **Consistent Patterns**
-   - Apply same header treatment across all feature pages
-   - Use same component patterns (sheets, pills, cards) throughout
-   - Mobile users expect consistency
+- **Rate limiting**: Upstash Redis on all cost-incurring routes. Fails CLOSED when Redis unavailable.
+- **Middleware auth**: Redirects to login for protected routes. Fails CLOSED on Supabase errors.
+- **Stripe**: Server-side plan derivation from priceId. Webhook signature verification.
+- **Auth on API routes**: Every user-data route checks `supabase.auth.getUser()`. Exception: help-chat (public, IP rate limited).
+- **Input validation**: Chat history arrays validated (max length, sanitized). Body size limits.
+- **RLS**: Every table. Users only see own data. Service role for admin.
+- **No in-memory rate limiting** — Vercel serverless resets Maps on cold starts.
 
 ---
 
-## Planned Features (NOT in repo yet — do not reference these files)
-
-### Trade Journal (`/journal`)
-- 5 tabs: Dashboard, Trades, Analytics, Daily Journal, Playbooks
-- 6 recharts visualizations: equity curve, daily P&L, setup performance, day-of-week, R-multiple, conviction
-- Log/Close/Edit trade modals with zod validation
-- Pelican Scan: click icon on trade → pre-fills chat with trade context
-- "Log Trade" button on chat messages with ticker detection
-- Sidebar "Trades" tab: open position cards, today's closed trades, quick actions
-
-### Market Heatmap (`/heatmap`)
-- Custom squarified treemap (no d3 dependency)
-- S&P 500 static constituent mapping (200+ stocks)
-- Sidebar "Heatmap" tab with same data views
-- Click stock → pre-fills chat with analysis prompt
-- Auto-refresh: 60s market hours, 5m after hours
-
-### Database tables exist in Supabase but frontend not built yet:
-trades, daily_journal, playbooks, watchlist, trade_screenshots, trade_imports
-
----
-
-## File Ownership (Agent Teams)
+## File Ownership
 
 ### Read-Only
 - `hooks/use-chat.ts` — SSE streaming. Works. Don't touch.
 - `hooks/use-streaming-chat.ts` — SSE parsing. Works.
 - `hooks/use-conversations.ts` — Conversation state. Works.
-- `messages/*.json` — Translation files. Only modify via i18n workflow.
+- `messages/*.json` — Translation files.
 
 ### Shared (Coordinate First)
-- `app/layout.tsx` — Root layout affects everything
+- `app/layout.tsx` — Root layout
 - `lib/supabase/*` — Shared client setup
 - `providers/` — Context providers
 - `tailwind.config.ts` — Global styles
-- `package.json` — Dependency changes need approval
-- `globals.css` — Design tokens and CSS variables
+- `package.json` — Dependencies
+- `globals.css` — Design tokens
 
 ---
 
 ## Coding Standards
+
 - TypeScript strict. No `any` where proper types exist.
 - Functional components + hooks. React.memo for expensive renders.
-- Tailwind utilities + custom classes in globals.css for animations.
+- Tailwind utilities + custom properties in globals.css for tokens.
 - PascalCase components, camelCase functions, kebab-case files.
 - All mutations in try/catch with user-facing errors.
 - `IF NOT EXISTS` in migrations. Never break production.
 - No console.log in production except intentional error logging.
 - All user-facing strings through translation system.
-- `tabular-nums` on all numeric data (prices, percentages).
+- `tabular-nums` + `font-mono` on ALL numeric data.
 - `next/dynamic` instead of React.lazy (App Router).
+- Framer Motion for all animations. No raw CSS transitions for interactive elements.
+- Phosphor Icons only. No mixing icon libraries. Use weight system.
 
 ---
 
-## Current TODO
-- [x] ~~Morning Brief with movers, earnings, IPOs~~ ✓ COMPLETE
-- [x] ~~Earnings Calendar with watermark branding~~ ✓ COMPLETE
-- [x] ~~Trade Journal with crypto/forex support~~ ✓ COMPLETE
-- [x] ~~Market Heatmap with live data~~ ✓ COMPLETE
-- [x] ~~Mobile responsiveness V2~~ ✓ COMPLETE
-- [ ] Image persistence (Supabase Storage → signed URLs)
-- [ ] TradingView attribution tags
-- [ ] Nick headshot + Twitter on team page
-- [ ] Chat UI polish (formatting, spacing, visual hierarchy)
-- [ ] Open Graph meta tags for social sharing
-- [ ] Landing page CRO improvements (audit score: 51/100)
+## What NOT to Do
 
-## Future TODO
-- [ ] Trade Analytics Dashboard (equity curve, P&L charts)
-- [ ] Daily Journal feature (pre/post market notes)
-- [ ] Playbooks system (setup rules, checklists)
-- [ ] Sidebar Trades + Heatmap tabs
-- [ ] Position health scores
-- [ ] AI trade grading
+- Do NOT reference the old `trade_journal` table. Use `trades` exclusively.
+- Do NOT add `OR is_admin()` to user-facing RLS policies.
+- Do NOT use in-memory Maps for rate limiting.
+- Do NOT trust client-supplied plan names or credit amounts.
+- Do NOT leave console.log in production code.
+- Do NOT use lucide-react for new code. Migrate to Phosphor.
+- Do NOT use raw `<img>` tags. Use `next/image`.
+- Do NOT add flat outlined boxes. Cards need depth.
+- Do NOT use more than 2 accent colors on any single view.
+- Do NOT skip hover/transition states on clickable elements.
+
+---
+
+## Payments
+
+- **Stripe** — Starter ($29/mo), Pro ($99/mo), Elite ($249/mo)
+- Credit-based system: each plan gets monthly credits, queries deduct credits
+- 10 free questions (no signup required)
+- Free account: additional free questions
+
+## Environment Variables
+```
+NEXT_PUBLIC_SUPABASE_URL
+NEXT_PUBLIC_SUPABASE_ANON_KEY
+SUPABASE_SERVICE_ROLE_KEY
+STRIPE_SECRET_KEY
+STRIPE_WEBHOOK_SECRET
+NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY
+OPENAI_API_KEY
+POLYGON_API_KEY
+UPSTASH_REDIS_REST_URL
+UPSTASH_REDIS_REST_TOKEN
+RESEND_API_KEY
+```
