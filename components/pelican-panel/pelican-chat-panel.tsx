@@ -180,9 +180,9 @@ function PelicanChatPanelInternal({
   return (
     <>
       {/* Mobile: Full-screen overlay */}
-      <div className="md:hidden fixed inset-0 z-50 bg-background">
-        {/* Header */}
-        <div className="border-b border-border px-4 py-3 flex items-center justify-between bg-background">
+      <div className="md:hidden fixed inset-0 z-50 flex flex-col bg-[var(--bg-surface)]">
+        {/* Header — pinned top */}
+        <div className="shrink-0 border-b border-[var(--border-subtle)] px-4 py-3 flex items-center justify-between bg-[var(--bg-elevated)]">
           <div className="flex items-center gap-2">
             <Image
               src="/pelican-logo-transparent.webp"
@@ -192,9 +192,9 @@ function PelicanChatPanelInternal({
               className="w-6 h-6 object-contain"
             />
             <div className="flex flex-col">
-              <span className="text-sm font-semibold text-foreground">Pelican AI</span>
+              <span className="text-sm font-semibold text-[var(--text-primary)]">Pelican AI</span>
               {ticker && (
-                <span className="text-xs text-muted-foreground font-mono">{ticker}</span>
+                <span className="text-xs text-[var(--text-muted)] font-mono">{ticker}</span>
               )}
             </div>
           </div>
@@ -208,11 +208,10 @@ function PelicanChatPanelInternal({
           </Button>
         </div>
 
-        {/* Messages */}
+        {/* Messages — scrollable middle */}
         <div
           ref={scrollContainerRef}
-          className="flex-1 overflow-y-auto px-4 pb-4 select-text"
-          style={{ height: 'calc(100vh - 140px)' }}
+          className="flex-1 overflow-y-auto px-4 pb-4 min-h-0 select-text"
         >
           <div className="space-y-1">
             {messages.map((message, index) => (
@@ -227,8 +226,8 @@ function PelicanChatPanelInternal({
           </div>
         </div>
 
-        {/* Input */}
-        <div className="border-t border-border bg-background px-4 py-3">
+        {/* Input — pinned bottom */}
+        <div className="shrink-0 border-t border-[var(--border-subtle)] bg-[var(--bg-elevated)] px-4 py-3">
           <div className="flex items-end gap-2">
             <textarea
               ref={inputRef}
@@ -237,7 +236,7 @@ function PelicanChatPanelInternal({
               onKeyDown={handleKeyDown}
               placeholder="Ask Pelican anything..."
               disabled={isStreaming}
-              className="flex-1 bg-white/[0.06] border border-border rounded-lg px-3 py-2 text-sm leading-relaxed text-foreground resize-none focus:outline-none focus:ring-1 focus:ring-purple-500 disabled:opacity-50 min-h-[40px] max-h-[120px]"
+              className="flex-1 bg-white/[0.06] border border-[var(--border-subtle)] rounded-lg px-3 py-2 text-sm leading-relaxed text-[var(--text-primary)] resize-none focus:outline-none focus:ring-1 focus:ring-purple-500 disabled:opacity-50 min-h-[40px] max-h-[120px]"
               rows={1}
             />
             <Button
@@ -263,7 +262,7 @@ function PelicanChatPanelInternal({
         exit={{ x: 100, opacity: 0 }}
         transition={{ duration: 0.2 }}
         className={cn(
-          "hidden md:flex flex-col border-l border-border bg-background",
+          "hidden md:flex flex-col border-l border-[var(--border-subtle)] bg-[var(--bg-surface)]",
           "h-screen w-full",
           className
         )}
@@ -272,8 +271,8 @@ function PelicanChatPanelInternal({
           maxWidth: '420px',
         }}
       >
-        {/* Header */}
-        <div className="border-b border-border px-4 py-3 flex items-center justify-between flex-shrink-0 bg-background">
+        {/* Header — pinned top */}
+        <div className="shrink-0 border-b border-[var(--border-subtle)] px-4 py-3 flex items-center justify-between bg-[var(--bg-elevated)]">
           <div className="flex items-center gap-2">
             <Image
               src="/pelican-logo-transparent.webp"
@@ -283,9 +282,9 @@ function PelicanChatPanelInternal({
               className="w-6 h-6 object-contain"
             />
             <div className="flex flex-col">
-              <span className="text-sm font-semibold text-foreground">Pelican AI</span>
+              <span className="text-sm font-semibold text-[var(--text-primary)]">Pelican AI</span>
               {ticker && (
-                <span className="text-xs text-muted-foreground font-mono">{ticker}</span>
+                <span className="text-xs text-[var(--text-muted)] font-mono">{ticker}</span>
               )}
             </div>
           </div>
@@ -293,13 +292,13 @@ function PelicanChatPanelInternal({
             variant="ghost"
             size="icon"
             onClick={onClose}
-            className="h-8 w-8 hover:bg-sidebar-accent/50"
+            className="h-8 w-8 hover:bg-white/[0.06]"
           >
             <X className="h-4 w-4" />
           </Button>
         </div>
 
-        {/* Messages */}
+        {/* Messages — scrollable middle */}
         <div
           ref={scrollContainerRef}
           className="flex-1 overflow-y-auto px-4 pb-4 min-h-0 select-text"
@@ -319,7 +318,7 @@ function PelicanChatPanelInternal({
                   variant="ghost"
                   size="sm"
                   onClick={onRegenerate}
-                  className="text-xs text-muted-foreground hover:text-purple-400 hover:bg-purple-500/10"
+                  className="text-xs text-[var(--text-muted)] hover:text-purple-400 hover:bg-purple-500/10"
                 >
                   <RefreshCw className="h-3 w-3 mr-1.5" />
                   Regenerate
@@ -339,15 +338,15 @@ function PelicanChatPanelInternal({
                 height={48}
                 className="w-12 h-12 object-contain opacity-40 mb-4"
               />
-              <p className="text-sm text-muted-foreground">
+              <p className="text-sm text-[var(--text-muted)]">
                 Ask Pelican anything about the markets
               </p>
             </div>
           )}
         </div>
 
-        {/* Input */}
-        <div className="border-t border-border bg-background px-4 py-3 flex-shrink-0">
+        {/* Input — pinned bottom */}
+        <div className="shrink-0 border-t border-[var(--border-subtle)] bg-[var(--bg-elevated)] px-4 py-3">
           <div className="flex items-end gap-2">
             <textarea
               ref={inputRef}
@@ -356,7 +355,7 @@ function PelicanChatPanelInternal({
               onKeyDown={handleKeyDown}
               placeholder="Ask Pelican anything..."
               disabled={isStreaming}
-              className="flex-1 bg-white/[0.06] border border-border rounded-lg px-3 py-2 text-sm leading-relaxed text-foreground resize-none focus:outline-none focus:ring-1 focus:ring-purple-500 disabled:opacity-50 min-h-[40px] max-h-[120px]"
+              className="flex-1 bg-white/[0.06] border border-[var(--border-subtle)] rounded-lg px-3 py-2 text-sm leading-relaxed text-[var(--text-primary)] resize-none focus:outline-none focus:ring-1 focus:ring-purple-500 disabled:opacity-50 min-h-[40px] max-h-[120px]"
               rows={1}
             />
             <Button

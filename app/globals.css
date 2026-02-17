@@ -84,11 +84,11 @@
   --sidebar-ring: oklch(0.45 0.01 240 / 0.3);
   /* ===== PELICAN DESIGN SYSTEM V3 TOKENS ===== */
 
-  /* Backgrounds — purple undertone through layers (17→27→35 blue channel) */
-  --bg-base: #111117;
-  --bg-surface: #1a1a27;
-  --bg-elevated: #242435;
-  --bg-overlay: rgba(0, 0, 0, 0.7);
+  /* Backgrounds — deep purple DNA throughout */
+  --bg-base: #110e1a;
+  --bg-surface: #1a1827;
+  --bg-elevated: #252335;
+  --bg-overlay: rgba(8, 5, 14, 0.75);
 
   /* Borders — purple tint on hover ties to accent */
   --border-subtle: rgba(255, 255, 255, 0.08);
@@ -140,15 +140,15 @@
 .dark {
   /* Purple-tinted dark mode — more pop, purple undertone through layers */
   /* HSL format for shadcn/Tailwind compatibility */
-  --background: 245 25% 8%;              /* matches --bg-base undertone */
+  --background: 260 28% 8%;              /* matches --bg-base #110e1a */
   --foreground: 245 10% 95%;             /* bright, almost white */
   --muted: 245 20% 16%;                  /* purple-tinted muted backgrounds */
   --muted-foreground: 245 8% 55%;        /* muted text */
 
   /* Layered surfaces - purple undertone, clear separation */
-  --surface-0: #111117;                  /* = bg-base */
-  --surface-1: #1a1a27;                  /* = bg-surface */
-  --surface-2: #242435;                  /* = bg-elevated */
+  --surface-0: #110e1a;                  /* = bg-base */
+  --surface-1: #1a1827;                  /* = bg-surface */
+  --surface-2: #252335;                  /* = bg-elevated */
   --surface-3: #2e2e42;                  /* extra step for deep nesting */
 
   /* Borders — purple accent on interaction */
@@ -197,7 +197,7 @@
   --card-foreground: 245 10% 95%;        /* bright text */
   --popover: 245 20% 15%;               /* ~bg-elevated */
   --popover-foreground: 245 10% 95%;     /* bright text */
-  --sidebar: 245 25% 8%;                 /* ~bg-base */
+  --sidebar: 260 28% 8%;                 /* ~bg-base */
   --sidebar-foreground: 252 10% 92%;     /* light text */
   --sidebar-primary: oklch(0.60 0.25 280);
   --sidebar-primary-foreground: oklch(0.98 0.002 280);
