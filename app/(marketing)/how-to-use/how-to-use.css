@@ -60,7 +60,7 @@
 }
 
 .tab-button.active {
-  color: var(--accent-purple);
+  color: var(--accent-indigo);
   background: var(--bg-primary);
 }
 
@@ -71,7 +71,7 @@
   left: 0;
   right: 0;
   height: 2px;
-  background: var(--accent-purple);
+  background: var(--accent-indigo);
 }
 
 /* Demos Section - tight top spacing */
@@ -161,11 +161,11 @@
   display: inline-flex;
   align-items: center;
   padding: 0.4rem 0.75rem;
-  background: var(--accent-purple-dim);
+  background: var(--accent-indigo-dim);
   border: 1px solid var(--border-accent);
   font-family: var(--font-jetbrains), monospace;
   font-size: 0.7rem;
-  color: var(--accent-purple);
+  color: var(--accent-indigo);
   text-transform: uppercase;
   letter-spacing: 0.05em;
 }

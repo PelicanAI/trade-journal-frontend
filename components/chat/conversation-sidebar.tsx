@@ -116,7 +116,7 @@ const ConversationItem = React.memo(function ConversationItem({
       data-conversation-id={conversation.id}
       className={cn(
         "w-full text-left px-3 py-2 rounded-lg transition-all duration-150 group relative mx-2",
-        isActive && "bg-[rgba(139,92,246,0.10)] border-l-2 border-l-[var(--accent-purple)] border-y border-r border-y-transparent border-r-transparent",
+        isActive && "bg-[rgba(79,70,229,0.10)] border-l-2 border-l-[var(--accent-indigo)] border-y border-r border-y-transparent border-r-transparent",
         !isActive && "hover:bg-white/[0.05] border border-transparent",
         isNavigatingToThis && "opacity-50 cursor-wait",
       )}
@@ -337,7 +337,7 @@ export function ConversationSidebar({
         <div className="flex gap-2 items-center">
           <button
             onClick={onNewConversation}
-            className="flex items-center gap-1.5 h-7 px-3 rounded-md bg-[var(--accent-purple-muted)] text-[var(--accent-purple-hover)] text-xs font-medium hover:bg-[rgba(139,92,246,0.22)] border border-[rgba(139,92,246,0.15)] hover:border-[rgba(139,92,246,0.30)] transition-all duration-200"
+            className="flex items-center gap-1.5 h-7 px-3 rounded-md bg-[var(--accent-indigo-muted)] text-[var(--accent-indigo-hover)] text-xs font-medium hover:bg-[rgba(79,70,229,0.22)] border border-[rgba(79,70,229,0.15)] hover:border-[rgba(79,70,229,0.30)] transition-all duration-200"
           >
             <Plus size={14} weight="bold" />
             New
@@ -346,7 +346,7 @@ export function ConversationSidebar({
             onClick={() => setSearchExpanded(!searchExpanded)}
             className={cn(
               "h-7 w-7 flex items-center justify-center rounded-md flex-shrink-0 transition-colors",
-              searchExpanded ? "bg-[var(--surface-2)] text-[var(--accent-purple)]" : "text-[var(--text-muted)] hover:text-[var(--text-secondary)] hover:bg-[var(--surface-1)]"
+              searchExpanded ? "bg-[var(--surface-2)] text-[var(--accent-indigo)]" : "text-[var(--text-muted)] hover:text-[var(--text-secondary)] hover:bg-[var(--surface-1)]"
             )}
           >
             <MagnifyingGlass size={14} weight="regular" />
@@ -588,7 +588,7 @@ export function ConversationSidebar({
           href="/settings"
           className="flex items-center gap-2.5 px-2 py-1.5 rounded-md hover:bg-white/[0.05] transition-colors cursor-pointer group"
         >
-          <div className="w-7 h-7 rounded-full bg-[var(--accent-purple-muted)] flex items-center justify-center text-xs font-medium text-[var(--accent-purple-hover)]">
+          <div className="w-7 h-7 rounded-full bg-[var(--accent-indigo-muted)] flex items-center justify-center text-xs font-medium text-[var(--accent-indigo-hover)]">
             <User size={14} weight="regular" />
           </div>
           <div className="flex-1 min-w-0">

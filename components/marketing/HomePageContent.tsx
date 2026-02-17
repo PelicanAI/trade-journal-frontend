@@ -418,7 +418,7 @@ export default function HomePageContent() {
 
       <section className="cta-section">
         <div className="section-inner animate-on-scroll">
-          <h2>{t.marketing.cta.title1}<br />{t.marketing.cta.title2} <span style={{ color: 'var(--accent-purple)' }}>{t.marketing.cta.titleHighlight}</span></h2>
+          <h2>{t.marketing.cta.title1}<br />{t.marketing.cta.title2} <span style={{ color: 'var(--accent-indigo)' }}>{t.marketing.cta.titleHighlight}</span></h2>
           <p>{t.marketing.cta.subtitle}</p>
           <SignUpButton className="btn-primary">{t.marketing.cta.button}</SignUpButton>
         </div>

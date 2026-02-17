@@ -157,12 +157,12 @@ export function TradingSection({ settings, updateSetting }: TradingSectionProps)
             {settings.favorite_tickers.map((ticker) => (
               <div
                 key={ticker}
-                className="flex items-center gap-2 px-3 py-1 bg-purple-100 dark:bg-purple-900/20 text-purple-700 dark:text-purple-300 rounded-full"
+                className="flex items-center gap-2 px-3 py-1 bg-indigo-100 dark:bg-indigo-900/20 text-indigo-700 dark:text-indigo-300 rounded-full"
               >
                 <span className="font-medium">{ticker}</span>
                 <button
                   onClick={() => removeTicker(ticker)}
-                  className="hover:text-purple-900"
+                  className="hover:text-indigo-900"
                 >
                   ×
                 </button>

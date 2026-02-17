@@ -1,7 +1,7 @@
 /* Force contrast fixes with high specificity */
 .pelican-logo-header {
-  background-color: #7c3aed !important;
-  background: #7c3aed !important;
+  background-color: #4338CA !important;
+  background: #4338CA !important;
 }
 
 .pelican-logo-header span {
@@ -9,8 +9,8 @@
 }
 
 .pelican-logo-footer {
-  background-color: #7c3aed !important;
-  background: #7c3aed !important;
+  background-color: #4338CA !important;
+  background: #4338CA !important;
 }
 
 .pelican-logo-footer span {
@@ -41,15 +41,15 @@ a.signin-button-custom {
 }
 
 /* Adding more specific selectors to override inline styles */
-span[style*="backgroundColor: #7c3aed"] {
-  background-color: #7c3aed !important;
-  background: #7c3aed !important;
+span[style*="backgroundColor: #4338CA"] {
+  background-color: #4338CA !important;
+  background: #4338CA !important;
   color: #ffffff !important;
 }
 
-span[style*='backgroundColor: "#7c3aed"'] {
-  background-color: #7c3aed !important;
-  background: #7c3aed !important;
+span[style*='backgroundColor: "#4338CA"'] {
+  background-color: #4338CA !important;
+  background: #4338CA !important;
   color: #ffffff !important;
 }
 
@@ -59,9 +59,9 @@ span[style*="backgroundColor: #374151"] {
   color: #ffffff !important;
 }
 
-/* Force purple background on P logo spans */
+/* Force indigo background on P logo spans */
 span.purple-logo {
-  background-color: #7c3aed !important;
+  background-color: #4338CA !important;
   color: #ffffff !important;
 }
 

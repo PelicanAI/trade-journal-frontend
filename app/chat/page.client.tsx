@@ -41,11 +41,11 @@ const TradingContextPanel = dynamic(() => import("@/components/chat/trading-cont
 // Loading screen component for chat page
 function ChatLoadingScreen() {
   return (
-    <div className="flex h-screen items-center justify-center bg-gradient-to-br from-purple-950/20 via-black to-violet-950/20">
+    <div className="flex h-screen items-center justify-center bg-gradient-to-br from-indigo-950/20 via-black to-indigo-950/20">
       <div className="flex flex-col items-center gap-4">
         <div className="relative">
-          <div className="animate-spin h-12 w-12 border-4 border-purple-500 border-t-transparent rounded-full" />
-          <div className="absolute inset-0 animate-ping h-12 w-12 border-4 border-purple-500 border-t-transparent rounded-full opacity-20" />
+          <div className="animate-spin h-12 w-12 border-4 border-indigo-500 border-t-transparent rounded-full" />
+          <div className="absolute inset-0 animate-ping h-12 w-12 border-4 border-indigo-500 border-t-transparent rounded-full opacity-20" />
         </div>
         <span className="text-gray-400 text-sm font-medium">Loading Pelican AI...</span>
       </div>
@@ -515,9 +515,9 @@ export default function ChatPage() {
         <div id="main-content" className="flex h-[calc(100vh-3.5rem)] min-h-0 overflow-hidden relative chat-background-gradient chat-viewport-lock">
       {/* Futuristic background effects - only in dark mode */}
       {/* <div className="absolute inset-0 dark:block hidden pointer-events-none">
-        <div className="absolute inset-0 bg-gradient-to-br from-purple-950/10 via-black to-violet-950/10" />
+        <div className="absolute inset-0 bg-gradient-to-br from-indigo-950/10 via-black to-indigo-950/10" />
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(124,58,237,0.08),transparent_50%)]" />
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_80%,rgba(139,92,246,0.06),transparent_50%)]" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_80%,rgba(79,70,229,0.06),transparent_50%)]" />
         <div className="absolute inset-0 bg-[linear-gradient(rgba(124,58,237,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(124,58,237,0.02)_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_80%_80%_at_50%_50%,black,transparent)]" />
       </div> */}
       {/* Offline indicator */}
@@ -545,7 +545,7 @@ export default function ChatPage() {
             </button>
             <button
               onClick={handleNewConversation}
-              className="h-8 w-8 flex items-center justify-center rounded-md text-[var(--accent-purple)] hover:bg-[var(--accent-purple-muted)] transition-colors"
+              className="h-8 w-8 flex items-center justify-center rounded-md text-[var(--accent-indigo)] hover:bg-[var(--accent-indigo-muted)] transition-colors"
               title="New chat"
             >
               <PlusIcon size={16} weight="bold" />
@@ -649,7 +649,7 @@ export default function ChatPage() {
                 <div className="absolute inset-0 z-10 flex items-center justify-center px-4 sm:px-6 py-3">
                   <div className="w-full flex items-center justify-center gap-2 px-4 py-4 rounded-2xl border border-border bg-card text-sm text-muted-foreground min-h-[56px]">
                     <span>You&apos;ve used all your free questions.</span>
-                    <Link href="/pricing" className="text-purple-400 hover:text-purple-300 font-medium underline underline-offset-2 whitespace-nowrap">
+                    <Link href="/pricing" className="text-indigo-400 hover:text-indigo-300 font-medium underline underline-offset-2 whitespace-nowrap">
                       Upgrade to keep trading &rarr;
                     </Link>
                   </div>
@@ -697,10 +697,10 @@ export default function ChatPage() {
         <>
           {/* Resize handle */}
           <div
-            className="hidden lg:flex items-center justify-center w-1.5 cursor-col-resize group hover:bg-purple-500/10 active:bg-purple-500/20 transition-colors flex-shrink-0"
+            className="hidden lg:flex items-center justify-center w-1.5 cursor-col-resize group hover:bg-indigo-500/10 active:bg-indigo-500/20 transition-colors flex-shrink-0"
             onMouseDown={handleResizeStart}
           >
-            <div className="w-0.5 h-8 rounded-full bg-border group-hover:bg-purple-400/50 group-active:bg-purple-400 transition-colors" />
+            <div className="w-0.5 h-8 rounded-full bg-border group-hover:bg-indigo-400/50 group-active:bg-indigo-400 transition-colors" />
           </div>
           <div
             className="hidden lg:block h-full overflow-y-auto flex-shrink-0"

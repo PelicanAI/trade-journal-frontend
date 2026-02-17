@@ -167,7 +167,7 @@ export function applyTickerLinks(
           const base = match.split(/[-/]/)[0] || match
           if (highlighted.has(base)) return match
           highlighted.add(base)
-          return `<span class="ticker-link text-purple-400 hover:text-purple-300 underline decoration-purple-400/40 hover:decoration-purple-300 cursor-pointer font-medium" data-ticker="${match}">${match}</span>`
+          return `<span class="ticker-link text-indigo-400 hover:text-indigo-300 underline decoration-indigo-400/40 hover:decoration-indigo-300 cursor-pointer font-medium" data-ticker="${match}">${match}</span>`
         })
       })
       .join("")

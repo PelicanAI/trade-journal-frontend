@@ -84,16 +84,16 @@
   --sidebar-ring: oklch(0.45 0.01 240 / 0.3);
   /* ===== PELICAN DESIGN SYSTEM V3 TOKENS ===== */
 
-  /* Backgrounds — deep purple DNA, perceptibly lifted */
-  --bg-base: #16131f;
-  --bg-surface: #1f1c2a;
-  --bg-elevated: #2a2738;
+  /* Backgrounds — deep indigo DNA, perceptibly lifted */
+  --bg-base: #131318;
+  --bg-surface: #1a1a24;
+  --bg-elevated: #242430;
   --bg-overlay: rgba(10, 8, 16, 0.75);
 
-  /* Borders — purple tint on hover ties to accent */
+  /* Borders — indigo tint on hover ties to accent */
   --border-subtle: rgba(255, 255, 255, 0.09);
   --border-default: rgba(255, 255, 255, 0.13);
-  --border-hover: rgba(139, 92, 246, 0.25);
+  --border-hover: rgba(79, 70, 229, 0.25);
 
   /* Text — bright enough to pop on any surface */
   --text-primary: #f4f4f8;
@@ -102,10 +102,10 @@
   --text-disabled: #44445a;
 
   /* Accent */
-  --accent-primary: #8b5cf6;
+  --accent-primary: #4F46E5;
   --accent-hover: #9d74f7;
-  --accent-muted: rgba(139, 92, 246, 0.15);
-  --accent-glow: rgba(139, 92, 246, 0.12);
+  --accent-muted: rgba(79, 70, 229, 0.15);
+  --accent-glow: rgba(79, 70, 229, 0.12);
 
   /* Data Colors — ONLY for financial data */
   --data-positive: #22c55e;
@@ -120,7 +120,7 @@
 
   /* Shadows — visible depth + purple glow on hover */
   --shadow-card: 0 2px 8px rgba(0,0,0,0.3), 0 0 0 1px rgba(255,255,255,0.05);
-  --shadow-card-hover: 0 8px 32px rgba(0,0,0,0.5), 0 0 0 1px rgba(139,92,246,0.15), 0 0 30px rgba(139,92,246,0.08);
+  --shadow-card-hover: 0 8px 32px rgba(0,0,0,0.5), 0 0 0 1px rgba(79,70,229,0.15), 0 0 30px rgba(79,70,229,0.08);
   --shadow-elevated: 0 4px 12px rgba(0,0,0,0.5), 0 20px 60px rgba(0,0,0,0.3);
 
   /* Spacing */
@@ -138,25 +138,25 @@
 
 /* Fixed dark mode selector to work properly with next-themes */
 .dark {
-  /* Purple-tinted dark mode — more pop, purple undertone through layers */
+  /* Indigo-tinted dark mode — more pop, indigo undertone through layers */
   /* HSL format for shadcn/Tailwind compatibility */
-  --background: 260 24% 10%;             /* matches --bg-base #16131f */
+  --background: 235 20% 8%;             /* matches --bg-base #131318 */
   --foreground: 245 10% 95%;             /* bright, almost white */
-  --muted: 245 20% 16%;                  /* purple-tinted muted backgrounds */
+  --muted: 245 20% 16%;                  /* indigo-tinted muted backgrounds */
   --muted-foreground: 245 8% 55%;        /* muted text */
 
-  /* Layered surfaces - purple undertone, clear separation */
-  --surface-0: #16131f;                  /* = bg-base */
-  --surface-1: #1f1c2a;                  /* = bg-surface */
-  --surface-2: #2a2738;                  /* = bg-elevated */
+  /* Layered surfaces - indigo undertone, clear separation */
+  --surface-0: #131318;                  /* = bg-base */
+  --surface-1: #1a1a24;                  /* = bg-surface */
+  --surface-2: #242430;                  /* = bg-elevated */
   --surface-3: #332f45;                  /* extra step for deep nesting */
 
-  /* Borders — purple accent on interaction */
-  --border: 252 18% 24%;                 /* subtle purple-gray border for Tailwind */
-  --border-subtle: rgba(139, 92, 246, 0.10);
-  --border-hover: rgba(139, 92, 246, 0.25);
-  --border-active: rgba(139, 92, 246, 0.35);
-  --ring: 252 50% 50% / 0.5;             /* purple focus ring */
+  /* Borders — indigo accent on interaction */
+  --border: 235 18% 24%;                 /* subtle indigo-gray border for Tailwind */
+  --border-subtle: rgba(79, 70, 229, 0.10);
+  --border-hover: rgba(79, 70, 229, 0.25);
+  --border-active: rgba(79, 70, 229, 0.35);
+  --ring: 235 50% 50% / 0.5;             /* indigo focus ring */
 
   /* Text colors - bright for pop */
   --text-primary: #f4f4f8;
@@ -164,16 +164,16 @@
   --text-muted: #6a6a8c;
   --text-ghost: #46465e;
 
-  /* Accent purple */
-  --accent-purple: #8b5cf6;
-  --accent-purple-hover: #a78bfa;
-  --bg-sidebar: #13101d;
-  --accent-purple-muted: rgba(139, 92, 246, 0.15);
-  --accent-purple-subtle: rgba(139, 92, 246, 0.12);
+  /* Accent indigo */
+  --accent-indigo: #4F46E5;
+  --accent-indigo-hover: #818CF8;
+  --bg-sidebar: #111118;
+  --accent-indigo-muted: rgba(79, 70, 229, 0.15);
+  --accent-indigo-subtle: rgba(79, 70, 229, 0.12);
 
   /* Glows — stronger for more pop */
-  --glow-purple-soft: 0 0 20px rgba(139, 92, 246, 0.12);
-  --glow-purple-medium: 0 0 30px rgba(139, 92, 246, 0.18);
+  --glow-indigo-soft: 0 0 20px rgba(79, 70, 229, 0.12);
+  --glow-indigo-medium: 0 0 30px rgba(79, 70, 229, 0.18);
 
   /* Brand - Vibrant Purple */
   --primary: oklch(0.60 0.25 280);
@@ -186,7 +186,7 @@
   --destructive-foreground: oklch(0.98 0.002 280);
   --input: oklch(0.12 0.01 280);
 
-  /* Charts with purple theme */
+  /* Charts with indigo theme */
   --chart-1: oklch(0.60 0.25 280);
   --chart-2: oklch(0.65 0.22 290);
   --chart-3: oklch(0.55 0.25 25);
@@ -199,13 +199,13 @@
   --popover: 245 20% 15%;               /* ~bg-elevated */
   --popover-foreground: 245 10% 95%;     /* bright text */
   --sidebar: 260 24% 10%;                /* ~bg-base */
-  --sidebar-foreground: 252 10% 92%;     /* light text */
+  --sidebar-foreground: 235 10% 92%;     /* light text */
   --sidebar-primary: oklch(0.60 0.25 280);
   --sidebar-primary-foreground: oklch(0.98 0.002 280);
-  --sidebar-accent: rgba(139, 92, 246, 0.12);
+  --sidebar-accent: rgba(79, 70, 229, 0.12);
   --sidebar-accent-foreground: oklch(0.95 0.004 280);
-  --sidebar-border: rgba(139, 92, 246, 0.08);
-  --sidebar-ring: rgba(139, 92, 246, 0.5);
+  --sidebar-border: rgba(79, 70, 229, 0.08);
+  --sidebar-ring: rgba(79, 70, 229, 0.5);
 }
 
 /* Pro Dark theme overrides */
@@ -369,7 +369,7 @@
 
   /* Focus indicators for accessibility */
   *:focus-visible {
-    outline: 2px solid rgba(139, 92, 246, 0.5);
+    outline: 2px solid rgba(79, 70, 229, 0.5);
     outline-offset: 2px;
     border-radius: 4px;
   }
@@ -379,15 +379,15 @@
   }
 
   button:focus-visible {
-    outline: 2px solid rgba(139, 92, 246, 0.5);
+    outline: 2px solid rgba(79, 70, 229, 0.5);
     outline-offset: 2px;
   }
 
   input:focus-visible,
   textarea:focus-visible {
-    outline: 2px solid rgba(139, 92, 246, 0.5);
+    outline: 2px solid rgba(79, 70, 229, 0.5);
     outline-offset: -2px;
-    border-color: rgba(139, 92, 246, 0.5);
+    border-color: rgba(79, 70, 229, 0.5);
   }
 
   /* Prevent scroll chaining without blocking wheel scrolling */
@@ -480,14 +480,14 @@
     word-break: break-word;
   }
 
-  /* Enhanced selection styles with purple theme */
+  /* Enhanced selection styles with indigo theme */
   ::selection {
-    background-color: rgba(168, 85, 247, 0.2);
+    background-color: rgba(99, 102, 241, 0.2);
     color: inherit;
   }
 
   .dark ::selection {
-    background-color: rgba(168, 85, 247, 0.3);
+    background-color: rgba(99, 102, 241, 0.3);
     color: inherit;
   }
 
@@ -548,12 +548,12 @@
     }
   }
 
-  /* Chat background gradient - VISIBLE purple aurora pool of light */
+  /* Chat background gradient - VISIBLE indigo aurora pool of light */
   .dark .chat-background-gradient {
     background:
-      radial-gradient(ellipse at 50% 20%, rgba(139, 92, 246, 0.12) 0%, transparent 55%),
-      radial-gradient(ellipse at 30% 60%, rgba(124, 58, 237, 0.06) 0%, transparent 45%),
-      radial-gradient(ellipse at 75% 80%, rgba(139, 92, 246, 0.08) 0%, transparent 40%),
+      radial-gradient(ellipse at 50% 20%, rgba(79, 70, 229, 0.12) 0%, transparent 55%),
+      radial-gradient(ellipse at 30% 60%, rgba(67, 56, 202, 0.06) 0%, transparent 45%),
+      radial-gradient(ellipse at 75% 80%, rgba(79, 70, 229, 0.08) 0%, transparent 40%),
       hsl(var(--background));
   }
 
@@ -630,7 +630,7 @@
 
   /* ========== V2 Visual Polish Utilities ========== */
 
-  /* Card with top highlight and purple glow on hover */
+  /* Card with top highlight and indigo glow on hover */
   .pelican-card {
     position: relative;
     background: var(--bg-surface);
@@ -661,7 +661,7 @@
   }
 
   .pelican-card:hover {
-    border-color: rgba(139, 92, 246, 0.25);
+    border-color: rgba(79, 70, 229, 0.25);
     box-shadow: var(--shadow-card-hover);
     transform: translateY(-1px);
   }
@@ -677,13 +677,13 @@
 
   /* Pelican logo breathing glow */
   .pelican-logo-glow {
-    filter: drop-shadow(0 0 20px rgba(139, 92, 246, 0.15));
+    filter: drop-shadow(0 0 20px rgba(79, 70, 229, 0.15));
     animation: logo-breathe 4s ease-in-out infinite;
   }
 
   @keyframes logo-breathe {
-    0%, 100% { filter: drop-shadow(0 0 20px rgba(139, 92, 246, 0.10)); }
-    50% { filter: drop-shadow(0 0 30px rgba(139, 92, 246, 0.20)); }
+    0%, 100% { filter: drop-shadow(0 0 20px rgba(79, 70, 229, 0.10)); }
+    50% { filter: drop-shadow(0 0 30px rgba(79, 70, 229, 0.20)); }
   }
 
   /* Stat value that glows green or red */
@@ -708,7 +708,7 @@
 
   /* Subtle gradient backgrounds for section headers */
   .section-header-gradient {
-    background: linear-gradient(135deg, rgba(139, 92, 246, 0.08) 0%, transparent 60%);
+    background: linear-gradient(135deg, rgba(79, 70, 229, 0.08) 0%, transparent 60%);
   }
 
   /* Animated skeleton for loading states */
@@ -766,7 +766,7 @@
 
   /* Subtle border utility for professional UI */
   .border-subtle {
-    border-color: rgba(139, 92, 246, 0.06);
+    border-color: rgba(79, 70, 229, 0.06);
   }
 
   /* Safe area padding for mobile (notch/bottom bar) */

@@ -23,21 +23,21 @@ export function AccountSection({ user, settings, supabase }: AccountSectionProps
     <>
       <div className="space-y-6">
         {!user && (
-          <Card className="border-purple-200 bg-purple-50/50">
+          <Card className="border-indigo-200 bg-indigo-50/50">
             <CardContent className="pt-6">
               <div className="flex items-start gap-4">
                 <div className="flex-shrink-0">
-                  <User className="h-8 w-8 text-purple-600" />
+                  <User className="h-8 w-8 text-indigo-600" />
                 </div>
                 <div className="flex-1">
-                  <h3 className="font-semibold text-purple-900 mb-2">
+                  <h3 className="font-semibold text-indigo-900 mb-2">
                     Sign in to save your settings
                   </h3>
-                  <p className="text-sm text-purple-700 mb-4">
+                  <p className="text-sm text-indigo-700 mb-4">
                     You&apos;re currently using Pelican AI in guest mode. Create an account to save your preferences and access additional features.
                   </p>
                   <div className="flex gap-3">
-                    <Button asChild size="sm" className="bg-gradient-to-r from-purple-600 to-purple-700">
+                    <Button asChild size="sm" className="bg-gradient-to-r from-indigo-600 to-indigo-700">
                       <Link href="/auth/signup">Create Account</Link>
                     </Button>
                     <Button asChild variant="outline" size="sm">

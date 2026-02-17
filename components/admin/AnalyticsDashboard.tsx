@@ -209,7 +209,7 @@ export function AnalyticsDashboard() {
       </div>
 
       {/* MRR — prominent card with accent border */}
-      <Card className="border-purple-500/30 shadow-[0_0_15px_rgba(168,85,247,0.08)]">
+      <Card className="border-indigo-500/30 shadow-[0_0_15px_rgba(99,102,241,0.08)]">
         <CardContent className="flex items-center gap-4 py-6">
           <div className="rounded-lg bg-emerald-500/10 p-3">
             <DollarSign className="size-6 text-emerald-600" />

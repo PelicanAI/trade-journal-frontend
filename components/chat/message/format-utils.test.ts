@@ -122,12 +122,12 @@ describe("formatLine", () => {
 })
 
 describe("applyTickerLinks", () => {
-  it("applies purple color only to ticker links", () => {
+  it("applies indigo color only to ticker links", () => {
     const html = '<strong class="font-semibold">Summary:</strong> AAPL is up'
     const result = applyTickerLinks(html, ["AAPL"])
-    expect(result).toContain("text-purple-400")
+    expect(result).toContain("text-indigo-400")
     expect(result).toContain("ticker-link")
-    // The strong tag should NOT have purple
+    // The strong tag should NOT have indigo
     expect(result).toMatch(/<strong class="font-semibold">/)
   })
 })

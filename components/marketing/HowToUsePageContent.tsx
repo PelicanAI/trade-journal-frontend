@@ -173,7 +173,7 @@ export default function HowToUsePageContent() {
           <h2>
             Ready to Trade
             <br />
-            <span style={{ color: 'var(--accent-purple)' }}>Smarter?</span>
+            <span style={{ color: 'var(--accent-indigo)' }}>Smarter?</span>
           </h2>
           <p>Join traders and investors who are already using Pelican.</p>
           <SignUpButton className="btn-primary">

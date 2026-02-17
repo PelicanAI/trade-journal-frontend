@@ -48,7 +48,7 @@
 }
 
 .privacy-header h1 .highlight {
-  color: var(--accent-purple);
+  color: var(--accent-indigo);
 }
 
 .privacy-meta {
@@ -95,8 +95,8 @@
 }
 
 .privacy-section-number {
-  background: var(--accent-purple-dim);
-  color: var(--accent-purple);
+  background: var(--accent-indigo-dim);
+  color: var(--accent-indigo);
   font-family: var(--font-jetbrains), monospace;
   font-size: 0.85rem;
   padding: 0.25rem 0.75rem;
@@ -127,7 +127,7 @@
 .privacy-notice {
   background: var(--bg-secondary);
   border: 1px solid var(--border-color);
-  border-left: 3px solid var(--accent-purple);
+  border-left: 3px solid var(--accent-indigo);
   padding: 1.5rem;
   margin: 1.5rem 0;
 }
@@ -155,7 +155,7 @@
   content: '•';
   position: absolute;
   left: 0;
-  color: var(--accent-purple);
+  color: var(--accent-indigo);
 }
 
 .privacy-list strong {
@@ -214,7 +214,7 @@
 }
 
 .privacy-contact a {
-  color: var(--accent-purple);
+  color: var(--accent-indigo);
   text-decoration: none;
 }
 
@@ -261,7 +261,7 @@
 }
 
 .privacy-footer a {
-  color: var(--accent-purple);
+  color: var(--accent-indigo);
   text-decoration: none;
 }
 

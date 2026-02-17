@@ -48,7 +48,7 @@
 }
 
 .terms-header h1 .highlight {
-  color: var(--accent-purple);
+  color: var(--accent-indigo);
 }
 
 .terms-meta {
@@ -95,8 +95,8 @@
 }
 
 .terms-section-number {
-  background: var(--accent-purple-dim);
-  color: var(--accent-purple);
+  background: var(--accent-indigo-dim);
+  color: var(--accent-indigo);
   font-family: var(--font-jetbrains), monospace;
   font-size: 0.85rem;
   padding: 0.25rem 0.75rem;
@@ -127,7 +127,7 @@
 .terms-notice {
   background: var(--bg-secondary);
   border: 1px solid var(--border-color);
-  border-left: 3px solid var(--accent-purple);
+  border-left: 3px solid var(--accent-indigo);
   padding: 1.5rem;
   margin: 1.5rem 0;
 }
@@ -177,7 +177,7 @@
   content: '•';
   position: absolute;
   left: 0;
-  color: var(--accent-purple);
+  color: var(--accent-indigo);
 }
 
 .terms-list-roman {
@@ -212,7 +212,7 @@
 }
 
 .terms-contact a {
-  color: var(--accent-purple);
+  color: var(--accent-indigo);
   text-decoration: none;
 }
 
@@ -259,7 +259,7 @@
 }
 
 .terms-footer a {
-  color: var(--accent-purple);
+  color: var(--accent-indigo);
   text-decoration: none;
 }
 
@@ -269,8 +269,8 @@
 
 /* Acknowledgment Box */
 .terms-acknowledgment {
-  background: linear-gradient(135deg, var(--bg-secondary) 0%, rgba(168, 85, 247, 0.05) 100%);
-  border: 2px solid var(--accent-purple);
+  background: linear-gradient(135deg, var(--bg-secondary) 0%, rgba(99, 102, 241, 0.05) 100%);
+  border: 2px solid var(--accent-indigo);
   padding: 2rem;
   margin: 2rem 0;
 }
@@ -280,7 +280,7 @@
   font-size: 1.25rem;
   letter-spacing: 0.05em;
   margin-bottom: 1rem;
-  color: var(--accent-purple);
+  color: var(--accent-indigo);
 }
 
 .terms-acknowledgment ul {
@@ -341,11 +341,11 @@
 }
 
 .terms-toc-list a:hover {
-  color: var(--accent-purple);
+  color: var(--accent-indigo);
 }
 
 .terms-toc-list .toc-number {
-  color: var(--accent-purple);
+  color: var(--accent-indigo);
   margin-right: 0.5rem;
 }
 

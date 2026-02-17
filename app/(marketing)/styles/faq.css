@@ -46,7 +46,7 @@
 }
 
 .faq-header h1 .highlight {
-  color: var(--accent-purple);
+  color: var(--accent-indigo);
 }
 
 .faq-header p {
@@ -119,7 +119,7 @@
 
 .faq-chevron {
   flex-shrink: 0;
-  color: var(--accent-purple);
+  color: var(--accent-indigo);
   transition: transform 0.3s ease;
 }
 
@@ -181,7 +181,7 @@
 
 
 .faq-footer a {
-  color: var(--accent-purple);
+  color: var(--accent-indigo);
   text-decoration: none;
 }
 

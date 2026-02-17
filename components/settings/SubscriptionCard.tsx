@@ -24,13 +24,13 @@ export function SubscriptionCard() {
         <div className="space-y-3">
           <Label>Current Plan</Label>
           {isFounder ? (
-            <div className="flex items-center gap-3 p-4 bg-gradient-to-r from-purple-500/10 to-orange-500/10 border border-purple-500/20 rounded-lg">
-              <Crown className="w-5 h-5 text-purple-400 flex-shrink-0" />
+            <div className="flex items-center gap-3 p-4 bg-gradient-to-r from-indigo-500/10 to-orange-500/10 border border-indigo-500/20 rounded-lg">
+              <Crown className="w-5 h-5 text-indigo-400 flex-shrink-0" />
               <div>
-                <p className="font-semibold text-purple-400">
+                <p className="font-semibold text-indigo-400">
                   Founder Account
                 </p>
-                <p className="text-sm text-purple-300/80">
+                <p className="text-sm text-indigo-300/80">
                   Unlimited Access - Thank you for your support! 🎉
                 </p>
               </div>
