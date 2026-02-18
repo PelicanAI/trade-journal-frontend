@@ -51,7 +51,7 @@ export default function RootLayout({
         <meta name="mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-        <meta name="theme-color" content="#060910" />
+        <meta name="theme-color" content="#2e2e2e" />
       </head>
       <body className={`${GeistSans.className} antialiased bg-background ${GeistSans.variable} ${GeistMono.variable}`}>
         <ReferralCapture />
