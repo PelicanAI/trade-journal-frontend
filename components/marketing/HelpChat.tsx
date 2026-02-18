@@ -83,7 +83,7 @@ export default function HelpChat({ logoUrl = '/pelican-logo-transparent.webp' }:
     // Convert email addresses to clickable links
     return content.replace(
       /support@pelicantrading\.ai/g,
-      '<a href="mailto:support@pelicantrading.ai" style="color: #3b82f6; text-decoration: underline;">support@pelicantrading.ai</a>'
+      '<a href="mailto:support@pelicantrading.ai" style="color: var(--primary); text-decoration: underline;">support@pelicantrading.ai</a>'
     );
   };
 
@@ -100,7 +100,7 @@ export default function HelpChat({ logoUrl = '/pelican-logo-transparent.webp' }:
           width: '60px',
           height: '60px',
           borderRadius: '50%',
-          background: '#3b82f6',
+          background: 'var(--primary)',
           border: 'none',
           cursor: 'pointer',
           display: 'flex',
@@ -116,11 +116,11 @@ export default function HelpChat({ logoUrl = '/pelican-logo-transparent.webp' }:
         className="help-chat-btn"
       >
         {isOpen ? (
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#060910" strokeWidth="2.5">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--background)" strokeWidth="2.5">
             <path d="M18 6L6 18M6 6l12 12" />
           </svg>
         ) : (
-          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#060910" strokeWidth="2">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--background)" strokeWidth="2">
             <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z" />
           </svg>
         )}
@@ -137,7 +137,7 @@ export default function HelpChat({ logoUrl = '/pelican-logo-transparent.webp' }:
             maxWidth: 'calc(100vw - 48px)',
             height: '500px',
             maxHeight: 'calc(100vh - 140px)',
-            background: '#0B0F18',
+            background: 'var(--card)',
             border: '1px solid rgba(59, 130, 246, 0.3)',
             borderRadius: '12px',
             display: 'flex',
@@ -152,7 +152,7 @@ export default function HelpChat({ logoUrl = '/pelican-logo-transparent.webp' }:
           <div
             style={{
               padding: '16px 20px',
-              background: '#0E1219',
+              background: 'var(--popover)',
               borderBottom: '1px solid rgba(148, 163, 184, 0.1)',
               display: 'flex',
               alignItems: 'center',
@@ -171,14 +171,14 @@ export default function HelpChat({ logoUrl = '/pelican-logo-transparent.webp' }:
                 fontFamily: "'Bebas Neue', sans-serif",
                 fontSize: '18px',
                 letterSpacing: '0.05em',
-                color: '#f1f5f9'
+                color: 'var(--foreground)'
               }}>
                 Pelican Help
               </div>
               <div style={{ 
                 fontFamily: "'JetBrains Mono', monospace",
                 fontSize: '11px',
-                color: '#22c55e',
+                color: 'var(--data-positive)',
                 textTransform: 'uppercase',
                 letterSpacing: '0.05em'
               }}>
@@ -202,7 +202,7 @@ export default function HelpChat({ logoUrl = '/pelican-logo-transparent.webp' }:
             {messages.length === 0 && (
               <div
                 style={{
-                  background: '#0E1219',
+                  background: 'var(--popover)',
                   padding: '16px',
                   borderRadius: '8px',
                   border: '1px solid rgba(148, 163, 184, 0.1)',
@@ -210,14 +210,14 @@ export default function HelpChat({ logoUrl = '/pelican-logo-transparent.webp' }:
               >
                 <div style={{ 
                   fontSize: '14px', 
-                  color: '#f1f5f9',
+                  color: 'var(--foreground)',
                   marginBottom: '8px'
                 }}>
                   👋 Hi! I&apos;m the Pelican assistant.
                 </div>
                 <div style={{ 
                   fontSize: '13px', 
-                  color: '#94a3b8',
+                  color: 'var(--muted-foreground)',
                   lineHeight: '1.5'
                 }}>
                   Ask me anything about Pelican Trading—features, pricing, data coverage, or how it works.
@@ -238,8 +238,8 @@ export default function HelpChat({ logoUrl = '/pelican-logo-transparent.webp' }:
                   style={{
                     padding: '12px 16px',
                     borderRadius: msg.type === 'user' ? '12px 12px 4px 12px' : '12px 12px 12px 4px',
-                    background: msg.type === 'user' ? '#3b82f6' : '#0E1219',
-                    color: msg.type === 'user' ? '#060910' : '#f1f5f9',
+                    background: msg.type === 'user' ? 'var(--primary)' : 'var(--popover)',
+                    color: msg.type === 'user' ? 'var(--primary-foreground)' : 'var(--foreground)',
                     fontSize: '14px',
                     lineHeight: '1.5',
                     border: msg.type === 'user' ? 'none' : '1px solid rgba(148, 163, 184, 0.1)',
@@ -258,7 +258,7 @@ export default function HelpChat({ logoUrl = '/pelican-logo-transparent.webp' }:
                   alignSelf: 'flex-start',
                   padding: '12px 16px',
                   borderRadius: '12px 12px 12px 4px',
-                  background: '#0E1219',
+                  background: 'var(--popover)',
                   border: '1px solid rgba(148, 163, 184, 0.1)',
                 }}
               >
@@ -270,7 +270,7 @@ export default function HelpChat({ logoUrl = '/pelican-logo-transparent.webp' }:
                         width: '8px',
                         height: '8px',
                         borderRadius: '50%',
-                        background: '#3b82f6',
+                        background: 'var(--primary)',
                         animation: 'bounce 1.4s infinite ease-in-out both',
                         animationDelay: `${i * 0.16}s`,
                       }}
@@ -288,7 +288,7 @@ export default function HelpChat({ logoUrl = '/pelican-logo-transparent.webp' }:
             style={{
               padding: '16px',
               borderTop: '1px solid rgba(148, 163, 184, 0.1)',
-              background: '#0E1219',
+              background: 'var(--popover)',
             }}
           >
             <form 
@@ -321,10 +321,10 @@ export default function HelpChat({ logoUrl = '/pelican-logo-transparent.webp' }:
                 style={{
                   flex: 1,
                   padding: '12px 16px',
-                  background: '#0B0F18',
+                  background: 'var(--card)',
                   border: '1px solid rgba(148, 163, 184, 0.2)',
                   borderRadius: '8px',
-                  color: '#f1f5f9',
+                  color: 'var(--foreground)',
                   fontSize: '14px',
                   fontFamily: "'IBM Plex Sans', sans-serif",
                   outline: 'none',
@@ -342,7 +342,7 @@ export default function HelpChat({ logoUrl = '/pelican-logo-transparent.webp' }:
                 disabled={isLoading || !input.trim()}
                 style={{
                   padding: '12px 16px',
-                  background: isLoading || !input.trim() ? '#64748b' : '#3b82f6',
+                  background: isLoading || !input.trim() ? 'var(--muted-foreground)' : 'var(--primary)',
                   border: 'none',
                   borderRadius: '8px',
                   cursor: isLoading || !input.trim() ? 'not-allowed' : 'pointer',
@@ -352,7 +352,7 @@ export default function HelpChat({ logoUrl = '/pelican-logo-transparent.webp' }:
                   justifyContent: 'center',
                 }}
               >
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#060910" strokeWidth="2.5">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--background)" strokeWidth="2.5">
                   <path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z" />
                 </svg>
               </button>
@@ -368,7 +368,7 @@ export default function HelpChat({ logoUrl = '/pelican-logo-transparent.webp' }:
                 background: 'transparent',
                 border: '1px solid rgba(59, 130, 246, 0.3)',
                 borderRadius: '6px',
-                color: '#94a3b8',
+                color: 'var(--muted-foreground)',
                 fontSize: '12px',
                 fontFamily: "'JetBrains Mono', monospace",
                 cursor: 'pointer',
@@ -396,8 +396,8 @@ export default function HelpChat({ logoUrl = '/pelican-logo-transparent.webp' }:
         }
         .help-chat-support-btn:hover {
           background: rgba(59, 130, 246, 0.1);
-          border-color: #3b82f6;
-          color: #f1f5f9;
+          border-color: var(--primary);
+          color: var(--foreground);
         }
       `}</style>
     </>

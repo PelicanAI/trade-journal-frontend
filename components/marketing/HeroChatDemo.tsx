@@ -24,7 +24,7 @@ const DEMO_SCRIPT = [
 // Shared styles
 const LOGO = '/pelican-logo-transparent.webp';
 const avatarStyle: CSSProperties = { borderRadius: 6, flexShrink: 0, marginTop: 2 };
-const msgText: CSSProperties = { flex: 1, minWidth: 0, fontSize: 14, lineHeight: 1.625, color: '#f1f5f9' };
+const msgText: CSSProperties = { flex: 1, minWidth: 0, fontSize: 14, lineHeight: 1.625, color: 'var(--foreground)' };
 const assistantRow: CSSProperties = { display: 'flex', gap: 10, alignItems: 'flex-start' };
 const divider = '1px solid rgba(148,163,184,0.1)';
 
@@ -123,7 +123,7 @@ export default function HeroChatDemo() {
   return (
     <div style={{
       position: 'relative', width: '100%', maxWidth: 560, margin: '0 auto',
-      borderRadius: 16, overflow: 'hidden', background: '#060910',
+      borderRadius: 16, overflow: 'hidden', background: 'var(--background)',
       border: '1px solid rgba(59,130,246,0.25)',
       boxShadow: '0 0 80px rgba(59,130,246,0.12), 0 25px 50px rgba(0,0,0,0.5)',
       fontFamily: 'var(--font-geist-sans), system-ui, -apple-system, sans-serif',
@@ -142,14 +142,14 @@ export default function HeroChatDemo() {
       </div>
 
       {/* Header */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '12px 16px', borderBottom: divider, background: '#0B0F18' }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '12px 16px', borderBottom: divider, background: 'var(--card)' }}>
         <div style={{ position: 'relative', flexShrink: 0 }}>
           <Image src={LOGO} alt="Pelican" width={28} height={28} style={{ borderRadius: 8 }} />
-          <div style={{ position: 'absolute', bottom: -2, right: -2, width: 10, height: 10, borderRadius: '50%', background: '#22c55e', border: '2px solid #0B0F18' }} />
+          <div style={{ position: 'absolute', bottom: -2, right: -2, width: 10, height: 10, borderRadius: '50%', background: 'var(--data-positive)', border: '2px solid var(--card)' }} />
         </div>
         <div>
-          <div style={{ fontSize: 15, fontWeight: 600, color: '#f1f5f9', lineHeight: 1.2 }}>Pelican AI</div>
-          <div style={{ fontSize: 11, color: '#22c55e', letterSpacing: '0.04em' }}>Online</div>
+          <div style={{ fontSize: 15, fontWeight: 600, color: 'var(--foreground)', lineHeight: 1.2 }}>Pelican AI</div>
+          <div style={{ fontSize: 11, color: 'var(--data-positive)', letterSpacing: '0.04em' }}>Online</div>
         </div>
       </div>
 
@@ -161,7 +161,7 @@ export default function HeroChatDemo() {
         {messages.map((msg, i) =>
           msg.role === 'user' ? (
             <div key={i} style={{ display: 'flex', justifyContent: 'flex-end' }}>
-              <div style={{ maxWidth: '85%', fontSize: 14, lineHeight: 1.625, color: '#f1f5f9' }}>{msg.content}</div>
+              <div style={{ maxWidth: '85%', fontSize: 14, lineHeight: 1.625, color: 'var(--foreground)' }}>{msg.content}</div>
             </div>
           ) : (
             <AssistantRow key={i}><div style={msgText}>{msg.content}</div></AssistantRow>
@@ -172,7 +172,7 @@ export default function HeroChatDemo() {
             <div style={{ display: 'flex', gap: 4, padding: '8px 0' }}>
               {[0, 1, 2].map(d => (
                 <div key={d} style={{
-                  width: 7, height: 7, borderRadius: '50%', background: '#3B82F6',
+                  width: 7, height: 7, borderRadius: '50%', background: 'var(--primary)',
                   animation: 'heroDotBounce 0.6s infinite ease-in-out', animationDelay: `${d * 0.15}s`,
                 }} />
               ))}
@@ -193,15 +193,15 @@ export default function HeroChatDemo() {
           boxShadow: inputFocused ? '0 0 0 3px rgba(59,130,246,0.1), 0 2px 8px rgba(0,0,0,0.2)' : '0 2px 8px rgba(0,0,0,0.2)',
           transition: 'border-color 0.2s, box-shadow 0.2s',
         }}>
-          <div style={{ flex: 1, fontSize: 14, lineHeight: 1.5, color: inputText ? '#f1f5f9' : '#64748b', minHeight: 22, display: 'flex', alignItems: 'center', wordBreak: 'break-word' as const }}>
+          <div style={{ flex: 1, fontSize: 14, lineHeight: 1.5, color: inputText ? 'var(--foreground)' : 'var(--muted-foreground)', minHeight: 22, display: 'flex', alignItems: 'center', wordBreak: 'break-word' as const }}>
             {inputText || 'Ask anything about markets...'}
           </div>
           <div style={{
             width: 36, height: 36, borderRadius: '50%', flexShrink: 0, transition: 'background 0.2s',
-            background: inputText ? '#3B82F6' : 'rgba(148,163,184,0.15)',
+            background: inputText ? 'var(--primary)' : 'rgba(148,163,184,0.15)',
             display: 'flex', alignItems: 'center', justifyContent: 'center',
           }}>
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke={inputText ? '#060910' : '#64748b'} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke={inputText ? 'var(--background)' : 'var(--muted-foreground)'} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
               <path d="M22 2L11 13" /><path d="M22 2L15 22L11 13L2 9L22 2Z" />
             </svg>
           </div>
