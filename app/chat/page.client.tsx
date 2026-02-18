@@ -33,6 +33,7 @@ import { ChatCreditCounter } from "@/components/chat/credit-counter"
 import { useTrades } from "@/hooks/use-trades"
 import { useWatchlist } from "@/hooks/use-watchlist"
 import { useSavedInsights } from "@/hooks/use-saved-insights"
+import { OnboardingSkipBanner } from "@/components/onboarding/skip-banner"
 import type { ActionTrade } from "@/types/action-buttons"
 
 const SettingsModal = dynamic(() => import("@/components/settings-modal").then(m => ({ default: m.SettingsModal })))
@@ -299,6 +300,24 @@ export default function ChatPage() {
         setTermsChecked(true)
       })
   }, [user, termsChecked, router])
+
+  // One-time onboarding survey check (runs after terms are verified)
+  const [surveyChecked, setSurveyChecked] = useState(false)
+  useEffect(() => {
+    if (!user || !termsChecked || surveyChecked) return
+    const supabase = createClient()
+    supabase
+      .from("trader_survey")
+      .select("completed_at, skipped")
+      .eq("user_id", user.id)
+      .single()
+      .then(({ data }) => {
+        if (!data || (!data.completed_at && !data.skipped)) {
+          router.replace("/onboarding")
+        }
+        setSurveyChecked(true)
+      })
+  }, [user, termsChecked, surveyChecked, router])
 
   const [settingsOpen, setSettingsOpen] = useState(false)
   const [trialExhaustedOpen, setTrialExhaustedOpen] = useState(false)
@@ -692,6 +711,7 @@ export default function ChatPage() {
         <div className="flex-1 flex flex-col overflow-hidden">
           <div className="flex-1 overflow-y-auto overscroll-none pb-[120px] md:pb-0 chat-scroll-area">
             <div className="max-w-5xl mx-auto w-full px-4 sm:px-6">
+              <OnboardingSkipBanner />
               <ChatContainer
                 messages={messages}
                 isLoading={chatLoading}

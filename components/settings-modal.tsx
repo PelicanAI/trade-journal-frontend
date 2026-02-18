@@ -2,10 +2,12 @@
 
 import { useState, useEffect } from "react"
 import { useTheme } from "next-themes"
+import { useRouter } from "next/navigation"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { Switch } from "@/components/ui/switch"
 import { Label } from "@/components/ui/label"
 import { Separator } from "@/components/ui/separator"
+import { User } from "@phosphor-icons/react"
 
 interface SettingsModalProps {
   open: boolean
@@ -14,6 +16,7 @@ interface SettingsModalProps {
 
 export function SettingsModal({ open, onOpenChange }: SettingsModalProps) {
   const { theme } = useTheme()
+  const router = useRouter()
   const [proDark, setProDark] = useState(false)
 
   // Load Pro Dark setting from localStorage
@@ -67,6 +70,19 @@ export function SettingsModal({ open, onOpenChange }: SettingsModalProps) {
             </div>
 
             {!isDarkMode && <p className="text-xs text-[var(--text-muted)]">Pro Dark is only available in dark mode</p>}
+          </div>
+
+          <Separator className="bg-[var(--border-subtle)]" />
+
+          <div className="space-y-4">
+            <h3 className="text-sm font-medium text-[var(--foreground)]">Account</h3>
+            <button
+              onClick={() => { onOpenChange(false); router.push('/profile') }}
+              className="flex items-center gap-2 text-sm text-[var(--text-secondary)] hover:text-[var(--foreground)] transition-colors"
+            >
+              <User weight="regular" className="w-4 h-4" />
+              Profile
+            </button>
           </div>
 
           <Separator className="bg-[var(--border-subtle)]" />
