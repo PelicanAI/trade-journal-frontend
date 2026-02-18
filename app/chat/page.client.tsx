@@ -717,12 +717,13 @@ export default function ChatPage() {
           </div>
 
           <div className={cn(
-            "bg-background border-t border-[var(--border-subtle)]",
             "fixed bottom-0 left-0 right-0 md:relative md:bottom-auto",
-            "chat-input-fixed md:pb-4",
+            "chat-input-fixed",
             "z-40"
           )}>
-            <div className="max-w-5xl mx-auto w-full px-4 sm:px-6 py-3 relative">
+            <div className="h-6 bg-gradient-to-t from-[var(--bg-base)] to-transparent pointer-events-none" />
+            <div className="bg-[var(--bg-base)] px-4 sm:px-6 pb-4">
+            <div className="max-w-5xl mx-auto w-full relative">
               {outOfCredits && (
                 <div className="absolute inset-0 z-10 flex items-center justify-center px-4 sm:px-6 py-3">
                   <div className="w-full flex items-center justify-center gap-2 px-4 py-4 rounded-2xl border border-border bg-card text-sm text-muted-foreground min-h-[56px]">
@@ -765,6 +766,7 @@ export default function ChatPage() {
                 pendingAttachments={fileUpload.pendingAttachments}
                 onRetryAttachment={fileUpload.handleRetryUpload}
               />
+            </div>
             </div>
           </div>
         </div>
