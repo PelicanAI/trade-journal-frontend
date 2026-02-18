@@ -18,8 +18,8 @@ import { buildScanPrompt } from "@/lib/journal/build-scan-prompt"
 import { PageHeader, PelicanButton, pageEnter, tabContent, backdrop } from "@/components/ui/pelican"
 import { Plus, ChartBar, Funnel } from "@phosphor-icons/react"
 
-const DashboardTab = dynamicImport(
-  () => import("@/components/journal/dashboard-tab").then((m) => ({ default: m.DashboardTab })),
+const PositionsDashboardTab = dynamicImport(
+  () => import("@/components/positions/positions-dashboard-tab").then((m) => ({ default: m.PositionsDashboardTab })),
   { ssr: false }
 )
 
@@ -63,12 +63,12 @@ export default function JournalPage() {
   const { stats, equityCurve, isLoading: statsLoading } = useTradeStats()
   const { openWithPrompt } = usePelicanPanelContext()
 
-  // Get live quotes for all open positions
-  const openTickers = trades
+  // Get live quotes for all open positions (ticker:asset_type format for Polygon routing)
+  const openTickersWithTypes = trades
     .filter(t => t.status === 'open')
-    .map(t => t.ticker)
+    .map(t => `${t.ticker}:${t.asset_type}`)
     .filter((v, i, a) => a.indexOf(v) === i) // dedupe
-  const { quotes } = useLiveQuotes(openTickers)
+  const { quotes } = useLiveQuotes(openTickersWithTypes)
 
   const handleScanTrade = async (trade: Trade) => {
     const quote = quotes[trade.ticker]
@@ -276,10 +276,21 @@ export default function JournalPage() {
                 animate="visible"
                 exit="exit"
               >
-                <DashboardTab
+                <PositionsDashboardTab
+                  trades={filteredTrades}
+                  quotes={quotes}
                   stats={stats}
                   equityCurve={equityCurve}
-                  isLoading={statsLoading}
+                  isLoading={statsLoading || tradesLoading}
+                  onOpenLogTrade={() => setShowLogTradeModal(true)}
+                  onSelectTrade={(tradeId) => {
+                    setActiveTab('trades')
+                    const trade = trades.find(t => t.id === tradeId)
+                    if (trade) {
+                      setSelectedTrade(trade)
+                      setActivePanel('detail')
+                    }
+                  }}
                 />
               </motion.div>
             )}
