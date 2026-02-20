@@ -16,7 +16,7 @@ interface SuggestedPromptsProps {
 
 export function SuggestedPrompts({ onSelect, disabled }: SuggestedPromptsProps) {
   return (
-    <div className="flex flex-wrap items-center justify-center gap-2">
+    <div className="flex flex-wrap items-center justify-center gap-3">
       {SUGGESTED_PROMPTS.map((prompt, index) => (
         <motion.button
           key={index}
@@ -27,10 +27,10 @@ export function SuggestedPrompts({ onSelect, disabled }: SuggestedPromptsProps) 
           whileHover={disabled ? undefined : { scale: 1.02 }}
           disabled={disabled}
           className={cn(
-            "px-4 py-2 rounded-full text-sm border transition-all duration-150",
+            "px-5 py-3 rounded-full text-[15px] border bg-card transition-all duration-150",
             disabled
               ? "border-border/30 text-muted-foreground/50 cursor-not-allowed"
-              : "border-border/40 text-foreground/70 hover:border-border/60 hover:text-foreground hover:bg-accent/5 cursor-pointer"
+              : "border-border text-foreground/70 hover:border-primary/20 hover:text-foreground hover:bg-accent cursor-pointer"
           )}
         >
           {prompt}

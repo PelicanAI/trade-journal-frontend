@@ -12,8 +12,8 @@ interface WelcomeScreenProps {
 export function WelcomeScreen({ onQuickStart, disabled }: WelcomeScreenProps) {
   return (
     <div className="flex-1 flex items-center justify-center p-4 pb-8 sm:p-8 bg-transparent">
-      <div className="max-w-2xl mx-auto text-center space-y-5 px-2">
-        <h1 className="text-xl sm:text-2xl font-semibold text-balance text-foreground tracking-tight h-auto">
+      <div className="max-w-2xl mx-auto text-center space-y-6 px-2">
+        <h1 className="text-2xl sm:text-4xl font-semibold text-balance text-foreground tracking-tight h-auto">
           Welcome to Pelican
         </h1>
 
@@ -21,7 +21,7 @@ export function WelcomeScreen({ onQuickStart, disabled }: WelcomeScreenProps) {
 
         <Link
           href="/guide"
-          className="text-xs text-muted-foreground/60 hover:text-muted-foreground transition-colors"
+          className="text-sm text-muted-foreground hover:text-foreground transition-colors mt-2 inline-block"
         >
           See how to get the most from Pelican →
         </Link>
