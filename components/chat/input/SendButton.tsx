@@ -24,7 +24,7 @@ export function SendButton({ isAIResponding, isSendDisabled, onStop, onSend }: S
         isAIResponding
           ? "bg-[var(--data-negative)] hover:bg-red-600 text-white"
           : isSendDisabled
-            ? "bg-muted text-muted-foreground cursor-not-allowed"
+            ? "bg-muted/40 text-muted-foreground/40 cursor-not-allowed"
             : "bg-[var(--accent-primary)] hover:bg-[var(--accent-hover)] text-white shadow-md shadow-[var(--accent-primary)]/20",
       )}
     >

@@ -148,17 +148,13 @@ export const ChatInput = forwardRef<ChatInputRef, ChatInputProps>(
           <div
             className={cn(
               "relative flex items-center gap-2 px-4 py-2",
-              "bg-[color-mix(in_oklch,var(--card),white_8%)]",
-              "rounded-2xl",
-              "border border-white/[0.08]",
-              "shadow-[0_0_20px_rgba(255,255,255,0.03),0_0_4px_rgba(255,255,255,0.02)]",
-              "ring-1 ring-white/[0.06]",
+              "bg-card/80",
+              "rounded-[28px]",
+              "border border-border/40",
+              "shadow-[0_1px_3px_rgba(0,0,0,0.15)]",
               "transition-all duration-200",
               "min-h-[56px]",
-              isFocused && [
-                "border-[rgba(59,130,246,0.40)]",
-                "shadow-[0_0_25px_rgba(255,255,255,0.05),0_0_6px_rgba(255,255,255,0.03)]",
-              ],
+              isFocused && "border-border/60 shadow-[0_1px_4px_rgba(0,0,0,0.2)]",
             )}
           >
             <AttachButton disabled={disabled} onFileSelect={handleFileSelect} />
@@ -209,11 +205,6 @@ export const ChatInput = forwardRef<ChatInputRef, ChatInputProps>(
           {pendingDraft && <DraftIndicator pendingDraft={pendingDraft} />}
         </div>
 
-        <div className="hidden sm:flex items-center justify-between px-3 pb-1 pt-0.5">
-          <span className="text-[11px] text-muted-foreground/50">
-            <kbd className="px-1 py-0.5 rounded bg-muted/30 text-[10px] font-mono">Enter</kbd> to send · <kbd className="px-1 py-0.5 rounded bg-muted/30 text-[10px] font-mono">Shift+Enter</kbd> for new line
-          </span>
-        </div>
       </div>
     )
   },
