@@ -149,13 +149,13 @@ export const ChatInput = forwardRef<ChatInputRef, ChatInputProps>(
           <div
             className={cn(
               "relative flex items-center gap-2 px-4 py-2",
-              "bg-card/80",
+              "bg-card dark:bg-[oklch(0.22_0_0)]",
               "rounded-[28px]",
-              "border border-black/10 dark:border-border/40",
+              "border border-black/10 dark:border-border",
               "shadow-[0_1px_3px_rgba(0,0,0,0.15)]",
               "transition-all duration-200",
               "min-h-[56px]",
-              isFocused && "border-black/20 dark:border-border/60 shadow-[0_1px_4px_rgba(0,0,0,0.2)]",
+              isFocused && "border-black/20 dark:border-border shadow-[0_1px_4px_rgba(0,0,0,0.2)]",
             )}
           >
             <LearningModeToggle />
