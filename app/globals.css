@@ -587,25 +587,13 @@
     }
   }
 
-  /* App background gradient — deep navy base with landing-page blue glow */
+  /* App background — flat surface, no gradients */
   .app-background-gradient {
-    background:
-      radial-gradient(ellipse 120% 80% at 50% 0%, oklch(0.6231 0.1880 259.8145 / 0.06) 0%, transparent 70%),
-      var(--background);
-  }
-
-  .dark .app-background-gradient {
     background: var(--background);
   }
 
-  /* Chat background gradient — subtle in light, aurora in dark */
+  /* Chat background — flat surface, no gradients */
   .chat-background-gradient {
-    background:
-      radial-gradient(ellipse at 50% 20%, oklch(0.6231 0.1880 259.8145 / 0.04) 0%, transparent 55%),
-      radial-gradient(ellipse at 80% 80%, oklch(0.6231 0.1880 259.8145 / 0.02) 0%, transparent 40%);
-  }
-
-  .dark .chat-background-gradient {
     background: var(--background);
   }
 
