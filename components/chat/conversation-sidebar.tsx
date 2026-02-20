@@ -133,7 +133,7 @@ const ConversationItem = React.memo(function ConversationItem({
         onSelect(conversation.id)
       }}
     >
-      <div className="flex items-center justify-between gap-2">
+      <div className="flex items-center gap-2">
         <div className="flex-1 min-w-0">
           <div className="text-sm text-foreground truncate font-medium">
             {conversation.title || newChatLabel}
@@ -143,7 +143,7 @@ const ConversationItem = React.memo(function ConversationItem({
           </div>
         </div>
 
-        <div className="flex items-center gap-0.5 flex-shrink-0 opacity-0 group-hover:opacity-100 transition-opacity">
+        <div className="absolute right-1 top-1/2 -translate-y-1/2 flex items-center gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity">
           <button
             onClick={(e) => {
               e.stopPropagation()
