@@ -12,7 +12,7 @@ export function GuideCTA() {
           href="/morning"
           className="bg-[var(--accent-primary)] text-white px-6 py-3 rounded-lg font-medium hover:opacity-90 transition-opacity"
         >
-          Go to Morning Brief
+          Go to Daily Brief
         </Link>
         <Link
           href="/chat"

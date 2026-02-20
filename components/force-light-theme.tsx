@@ -1,35 +1,33 @@
 "use client"
 
 import { useTheme } from "next-themes"
-import { useEffect, useRef } from "react"
+import { useEffect } from "react"
+
+/** Key used to back up the user's real theme preference while public pages force light. */
+export const THEME_BACKUP_KEY = "pelican-theme-v2-user-pref"
 
 /**
  * Forces light theme on public pages (landing, auth, pricing).
- * Saves and restores the user's preference when navigating away.
+ * Backs up the user's preference to a separate localStorage key so it
+ * survives full-page reloads during auth redirects.
  */
 export function ForceLightTheme() {
-  const { setTheme, resolvedTheme } = useTheme()
-  const savedTheme = useRef<string | null>(null)
+  const { setTheme } = useTheme()
 
   useEffect(() => {
-    // Save current theme so we can restore it on unmount
-    if (resolvedTheme && resolvedTheme !== "light") {
-      savedTheme.current = resolvedTheme
+    // Back up the user's real preference before overwriting
+    const current = localStorage.getItem("pelican-theme-v2")
+    if (current && current !== "light") {
+      localStorage.setItem(THEME_BACKUP_KEY, current)
     }
     setTheme("light")
 
     return () => {
-      // Restore user's preference when leaving public page
-      if (savedTheme.current) {
-        setTheme(savedTheme.current)
-      } else {
-        // Restore from storage or default
-        const stored = localStorage.getItem("pelican-theme-v2")
-        if (stored) {
-          setTheme(stored)
-        } else {
-          setTheme("dark")
-        }
+      // Restore on client-side navigation away from public page
+      const saved = localStorage.getItem(THEME_BACKUP_KEY)
+      if (saved) {
+        setTheme(saved)
+        localStorage.removeItem(THEME_BACKUP_KEY)
       }
     }
   }, []) // eslint-disable-line react-hooks/exhaustive-deps

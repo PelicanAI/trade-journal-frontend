@@ -56,12 +56,12 @@ export default function GuidePage() {
             title="Morning Routine"
             hook="Most traders waste 30 minutes every morning checking 6 different apps. Here's your 5-minute morning scan."
             cta={{
-              label: "Try it now → Go to your Morning Brief",
+              label: "Try it now → Go to your Daily Brief",
               href: "/morning",
             }}
           >
             <p>
-              <strong>Step 1 — Check the Morning Brief</strong>
+              <strong>Step 1 — Check the Daily Brief</strong>
             </p>
             <p>
               Open the Brief page first thing. In one glance you see your open
@@ -325,7 +325,7 @@ export default function GuidePage() {
                 <p>
                   <strong>Use the watchlist strategically.</strong> Add tickers
                   from conversations. When you ask about a stock but aren&apos;t
-                  ready to trade, watch it. The Morning Brief tracks it for you.
+                  ready to trade, watch it. The Daily Brief tracks it for you.
                 </p>
               </div>
               <div className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] rounded-lg p-4">
@@ -353,7 +353,7 @@ export default function GuidePage() {
               </div>
               <div className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] rounded-lg p-4">
                 <p>
-                  <strong>The daily flow:</strong> Morning Brief → check
+                  <strong>The daily flow:</strong> Daily Brief → check
                   positions with concerns → chat for deeper analysis → adjust
                   positions. Takes 10-15 minutes.
                 </p>

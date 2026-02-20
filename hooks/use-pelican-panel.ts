@@ -163,7 +163,7 @@ export function usePelicanPanel(options: UsePelicanPanelOptions = {}): UsePelica
       if (ticker) {
         title = `${ticker} Analysis`
       } else if (context === 'morning') {
-        title = 'Morning Brief'
+        title = 'Daily Brief'
       } else if (context === 'journal') {
         title = 'Trade Journal'
       }

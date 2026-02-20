@@ -262,7 +262,7 @@ export default function MorningPage() {
     const dateStr = new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
 
     if (format === 'full') {
-      text = `Pelican Morning Brief — ${dateStr}\n\n${briefContent}`
+      text = `Pelican Daily Brief — ${dateStr}\n\n${briefContent}`
     } else if (format === 'summary') {
       // Extract first 2 sections or first 500 chars
       const lines = briefContent.split('\n')
@@ -308,7 +308,7 @@ export default function MorningPage() {
       `${m.ticker}: ${m.changePercent >= 0 ? '+' : ''}${m.changePercent.toFixed(1)}%`
     ).join(', ')
 
-    return `You are Pelican, an institutional-grade AI trading assistant delivering a comprehensive morning briefing.
+    return `You are Pelican, an institutional-grade AI trading assistant delivering a comprehensive daily briefing.
 
 Date: ${dateStr}
 Time: ${timeStr}
@@ -322,7 +322,7 @@ ${watchlistSummary}
 TODAY'S TOP MOVERS:
 ${moversSummary || 'Loading...'}
 
-Generate my personalized morning brief covering ALL of the following sections. Be specific with numbers, levels, and tickers. No fluff \u2014 write like a Goldman Sachs morning note meets a trading desk briefing.
+Generate my personalized daily brief covering ALL of the following sections. Be specific with numbers, levels, and tickers. No fluff \u2014 write like a Goldman Sachs morning note meets a trading desk briefing.
 
 **1. MARKET OVERNIGHT RECAP**
 - How did futures trade overnight? Where are S&P, Nasdaq, Dow futures right now?
@@ -512,7 +512,7 @@ Keep it dense, actionable, and personalized to MY positions and watchlist. Use m
     <div className="h-full overflow-auto p-4 sm:p-6">
       {/* Page Header */}
       <PageHeader
-        title="Morning Brief"
+        title="Daily Brief"
         subtitle={new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' })}
         actions={
           <div className="flex items-center gap-2">
@@ -594,7 +594,7 @@ Keep it dense, actionable, and personalized to MY positions and watchlist. Use m
             <div className="flex items-center gap-3 py-8">
               <div className="h-5 w-5 border-2 border-[var(--accent-muted)] border-t-[var(--accent-primary)] rounded-full animate-spin" />
               <span className="text-sm text-[var(--text-muted)]">
-                Generating your morning brief...
+                Generating your daily brief...
               </span>
             </div>
           )}
