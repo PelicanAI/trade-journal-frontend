@@ -36,6 +36,7 @@ export function useSmartScroll(options: SmartScrollOptions = {}) {
   const lastScrollTopRef = useRef(0)
   const isStreamingRef = useRef(false)
   const shouldAutoScrollRef = useRef(true) // Track if auto-scroll is enabled (disabled when user scrolls up)
+  const forceScrollRef = useRef(false) // Set true on user-initiated sends — bypasses ALL guards
   const [lastNewMessageAt, setLastNewMessageAt] = useState<number>(0)
 
   const [state, setState] = useState<SmartScrollState>({
@@ -82,12 +83,12 @@ export function useSmartScroll(options: SmartScrollOptions = {}) {
   }, [])
 
   const scrollToBottom = useCallback(
-    (behavior: ScrollBehavior = scrollBehavior) => {
+    (behavior: ScrollBehavior = scrollBehavior, force = false) => {
       const container = containerRef.current
       if (!container) return
 
-      // Don't scroll if content fits on screen
-      if (container.scrollHeight <= container.clientHeight + 50) return
+      // Don't scroll if content fits on screen (skip this check when forced)
+      if (!force && container.scrollHeight <= container.clientHeight + 50) return
 
       container.scrollTo({
         top: container.scrollHeight,
@@ -117,6 +118,7 @@ export function useSmartScroll(options: SmartScrollOptions = {}) {
     // If user scrolls UP during streaming: disable auto-scroll immediately
     if (isScrollingUp && isStreamingRef.current && !isNearBottom) {
       shouldAutoScrollRef.current = false
+      forceScrollRef.current = false // User explicitly scrolled away — respect that
     }
     
     // If user scrolls back to bottom: re-enable auto-scroll
@@ -195,16 +197,18 @@ export function useSmartScroll(options: SmartScrollOptions = {}) {
       // Check if user is near bottom (within 150px)
       const isNearBottom = checkIfNearBottom()
 
-      // SCENARIO 1: When user sends a message
+      // SCENARIO 1: When user sends a message (input box, sidebar action, etc.)
+      // ALWAYS scroll to bottom unconditionally — user explicitly initiated this send.
+      // The "don't auto-scroll" logic only applies to streaming chunk updates.
       if (isUserMessage) {
-        // Scroll to bottom so the user message + AI thinking indicator are visible.
-        // For sidebar-triggered sends (watchlist, positions) the user may be scrolled
-        // far up; scrollToUserMessage alone can leave us away from the bottom, which
-        // then prevents streaming auto-scroll from kicking in.
         shouldAutoScrollRef.current = true
+        forceScrollRef.current = true
+        // Use instant scroll then a delayed smooth follow-up to ensure we land at bottom
+        // even if the DOM hasn't fully updated yet.
+        scrollToBottom("auto", true)
         createTimeout(() => {
-          scrollToBottom("smooth")
-        }, 50)
+          scrollToBottom("smooth", true)
+        }, 150)
       }
       // SCENARIO 5: When new conversation starts (non-streaming, non-user message)
       else if (!isStreaming && !isUserMessage) {
@@ -216,10 +220,8 @@ export function useSmartScroll(options: SmartScrollOptions = {}) {
       
       // SCENARIO 2 & 3: AI responding - continuously check and scroll if appropriate
       if (isStreaming) {
-        // Before EVERY scroll attempt: check if we should auto-scroll
-        // This is checked on every streaming update
-        if (shouldAutoScrollRef.current && isNearBottom) {
-          // User is at bottom and hasn't scrolled up: keep showing new text
+        // forceScrollRef bypasses isNearBottom — set when user explicitly sent a message
+        if (forceScrollRef.current || (shouldAutoScrollRef.current && isNearBottom)) {
           const container = containerRef.current
           if (container) {
             container.scrollTo({
@@ -228,8 +230,6 @@ export function useSmartScroll(options: SmartScrollOptions = {}) {
             })
           }
         }
-        // If user scrolled up during streaming: shouldAutoScrollRef.current is false (set by handleScroll)
-        // So we won't scroll anymore until they scroll back to bottom
       }
 
       // Reset new messages flag
@@ -243,7 +243,7 @@ export function useSmartScroll(options: SmartScrollOptions = {}) {
   // Reset scroll state when streaming ends
   const handleStreamingEnd = useCallback(() => {
     isStreamingRef.current = false
-    // Keep shouldAutoScrollRef as is - will be reset on next user message
+    forceScrollRef.current = false
     setState((prev) => ({ ...prev, isStreaming: false }))
   }, [])
 
@@ -254,10 +254,11 @@ export function useSmartScroll(options: SmartScrollOptions = {}) {
 
   // Lightweight streaming auto-scroll: only scrolls if user hasn't scrolled away
   const handleStreamingUpdate = useCallback(() => {
-    if (!shouldAutoScrollRef.current) return
+    // forceScrollRef is set on user-initiated sends — always scroll until streaming ends
+    if (!shouldAutoScrollRef.current && !forceScrollRef.current) return
     const container = containerRef.current
     if (!container) return
-    if (container.scrollHeight <= container.clientHeight + 50) return
+    if (!forceScrollRef.current && container.scrollHeight <= container.clientHeight + 50) return
     container.scrollTo({ top: container.scrollHeight, behavior: "auto" })
   }, [])
 
@@ -297,6 +298,7 @@ export function useSmartScroll(options: SmartScrollOptions = {}) {
 
   const resetScrollState = useCallback(() => {
     shouldAutoScrollRef.current = true
+    forceScrollRef.current = false
     isStreamingRef.current = false
     lastScrollTopRef.current = 0
     setState({
