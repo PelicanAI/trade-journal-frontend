@@ -14,9 +14,9 @@ export function Providers({ children }: { children: React.ReactNode }) {
     <ThemeProvider
       attribute="class"
       defaultTheme="dark"
-      enableSystem={true}
+      enableSystem={false}
       disableTransitionOnChange={true}
-      storageKey="pelican-theme"
+      storageKey="pelican-theme-v2"
     >
       <TranslationProvider>
         <SWRProvider>

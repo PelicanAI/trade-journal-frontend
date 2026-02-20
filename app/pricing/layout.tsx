@@ -1,4 +1,5 @@
 import { Bebas_Neue, IBM_Plex_Sans, JetBrains_Mono } from 'next/font/google';
+import { ForceLightTheme } from '@/components/force-light-theme';
 import '@/app/(marketing)/styles/marketing.css';
 
 const bebasNeue = Bebas_Neue({
@@ -31,6 +32,7 @@ export default function PricingLayout({
 }) {
   return (
     <div className={`marketing-page ${bebasNeue.variable} ${ibmPlexSans.variable} ${jetbrainsMono.variable}`}>
+      <ForceLightTheme />
       <div className="grid-bg"></div>
       {children}
     </div>

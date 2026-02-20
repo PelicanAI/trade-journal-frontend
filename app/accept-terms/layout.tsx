@@ -1,11 +1,6 @@
-import type { Metadata } from 'next';
 import { ForceLightTheme } from '@/components/force-light-theme';
 
-export const metadata: Metadata = {
-  robots: { index: false, follow: false },
-};
-
-export default function AuthLayout({
+export default function AcceptTermsLayout({
   children,
 }: {
   children: React.ReactNode;

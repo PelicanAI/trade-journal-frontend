@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import { Bebas_Neue, IBM_Plex_Sans, JetBrains_Mono } from 'next/font/google';
+import { ForceLightTheme } from '@/components/force-light-theme';
 import './styles/marketing.css';
 
 const bebasNeue = Bebas_Neue({
@@ -55,6 +56,7 @@ export default function MarketingLayout({
 }) {
   return (
     <div className={`marketing-page ${bebasNeue.variable} ${ibmPlexSans.variable} ${jetbrainsMono.variable}`}>
+      <ForceLightTheme />
       {children}
     </div>
   );
