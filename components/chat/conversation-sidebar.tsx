@@ -400,7 +400,7 @@ export function ConversationSidebar({
   return (
     <div
       className={cn(
-        "relative z-20",
+        "relative z-20 overflow-hidden",
         isMobileSheet ? "w-full h-full" : "h-full border-r border-[var(--border-subtle)]",
         "flex flex-col bg-sidebar",
         className,
@@ -497,9 +497,9 @@ export function ConversationSidebar({
       )}
 
       {/* Main content area — conversations or saved insights */}
-      <ScrollArea className="flex-1 min-h-0">
+      <ScrollArea className="flex-1 min-h-0 [&_[data-slot=scroll-area-viewport]>div]:!min-w-0 [&_[data-slot=scroll-area-viewport]>div]:!block">
         {sidebarView === 'conversations' ? (
-          <div className="py-2">
+          <div className="py-2 overflow-hidden">
             {loading ? (
               <div className="space-y-1 px-2 py-3">
                 {[...Array(5)].map((_, i) => (
