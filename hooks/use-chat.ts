@@ -18,6 +18,11 @@ import { useStreamingChat, type TrialExhaustedInfo, type InsufficientCreditsInfo
 import { logger } from '@/lib/logger';
 import type { Message, Attachment } from '@/lib/chat-utils';
 import { createClient } from '@/lib/supabase/client';
+import {
+  type MessageSource,
+  type ConversationSourceMetadata,
+  updateConversationSourceMetadata,
+} from '@/lib/chat/message-source';
 
 // =============================================================================
 // CONSTANTS
@@ -65,6 +70,7 @@ interface SendMessageOptions {
   fileIds?: string[];
   attachments?: Attachment[];
   skipUserMessage?: boolean;
+  source?: MessageSource;
 }
 
 // =============================================================================
@@ -410,6 +416,31 @@ export function useChat(options: UseChatOptions = {}): UseChatReturn {
                 responseLength: fullResponse.length,
                 conversationId: newConversationId || currentConversationId,
               });
+
+              // Update conversation source tracking metadata
+              const messageSource: MessageSource = sendOptions.source || 'typed';
+              const trackingConvId = conversationId || currentConversationId;
+              if (trackingConvId) {
+                try {
+                  const trackingSupabase = createClient();
+                  const { data: convData } = await trackingSupabase
+                    .from('conversations')
+                    .select('metadata')
+                    .eq('id', trackingConvId)
+                    .single();
+                  const existingMeta = (convData?.metadata as Record<string, unknown>) || {};
+                  const updatedTracking = updateConversationSourceMetadata(
+                    existingMeta.source_tracking as ConversationSourceMetadata | null,
+                    messageSource
+                  );
+                  await trackingSupabase
+                    .from('conversations')
+                    .update({ metadata: { ...existingMeta, source_tracking: updatedTracking } })
+                    .eq('id', trackingConvId);
+                } catch {
+                  logger.warn('[CHAT-COMPLETE] Failed to update source tracking');
+                }
+              }
             },
             onError: (err: Error) => {
               setError(err);

@@ -1,0 +1,138 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Import fonts */
+@import url("https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=Bebas+Neue&display=swap");
+
+/* Base video styles */
+.video-container {
+  font-family: "Inter", sans-serif;
+  background-color: #0a0b0f;
+  color: #f1f5f9;
+  overflow: hidden;
+}
+
+/* Grid background pattern */
+.grid-bg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: linear-gradient(rgba(148, 163, 184, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(148, 163, 184, 0.03) 1px, transparent 1px);
+  background-size: 60px 60px;
+  pointer-events: none;
+}
+
+/* Purple glow overlay */
+.glow-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: radial-gradient(ellipse at 50% 0%, rgba(168, 85, 247, 0.15) 0%, transparent 60%);
+  pointer-events: none;
+}
+
+/* Corner bracket styling */
+.bracket-box {
+  position: relative;
+}
+
+.bracket-box::before,
+.bracket-box::after {
+  content: "";
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  border-color: #a855f7;
+  border-style: solid;
+  opacity: 0.6;
+}
+
+.bracket-box::before {
+  top: -1px;
+  left: -1px;
+  border-width: 2px 0 0 2px;
+}
+
+.bracket-box::after {
+  bottom: -1px;
+  right: -1px;
+  border-width: 0 2px 2px 0;
+}
+
+/* Larger brackets variant */
+.bracket-box-lg::before,
+.bracket-box-lg::after {
+  width: 40px;
+  height: 40px;
+  border-width: 3px;
+}
+
+.bracket-box-lg::before {
+  border-width: 3px 0 0 3px;
+}
+
+.bracket-box-lg::after {
+  border-width: 0 3px 3px 0;
+}
+
+/* Terminal style tag */
+.terminal-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  background: #12141a;
+  border: 1px solid rgba(148, 163, 184, 0.1);
+  font-family: "JetBrains Mono", monospace;
+  font-size: 0.85rem;
+  color: #22d3ee;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+.terminal-tag::before {
+  content: "//";
+  color: #64748b;
+}
+
+/* Glow text effect */
+.glow-text {
+  text-shadow: 0 0 20px rgba(168, 85, 247, 0.5), 0 0 40px rgba(168, 85, 247, 0.3);
+}
+
+/* Button styles */
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  background: #a855f7;
+  color: #0a0b0f;
+  font-family: "JetBrains Mono", monospace;
+  font-size: 0.85rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  border: none;
+}
+
+.btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  background: transparent;
+  color: #f1f5f9;
+  font-family: "JetBrains Mono", monospace;
+  font-size: 0.85rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  border: 1px solid rgba(168, 85, 247, 0.3);
+}

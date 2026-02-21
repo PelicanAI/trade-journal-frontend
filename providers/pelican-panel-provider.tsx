@@ -2,6 +2,7 @@
 
 import React, { createContext, useContext, useMemo, ReactNode } from 'react'
 import { usePelicanPanel, type PelicanPanelContext } from '@/hooks/use-pelican-panel'
+import type { MessageSource } from '@/lib/chat/message-source'
 
 // =============================================================================
 // TYPES
@@ -14,7 +15,7 @@ interface PelicanPanelContextValue {
   isStreaming: boolean
   ticker: string | null
   context: PelicanPanelContext
-  openWithPrompt: (ticker: string | null, prompt: string | { visibleMessage: string; fullPrompt: string }, context: PelicanPanelContext) => Promise<void>
+  openWithPrompt: (ticker: string | null, prompt: string | { visibleMessage: string; fullPrompt: string }, context: PelicanPanelContext, source?: MessageSource) => Promise<void>
   sendMessage: (content: string) => Promise<void>
   close: () => void
   clearMessages: () => void

@@ -36,6 +36,7 @@ export interface Conversation {
   last_message_preview: string
   user_id: string
   archived?: boolean
+  metadata?: Record<string, unknown>
 }
 
 export interface UseConversationsReturn {

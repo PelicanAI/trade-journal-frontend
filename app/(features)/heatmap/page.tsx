@@ -240,9 +240,9 @@ function HeatmapPageInner() {
   const handleStockClick = useCallback((ticker: string, name: string) => {
     const stock = stocks.find(s => s.ticker === ticker)
     if (stock) {
-      openWithPrompt(ticker, buildAnalysisPrompt(stock, heatmapContext), 'heatmap')
+      openWithPrompt(ticker, buildAnalysisPrompt(stock, heatmapContext), 'heatmap', 'heatmap_click')
     } else {
-      openWithPrompt(ticker, `Analyze ${ticker} (${name}). Provide momentum drivers, key levels, setup quality, and a tactical trade plan with invalidation.`, 'heatmap')
+      openWithPrompt(ticker, `Analyze ${ticker} (${name}). Provide momentum drivers, key levels, setup quality, and a tactical trade plan with invalidation.`, 'heatmap', 'heatmap_click')
     }
   }, [stocks, heatmapContext, openWithPrompt])
 

@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useCallback, useEffect, useRef } from 'react'
+import { useState, useCallback, useEffect, useRef, useMemo } from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import {
@@ -22,6 +22,8 @@ import {
   X,
 } from 'lucide-react'
 import { formatLine } from '@/components/chat/message/format-utils'
+import { getSourceLabel, getConversationClass, isActionSource, type MessageSource, type ConversationSourceMetadata, type ConversationClass } from '@/lib/chat/message-source'
+import { cn } from '@/lib/utils'
 
 // =============================================================================
 // TYPES
@@ -33,6 +35,7 @@ interface ConversationRow {
   userName: string | null
   createdAt: string
   messageCount?: number | null
+  metadata?: Record<string, unknown> | null
 }
 
 interface ConvoMessage {
@@ -40,6 +43,7 @@ interface ConvoMessage {
   role: string
   content: string
   created_at: string
+  metadata?: Record<string, unknown>
 }
 
 interface CachedMessages {
@@ -107,6 +111,95 @@ function formatCopyThread(messages: ConvoMessage[]): string {
       return `${role} (${time}): ${msg.content}`
     })
     .join('\n\n')
+}
+
+// =============================================================================
+// SOURCE ANALYTICS HELPERS
+// =============================================================================
+
+type ClassFilter = 'all' | ConversationClass
+
+function getSourceTracking(conv: ConversationRow): ConversationSourceMetadata | null {
+  const tracking = conv.metadata?.source_tracking as ConversationSourceMetadata | undefined
+  return tracking ?? null
+}
+
+function SourceBadge({ conv }: { conv: ConversationRow }) {
+  const tracking = getSourceTracking(conv)
+  if (!tracking) return null
+
+  const source = tracking.initiated_by
+  const action = isActionSource(source)
+  const label = getSourceLabel(source)
+
+  return (
+    <span
+      className={cn(
+        'text-[10px] font-mono px-1.5 py-0.5 rounded-full whitespace-nowrap',
+        action
+          ? 'bg-[var(--accent-muted)] text-[var(--accent-primary)]'
+          : 'bg-[var(--bg-elevated)] text-[var(--text-muted)]'
+      )}
+    >
+      {label}
+    </span>
+  )
+}
+
+function SourceBreakdownSummary({ conversations }: { conversations: ConversationRow[] }) {
+  const breakdown = useMemo(() => {
+    const counts: Record<string, number> = { organic: 0, action: 0, promoted: 0 }
+    const sourceCounts: Record<string, number> = {}
+
+    conversations.forEach((conv) => {
+      const cls = getConversationClass(conv.metadata)
+      counts[cls] = (counts[cls] || 0) + 1
+
+      const tracking = getSourceTracking(conv)
+      if (tracking?.initiated_by && tracking.initiated_by !== 'typed') {
+        const label = getSourceLabel(tracking.initiated_by)
+        sourceCounts[label] = (sourceCounts[label] || 0) + 1
+      }
+    })
+
+    const topSources = Object.entries(sourceCounts)
+      .sort(([, a], [, b]) => b - a)
+      .slice(0, 5)
+
+    return { counts, topSources, total: conversations.length }
+  }, [conversations])
+
+  if (breakdown.total === 0) return null
+
+  return (
+    <div className="flex flex-wrap items-center gap-2 mb-3 text-[11px]">
+      <span className="text-[var(--text-muted)]">Sources:</span>
+      <span className="px-1.5 py-0.5 rounded-full bg-[var(--bg-elevated)] text-[var(--text-muted)]">
+        Organic <span className="font-mono">{breakdown.counts.organic}</span>
+      </span>
+      <span className="px-1.5 py-0.5 rounded-full bg-[var(--accent-muted)] text-[var(--accent-primary)]">
+        Action <span className="font-mono">{breakdown.counts.action}</span>
+      </span>
+      {(breakdown.counts.promoted ?? 0) > 0 && (
+        <span className="px-1.5 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400">
+          Promoted <span className="font-mono">{breakdown.counts.promoted}</span>
+        </span>
+      )}
+      {breakdown.topSources.length > 0 && (
+        <>
+          <span className="text-[var(--text-muted)] ml-1">Top:</span>
+          {breakdown.topSources.map(([label, count]) => (
+            <span
+              key={label}
+              className="px-1.5 py-0.5 rounded-full bg-[var(--bg-elevated)] text-[var(--text-secondary)]"
+            >
+              {label} <span className="font-mono">{count}</span>
+            </span>
+          ))}
+        </>
+      )}
+    </div>
+  )
 }
 
 // =============================================================================
@@ -180,15 +273,27 @@ function AdminMessageRow({ msg, spacious }: { msg: ConvoMessage; spacious?: bool
       onMouseLeave={() => setHovered(false)}
     >
       <div className="flex items-center justify-between mb-2">
-        <span
-          className={`text-xs font-medium px-3 py-1 rounded-md ${
-            isUser
-              ? 'bg-blue-500/20 text-blue-300'
-              : 'bg-blue-500/15 text-blue-300'
-          }`}
-        >
-          {isUser ? 'User' : 'Assistant'}
-        </span>
+        <div className="flex items-center gap-2">
+          <span
+            className={`text-xs font-medium px-3 py-1 rounded-md ${
+              isUser
+                ? 'bg-blue-500/20 text-blue-300'
+                : 'bg-blue-500/15 text-blue-300'
+            }`}
+          >
+            {isUser ? 'User' : 'Assistant'}
+          </span>
+          {typeof msg.metadata?.source === 'string' && (
+            <span className={cn(
+              "text-[10px] px-1.5 py-0.5 rounded-full",
+              msg.metadata.source === 'typed'
+                ? "bg-blue-500/10 text-blue-400"
+                : "bg-amber-500/10 text-amber-400"
+            )}>
+              {getSourceLabel((msg.metadata.source as MessageSource) || 'typed')}
+            </span>
+          )}
+        </div>
         <div className="flex items-center gap-2">
           {hovered && (
             <button
@@ -267,6 +372,23 @@ function ConversationModal({
     return () => { cancelled = true }
   }, [open, conversation])
 
+  const sourceBreakdown = useMemo(() => {
+    const counts: Record<string, number> = {}
+    messages.forEach((m) => {
+      if (m.role === 'user') {
+        const source = (m.metadata?.source as string) || 'typed'
+        counts[source] = (counts[source] || 0) + 1
+      }
+    })
+    return Object.entries(counts)
+      .sort(([, a], [, b]) => b - a)
+      .map(([source, count]) => ({
+        source,
+        count,
+        label: getSourceLabel(source as MessageSource),
+      }))
+  }, [messages])
+
   const handleCopyAll = async () => {
     if (messages.length === 0) return
     try {
@@ -304,6 +426,18 @@ function ConversationModal({
                 <span>&middot;</span>
                 <span className="tabular-nums">{messages.length} messages</span>
               </div>
+              {sourceBreakdown.length > 0 && (
+                <div className="flex flex-wrap gap-2 text-xs mt-2">
+                  {sourceBreakdown.map(({ source, count, label }) => (
+                    <span
+                      key={source}
+                      className="px-2 py-0.5 rounded-full bg-white/5 text-[var(--text-secondary)]"
+                    >
+                      {label}: <span className="font-mono">{count}</span>
+                    </span>
+                  ))}
+                </div>
+              )}
             </div>
             <div className="flex items-center gap-2 ml-4 flex-shrink-0">
               <button
@@ -380,6 +514,7 @@ export function RecentConversations({
   const [debouncedContent, setDebouncedContent] = useState('')
   const [copyAllState, setCopyAllState] = useState<string | null>(null)
   const [modalConv, setModalConv] = useState<ConversationRow | null>(null)
+  const [classFilter, setClassFilter] = useState<ClassFilter>('all')
 
   const expandedRef = useRef<string | null>(null)
   expandedRef.current = expandedId
@@ -564,6 +699,13 @@ export function RecentConversations({
     [messagesCache]
   )
 
+  const filteredConversations = useMemo(() => {
+    if (classFilter === 'all') return conversations
+    return conversations.filter(
+      (conv) => getConversationClass(conv.metadata) === classFilter
+    )
+  }, [conversations, classFilter])
+
   return (
     <>
       <Card>
@@ -571,6 +713,9 @@ export function RecentConversations({
           <CardTitle className="text-base">Recent Conversations</CardTitle>
         </CardHeader>
         <CardContent>
+          {/* Source breakdown summary */}
+          <SourceBreakdownSummary conversations={conversations} />
+
           {/* Filters */}
           <div className="flex gap-2 mb-3">
             <div className="relative flex-1">
@@ -591,17 +736,27 @@ export function RecentConversations({
                 className="pl-8 h-8 text-sm"
               />
             </div>
+            <select
+              value={classFilter}
+              onChange={(e) => setClassFilter(e.target.value as ClassFilter)}
+              className="h-8 text-sm rounded-md border border-[var(--border-default)] bg-[var(--bg-surface)] text-[var(--text-secondary)] px-2 focus:outline-none focus:ring-1 focus:ring-[var(--accent-primary)]"
+            >
+              <option value="all">All Sources</option>
+              <option value="organic">Organic</option>
+              <option value="action">Action</option>
+              <option value="promoted">Promoted</option>
+            </select>
           </div>
 
-          {conversations.length === 0 ? (
+          {filteredConversations.length === 0 ? (
             <p className="text-sm text-muted-foreground">
-              {debouncedEmail || debouncedContent
+              {debouncedEmail || debouncedContent || classFilter !== 'all'
                 ? 'No conversations matching filters'
                 : 'No recent conversations'}
             </p>
           ) : (
             <div className="space-y-1">
-              {conversations.map((conv) => {
+              {filteredConversations.map((conv) => {
                 const isExpanded = expandedId === conv.id
                 const cached = messagesCache[conv.id]
                 const messages = cached?.messages ?? []
@@ -619,9 +774,12 @@ export function RecentConversations({
                       >
                         <MessageSquare className="size-4 mt-0.5 shrink-0 text-muted-foreground" />
                         <div className="min-w-0 flex-1">
-                          <p className="truncate font-medium">
-                            {conv.title || 'Untitled conversation'}
-                          </p>
+                          <div className="flex items-center gap-2">
+                            <p className="truncate font-medium">
+                              {conv.title || 'Untitled conversation'}
+                            </p>
+                            <SourceBadge conv={conv} />
+                          </div>
                           <p className="text-xs text-muted-foreground flex items-center">
                             <span>{conv.userName || 'Unknown user'}</span>
                             {conv.userName && (

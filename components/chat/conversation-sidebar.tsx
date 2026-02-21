@@ -31,6 +31,7 @@ import {
   CaretUp,
   ArrowLeft,
   DotsThree,
+  Lightning,
 } from "@phosphor-icons/react"
 import {
   DropdownMenu,
@@ -47,6 +48,7 @@ import { useRouter } from "next/navigation"
 import { useT } from "@/lib/providers/translation-provider"
 import { useAuth } from "@/lib/providers/auth-provider"
 import { createClient } from "@/lib/supabase/client"
+import { getConversationClass, type ConversationClass } from "@/lib/chat/message-source"
 
 interface Conversation {
   id: string
@@ -54,7 +56,10 @@ interface Conversation {
   created_at: string
   updated_at: string
   archived?: boolean
+  metadata?: Record<string, unknown>
 }
+
+type SidebarSourceFilter = 'my_chats' | 'all' | 'actions'
 
 interface ConversationSidebarProps {
   currentConversationId?: string
@@ -142,8 +147,11 @@ const ConversationItem = React.memo(function ConversationItem({
     >
       <div className="flex items-center gap-2">
         <div className="flex-1 min-w-0">
-          <div className="text-sm text-foreground truncate font-medium">
+          <div className="text-sm text-foreground truncate font-medium flex items-center gap-1">
             {conversation.title || newChatLabel}
+            {getConversationClass(conversation.metadata) === 'action' && (
+              <span className="shrink-0" title="Quick action"><Lightning size={12} weight="fill" className="text-[var(--accent-primary)]" /></span>
+            )}
           </div>
         </div>
 
@@ -244,6 +252,7 @@ export function ConversationSidebar({
   const [showSignOutDialog, setShowSignOutDialog] = useState(false)
   const [isAdmin, setIsAdmin] = useState(false)
   const [sidebarView, setSidebarView] = useState<'conversations' | 'insights'>('conversations')
+  const [sourceFilter, setSourceFilter] = useState<SidebarSourceFilter>('my_chats')
   const [showProfileMenu, setShowProfileMenu] = useState(false)
   const profileMenuRef = useRef<HTMLDivElement>(null)
   const { items: savedInsights, deleteInsight } = useSavedInsights()
@@ -328,9 +337,18 @@ export function ConversationSidebar({
   const filteredConversations = useMemo(() => {
     return conversations.filter((conv) => {
       const matchesSearch = conv.title.toLowerCase().includes(searchQuery.toLowerCase())
-      return matchesSearch && !conv.archived
+      if (!matchesSearch || conv.archived) return false
+
+      // Apply source filter
+      if (sourceFilter === 'my_chats') {
+        return getConversationClass(conv.metadata) !== 'action'
+      }
+      if (sourceFilter === 'actions') {
+        return getConversationClass(conv.metadata) === 'action'
+      }
+      return true // 'all'
     })
-  }, [conversations, searchQuery])
+  }, [conversations, searchQuery, sourceFilter])
 
   // Group conversations by time
   const groupedConversations = useMemo(() => {
@@ -482,6 +500,24 @@ export function ConversationSidebar({
             />
           </div>
         )}
+
+        {/* Source filter chips */}
+        <div className="flex items-center gap-1">
+          {(['my_chats', 'all', 'actions'] as const).map((f) => (
+            <button
+              key={f}
+              onClick={() => setSourceFilter(f)}
+              className={cn(
+                "px-2.5 py-1 text-xs rounded-md transition-colors",
+                sourceFilter === f
+                  ? "bg-[var(--accent-primary)] text-white font-medium"
+                  : "bg-[var(--bg-base)] text-[var(--text-muted)] hover:text-[var(--text-secondary)]"
+              )}
+            >
+              {f === 'my_chats' ? 'My Chats' : f === 'all' ? 'All' : 'Actions'}
+            </button>
+          ))}
+        </div>
       </div>
 
       {/* Saved Insights toggle */}

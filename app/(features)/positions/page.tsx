@@ -83,7 +83,7 @@ export default function PositionsPage() {
 
   // Chat integration — send rich prompt to Pelican panel
   const handleSendMessage = useCallback(async (message: string) => {
-    await openWithPrompt(null, message, "journal")
+    await openWithPrompt(null, message, "journal", 'position_fix')
   }, [openWithPrompt])
 
   const handleScanPosition = useCallback(async (position: PortfolioPosition) => {
@@ -100,7 +100,7 @@ export default function PositionsPage() {
       'Give me: current technicals, whether my thesis is still valid, key levels to watch, and your honest recommendation — hold, add, trim, or exit. Be specific.',
     ].filter(Boolean).join(' ')
 
-    await openWithPrompt(position.ticker, parts, "journal")
+    await openWithPrompt(position.ticker, parts, "journal", 'position_scan')
   }, [openWithPrompt])
 
   // Edit: navigate to journal with highlight

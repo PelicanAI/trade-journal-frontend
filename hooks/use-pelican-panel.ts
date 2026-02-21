@@ -21,6 +21,13 @@ import { useStreamingChat, type TrialExhaustedInfo, type InsufficientCreditsInfo
 import { logger, type LogContext } from '@/lib/logger'
 import { createClient } from '@/lib/supabase/client'
 import type { Message } from '@/lib/chat-utils'
+import {
+  type MessageSource,
+  type ConversationSourceMetadata,
+  contextToSource,
+  createConversationSourceMetadata,
+  updateConversationSourceMetadata,
+} from '@/lib/chat/message-source'
 
 // =============================================================================
 // TYPES
@@ -45,7 +52,7 @@ interface UsePelicanPanelOptions {
 
 interface UsePelicanPanelReturn {
   state: PelicanPanelState
-  openWithPrompt: (ticker: string | null, prompt: string | { visibleMessage: string; fullPrompt: string }, context: PelicanPanelContext) => Promise<void>
+  openWithPrompt: (ticker: string | null, prompt: string | { visibleMessage: string; fullPrompt: string }, context: PelicanPanelContext, source?: MessageSource) => Promise<void>
   sendMessage: (content: string) => Promise<void>
   close: () => void
   clearMessages: () => void
@@ -149,7 +156,7 @@ export function usePelicanPanel(options: UsePelicanPanelOptions = {}): UsePelica
   // HELPER: Create conversation in Supabase
   // ---------------------------------------------------------------------------
 
-  const createConversation = useCallback(async (ticker: string | null, context: PelicanPanelContext): Promise<string | null> => {
+  const createConversation = useCallback(async (ticker: string | null, context: PelicanPanelContext, source?: MessageSource): Promise<string | null> => {
     try {
       const supabase = createClient()
       const { data: { user } } = await supabase.auth.getUser()
@@ -168,12 +175,16 @@ export function usePelicanPanel(options: UsePelicanPanelOptions = {}): UsePelica
         title = 'Trade Journal'
       }
 
+      const resolvedSource = source || contextToSource(context)
       const { data, error } = await supabase
         .from('conversations')
         .insert({
           user_id: user.id,
           title,
-          metadata: { context, ticker, source: 'pelican_panel' },
+          metadata: {
+            context, ticker, source: 'pelican_panel',
+            source_tracking: createConversationSourceMetadata(resolvedSource),
+          },
         })
         .select('id')
         .single()
@@ -192,13 +203,42 @@ export function usePelicanPanel(options: UsePelicanPanelOptions = {}): UsePelica
   }, [])
 
   // ---------------------------------------------------------------------------
+  // HELPER: Update source tracking on existing conversation
+  // ---------------------------------------------------------------------------
+
+  const updateSourceTracking = useCallback(async (source: MessageSource) => {
+    const convId = conversationIdRef.current
+    if (!convId) return
+    try {
+      const supabase = createClient()
+      const { data } = await supabase
+        .from('conversations')
+        .select('metadata')
+        .eq('id', convId)
+        .single()
+      const existingMeta = (data?.metadata as Record<string, unknown>) || {}
+      const updatedTracking = updateConversationSourceMetadata(
+        existingMeta.source_tracking as ConversationSourceMetadata | null,
+        source
+      )
+      await supabase
+        .from('conversations')
+        .update({ metadata: { ...existingMeta, source_tracking: updatedTracking } })
+        .eq('id', convId)
+    } catch {
+      logger.warn('[PELICAN-PANEL] Failed to update source tracking')
+    }
+  }, [])
+
+  // ---------------------------------------------------------------------------
   // PUBLIC: Open with prompt
   // ---------------------------------------------------------------------------
 
   const openWithPrompt = useCallback(async (
     ticker: string | null,
     prompt: string | { visibleMessage: string; fullPrompt: string },
-    context: PelicanPanelContext
+    context: PelicanPanelContext,
+    source?: MessageSource
   ): Promise<void> => {
     // Handle both string and object prompt formats
     const visibleMessage = typeof prompt === 'string' ? prompt : prompt.visibleMessage
@@ -209,9 +249,11 @@ export function usePelicanPanel(options: UsePelicanPanelOptions = {}): UsePelica
     // If panel is already open for same context, append to existing conversation
     const shouldAppend = state.isOpen && state.context === context && conversationIdRef.current
 
+    const resolvedSource = source || contextToSource(context)
+
     if (!shouldAppend) {
       // Opening fresh - create new conversation
-      const newConversationId = await createConversation(ticker, context)
+      const newConversationId = await createConversation(ticker, context, resolvedSource)
       conversationIdRef.current = newConversationId
 
       setState({
@@ -226,6 +268,7 @@ export function usePelicanPanel(options: UsePelicanPanelOptions = {}): UsePelica
     } else {
       // Appending to existing conversation
       setState(prev => ({ ...prev, isOpen: true, ticker }))
+      void updateSourceTracking(resolvedSource)
     }
 
     // Send the prompt - user sees visibleMessage, backend gets fullPrompt
@@ -302,7 +345,7 @@ export function usePelicanPanel(options: UsePelicanPanelOptions = {}): UsePelica
       updateMessagesWithSync(prev => prev.filter(msg => msg.id !== assistantMessageId))
       logger.error('[PELICAN-PANEL] Send message failed', err)
     }
-  }, [state.isOpen, state.context, sendStreamingMessage, onError, onTrialExhausted, onInsufficientCredits, updateMessagesWithSync, captureConversationHistory, createConversation])
+  }, [state.isOpen, state.context, sendStreamingMessage, onError, onTrialExhausted, onInsufficientCredits, updateMessagesWithSync, captureConversationHistory, createConversation, updateSourceTracking])
 
   // ---------------------------------------------------------------------------
   // PUBLIC: Send message (user-initiated)
@@ -312,6 +355,7 @@ export function usePelicanPanel(options: UsePelicanPanelOptions = {}): UsePelica
     if (!content.trim()) return
 
     logger.info('[PELICAN-PANEL] Sending user message', { length: content.length })
+    void updateSourceTracking('typed')
 
     const userMessage = createUserMessage(content)
     const assistantMessage = createAssistantMessage('')
@@ -366,7 +410,7 @@ export function usePelicanPanel(options: UsePelicanPanelOptions = {}): UsePelica
       onError?.(err)
       updateMessagesWithSync(prev => prev.filter(msg => msg.id !== assistantMessageId))
     }
-  }, [sendStreamingMessage, onError, onTrialExhausted, onInsufficientCredits, updateMessagesWithSync, captureConversationHistory])
+  }, [sendStreamingMessage, onError, onTrialExhausted, onInsufficientCredits, updateMessagesWithSync, captureConversationHistory, updateSourceTracking])
 
   // ---------------------------------------------------------------------------
   // PUBLIC: Regenerate last message

@@ -111,7 +111,7 @@ export function PairDetailPanel({
       `What does this tell us about current market conditions? Is this a normal relationship or an anomaly worth monitoring? Any actionable implications for traders?`,
     ].filter(Boolean).join(' ')
 
-    openWithPrompt(null, { visibleMessage, fullPrompt }, 'correlations')
+    openWithPrompt(null, { visibleMessage, fullPrompt }, 'correlations', 'correlation_ask')
   }
 
   return (

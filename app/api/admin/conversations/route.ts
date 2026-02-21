@@ -61,7 +61,7 @@ export async function GET(req: NextRequest) {
 
   let query = admin
     .from('conversations')
-    .select('id, title, user_id, created_at, message_count')
+    .select('id, title, user_id, created_at, message_count, metadata')
     .order('created_at', { ascending: false })
     .limit(limit)
 
@@ -103,6 +103,7 @@ export async function GET(req: NextRequest) {
     userName: userEmailMap.get(c.user_id as string) ?? null,
     createdAt: c.created_at as string,
     messageCount: (c.message_count as number | null) ?? null,
+    metadata: (c.metadata as Record<string, unknown> | null) ?? null,
   }))
 
   return NextResponse.json({

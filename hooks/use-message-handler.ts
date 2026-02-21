@@ -2,17 +2,19 @@
 
 import { useState, useCallback } from "react"
 import type { ChatInputRef } from "@/components/chat/chat-input"
+import type { MessageSource } from '@/lib/chat/message-source'
 
 interface PendingMessage {
   content: string
   fileIds?: string[]
   attachments?: any[]
+  source?: MessageSource
 }
 
 interface UseMessageHandlerOptions {
   chatLoading: boolean
   currentConversationId: string | null
-  sendMessage: (content: string, options?: { attachments?: any[]; fileIds?: string[] }) => Promise<void>
+  sendMessage: (content: string, options?: { attachments?: any[]; fileIds?: string[]; source?: MessageSource }) => Promise<void>
   chatInputRef: React.RefObject<ChatInputRef>
 }
 
@@ -33,21 +35,23 @@ export function useMessageHandler({
   }, [])
 
   const handleSendMessage = useCallback(
-    async (content: string, options?: { forceQueue?: boolean; fileIds?: string[]; attachments?: any[] }) => {
+    async (content: string, options?: { forceQueue?: boolean; fileIds?: string[]; attachments?: any[]; source?: MessageSource }) => {
       if (chatLoading || options?.forceQueue) {
         setPendingMessage({
           content,
           fileIds: options?.fileIds,
           attachments: options?.attachments,
+          source: options?.source,
         })
         setDraftConversationId(currentConversationId)
         setIsQueueingMessage(true)
         return
       }
 
-      await sendMessage(content, { 
-        fileIds: options?.fileIds, 
-        attachments: options?.attachments 
+      await sendMessage(content, {
+        fileIds: options?.fileIds,
+        attachments: options?.attachments,
+        source: options?.source,
       })
       setTimeout(() => chatInputRef.current?.focus(), 100)
     },
@@ -81,6 +85,7 @@ export function useMessageHandler({
         await sendMessage(messageToSend.content, {
           fileIds: messageToSend.fileIds,
           attachments: messageToSend.attachments,
+          source: messageToSend.source,
         })
         chatInputRef.current?.focus()
       }, 100)

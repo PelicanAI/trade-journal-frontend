@@ -190,7 +190,7 @@ export default function JournalPage() {
     })
 
     // Send to Pelican chat (panel managed by layout)
-    await openWithPrompt(trade.ticker, prompt, "journal")
+    await openWithPrompt(trade.ticker, prompt, "journal", 'journal_scan')
   }
 
 
@@ -239,7 +239,7 @@ export default function JournalPage() {
   }
 
   const handleAskPelican = async (prompt: string) => {
-    await openWithPrompt(null, prompt, "journal")
+    await openWithPrompt(null, prompt, "journal", 'journal_review')
   }
 
   const showDetailPanel = activePanel === 'detail' && selectedTrade !== null

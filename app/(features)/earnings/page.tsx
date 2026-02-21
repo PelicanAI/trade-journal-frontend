@@ -285,7 +285,7 @@ Revenue estimate: ${event.revenueEstimate != null ? `$${(event.revenueEstimate /
 What are the key things to watch? Any whisper numbers or sentiment shifts? How has this stock reacted to the last few earnings?`
 
     if (typeof openWithPrompt === 'function') {
-      openWithPrompt(event.symbol, prompt, 'earnings')
+      openWithPrompt(event.symbol, prompt, 'earnings', 'earnings_click')
     }
   }
 

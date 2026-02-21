@@ -394,7 +394,7 @@ export default function ChatPage() {
   )
 
   const handleQuickStart = (message: string) => {
-    messageHandler.handleSendMessage(message)
+    messageHandler.handleSendMessage(message, { source: 'welcome_chip' })
   }
 
   // Track latest conversation ID (updated by onConversationCreated before onFinish fires)
@@ -612,7 +612,7 @@ export default function ChatPage() {
                 active={activeExpander}
                 onClose={() => setActiveExpander(null)}
                 onSend={(msg) => {
-                  messageHandler.handleSendMessage(msg)
+                  messageHandler.handleSendMessage(msg, { source: 'action_bar' })
                   setActiveExpander(null)
                 }}
                 openTrades={allTradesRaw.filter(t => t.status === "open")}

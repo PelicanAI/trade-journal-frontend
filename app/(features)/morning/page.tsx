@@ -264,7 +264,7 @@ export default function MorningPage() {
     const pnl = unrealizedPnL ?? trade.pnl_amount ?? null
 
     const prompt = `Analyze my ${trade.direction} position in ${trade.ticker}: Entry $${trade.entry_price.toFixed(2)}, Qty ${trade.quantity}${currentPrice ? `, Current $${currentPrice.toFixed(2)}` : ''}${pnl != null ? `, P&L ${pnl >= 0 ? '+' : ''}$${pnl.toFixed(2)}` : ''}${trade.stop_loss ? `, Stop $${trade.stop_loss}` : ''}${trade.take_profit ? `, Target $${trade.take_profit}` : ''}${trade.thesis ? `\nThesis: ${trade.thesis}` : ''}. What's the current technical setup? Any upcoming catalysts or risks I should watch?`
-    await openWithPrompt(trade.ticker, prompt, "morning")
+    await openWithPrompt(trade.ticker, prompt, "morning", 'brief_action')
   }
 
   const handleShareBrief = useCallback((format: 'full' | 'summary' | 'twitter') => {
@@ -560,7 +560,7 @@ Keep it dense, actionable, and personalized to MY positions and watchlist. Use m
               DJI: `Analyze the Dow Jones today. What sectors are leading/lagging and why?`,
               VIX: `VIX analysis: what is volatility signaling right now? Should I be hedging?`,
             }
-            openWithPrompt(null, prompts[symbol] || `Analyze ${label} today. What's driving the move?`, 'morning')
+            openWithPrompt(null, prompts[symbol] || `Analyze ${label} today. What's driving the move?`, 'morning', 'brief_action')
           }}
         />
       </div>
@@ -570,7 +570,7 @@ Keep it dense, actionable, and personalized to MY positions and watchlist. Use m
         <div className="mt-4">
           <WarningBanner
             warnings={todaysWarnings}
-            onAction={(w) => openWithPrompt(null, `I have a trading warning: ${w.title}. ${w.message} What should I do? ${w.action}`, 'morning')}
+            onAction={(w) => openWithPrompt(null, `I have a trading warning: ${w.title}. ${w.message} What should I do? ${w.action}`, 'morning', 'brief_action')}
           />
         </div>
       )}
@@ -635,7 +635,7 @@ Keep it dense, actionable, and personalized to MY positions and watchlist. Use m
             <InteractiveBrief
               content={briefContent}
               isStreaming={briefLoading}
-              onTickerClick={(ticker, prompt) => openWithPrompt(ticker, prompt, 'morning')}
+              onTickerClick={(ticker, prompt) => openWithPrompt(ticker, prompt, 'morning', 'brief_action')}
               onShare={handleShareBrief}
             />
           )}
@@ -856,7 +856,7 @@ Keep it dense, actionable, and personalized to MY positions and watchlist. Use m
                           crypto: `Analyze ${mover.ticker} \u2014 it's ${mover.changePercent >= 0 ? 'up' : 'down'} ${Math.abs(mover.changePercent).toFixed(2)}% today. What's driving the move in crypto?`,
                           forex: `Analyze ${mover.ticker.slice(0, 3)}/${mover.ticker.slice(3)} \u2014 the pair is ${mover.changePercent >= 0 ? 'up' : 'down'} ${Math.abs(mover.changePercent).toFixed(2)}%. What's the macro driver?`,
                         }
-                        openWithPrompt(mover.ticker, prompts[assetClass], 'morning')
+                        openWithPrompt(mover.ticker, prompts[assetClass], 'morning', 'brief_action')
                       }}
                       className="flex w-full items-center justify-between rounded-lg border border-[var(--border-subtle)] bg-[var(--bg-surface)] p-3 transition-all duration-150 hover:bg-[var(--bg-elevated)] hover:border-[var(--border-hover)] active:scale-[0.98] min-h-[44px]"
                     >
@@ -907,7 +907,7 @@ Keep it dense, actionable, and personalized to MY positions and watchlist. Use m
             <TodaysPlaybook
               economicEvents={economicEvents}
               economicLoading={economicLoading}
-              onAnalyze={(ticker, prompt) => openWithPrompt(ticker, prompt, 'morning')}
+              onAnalyze={(ticker, prompt) => openWithPrompt(ticker, prompt, 'morning', 'brief_action')}
             />
           </motion.div>
 
@@ -916,7 +916,7 @@ Keep it dense, actionable, and personalized to MY positions and watchlist. Use m
             <WatchlistRadar
               watchlistItems={watchlistItems}
               quotes={quotes}
-              onAnalyze={(ticker, prompt) => openWithPrompt(ticker, prompt, 'morning')}
+              onAnalyze={(ticker, prompt) => openWithPrompt(ticker, prompt, 'morning', 'brief_action')}
             />
           </motion.div>
 
@@ -925,7 +925,7 @@ Keep it dense, actionable, and personalized to MY positions and watchlist. Use m
             <motion.div variants={staggerItem}>
               <EdgeSummary
                 insights={behavioralInsights}
-                onAskPelican={(prompt) => openWithPrompt(null, prompt, 'morning')}
+                onAskPelican={(prompt) => openWithPrompt(null, prompt, 'morning', 'brief_action')}
                 compact
               />
             </motion.div>
@@ -937,14 +937,14 @@ Keep it dense, actionable, and personalized to MY positions and watchlist. Use m
               openTrades={openTrades}
               closedTrades={closedTrades ?? []}
               quotes={quotes}
-              onAnalyze={(ticker, prompt) => openWithPrompt(ticker, prompt, 'morning')}
+              onAnalyze={(ticker, prompt) => openWithPrompt(ticker, prompt, 'morning', 'brief_action')}
             />
           </motion.div>
 
           {/* News Headlines (placeholder) */}
           <motion.div variants={staggerItem}>
             <NewsHeadlines
-              onAnalyze={(prompt) => openWithPrompt(null, prompt, 'morning')}
+              onAnalyze={(prompt) => openWithPrompt(null, prompt, 'morning', 'brief_action')}
             />
           </motion.div>
         </div>
