@@ -82,13 +82,7 @@ export function ChatContainer({
   const [newMessageCount, setNewMessageCount] = useState(0)
   const [showNewMessagesPill, setShowNewMessagesPill] = useState(false)
 
-  // Find the index of the last assistant message (for regenerate button)
-  const lastAssistantIndex = (() => {
-    for (let i = messages.length - 1; i >= 0; i--) {
-      if (messages[i]?.role === "assistant") return i
-    }
-    return -1
-  })()
+  // No longer restrict regenerate to last assistant message only
 
   // Track previous messages to detect when user sends
   const prevMessagesLengthRef = useRef(messages.length)
@@ -396,11 +390,17 @@ export function ChatContainer({
                     message={message}
                     onStop={message.isStreaming ? onStopGeneration : undefined}
                     onRegenerate={
-                      index === lastAssistantIndex && message.role === "assistant" && !message.isStreaming
-                        ? onRegenerateMessage
+                      message.role === "assistant" && !message.isStreaming && onEditMessage
+                        ? () => {
+                            // Find the preceding user message to re-send from that point
+                            const userMsg = messages.slice(0, index).reverse().find(m => m.role === 'user')
+                            if (userMsg) {
+                              onEditMessage(userMsg.id, userMsg.content)
+                            }
+                          }
                         : undefined
                     }
-                    isRegenerating={index === lastAssistantIndex && message.role === "assistant" && isLoading && !message.isStreaming}
+                    isRegenerating={message.role === "assistant" && isLoading && !message.isStreaming}
                     isGlobalLoading={isLoading}
                     onEdit={onEditMessage}
                     onDelete={onDeleteMessage}
