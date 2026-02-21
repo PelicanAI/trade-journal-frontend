@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect, useCallback } from "react"
-import { usePelicanPanel } from "@/hooks/use-pelican-panel"
+import { usePelicanPanelContext } from "@/providers/pelican-panel-provider"
 import { Search, TrendingUp, Clock, Command } from "lucide-react"
 import { TickerSearchResult } from "@/app/api/tickers/search/route"
 
@@ -17,7 +17,7 @@ export function TickerSearch({ open, onClose }: TickerSearchProps) {
   const [selectedIndex, setSelectedIndex] = useState(0)
   const [recentSearches, setRecentSearches] = useState<string[]>([])
 
-  const { openWithPrompt } = usePelicanPanel()
+  const { openWithPrompt } = usePelicanPanelContext()
 
   // Load recent searches from localStorage
   useEffect(() => {
