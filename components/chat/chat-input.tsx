@@ -58,13 +58,21 @@ export const ChatInput = forwardRef<ChatInputRef, ChatInputProps>(
     const [isFocused, setIsFocused] = useState(false)
     const [message, setMessage] = useState("")
     const [slashMenuIndex, setSlashMenuIndex] = useState(0)
+    const [slashDismissed, setSlashDismissed] = useState(false)
 
     const textareaRef = useRef<InputTextareaRef>(null)
     const containerRef = useRef<HTMLDivElement>(null)
     const isProcessingPaste = useRef(false)
+    const prevMessageRef = useRef(message)
+
+    // Reset slashDismissed when user types (input changes)
+    if (message !== prevMessageRef.current) {
+      prevMessageRef.current = message
+      if (slashDismissed) setSlashDismissed(false)
+    }
 
     // Slash command state
-    const showSlashMenu = message.startsWith("/") && getFilteredCommands(message).length > 0
+    const showSlashMenu = !slashDismissed && message.startsWith("/") && getFilteredCommands(message).length > 0
     const filteredCommands = showSlashMenu ? getFilteredCommands(message) : []
 
     useImperativeHandle(ref, () => ({
@@ -93,7 +101,7 @@ export const ChatInput = forwardRef<ChatInputRef, ChatInputProps>(
     )
 
     const handleSlashClose = useCallback(() => {
-      // Menu hides naturally when input changes
+      setSlashDismissed(true)
     }, [])
 
     const handleSlashKeyDown = useCallback(
@@ -116,7 +124,7 @@ export const ChatInput = forwardRef<ChatInputRef, ChatInputProps>(
           }
         } else if (e.key === "Escape") {
           e.preventDefault()
-          setMessage("")
+          setSlashDismissed(true)
         }
       },
       [filteredCommands, slashMenuIndex, handleSlashSelect],
