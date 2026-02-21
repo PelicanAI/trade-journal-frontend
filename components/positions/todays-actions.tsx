@@ -87,7 +87,7 @@ export function TodaysActions({ positions, insights, warnings, portfolioStats, r
           priority: 0, icon: ShieldWarning, iconColor: 'text-red-400',
           label: w.title, detail: w.message,
           actionLabel: w.action + ' \u2192', actionType: 'chat',
-          chatPrompt: `I have a critical warning: "${w.title}" — ${w.message}. What should I do?`,
+          chatPrompt: `I have a heads-up worth checking: "${w.title}" — ${w.message}. What should I do?`,
         })
       }
     }
