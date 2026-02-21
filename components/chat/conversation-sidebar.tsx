@@ -41,7 +41,7 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { useTheme } from "next-themes"
 import { cn } from "@/lib/utils"
-import { useConversations } from "@/hooks/use-conversations"
+import { useConversations, type Conversation } from "@/hooks/use-conversations"
 import { useSavedInsights } from "@/hooks/use-saved-insights"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
@@ -49,15 +49,6 @@ import { useT } from "@/lib/providers/translation-provider"
 import { useAuth } from "@/lib/providers/auth-provider"
 import { createClient } from "@/lib/supabase/client"
 import { getConversationClass, type ConversationClass } from "@/lib/chat/message-source"
-
-interface Conversation {
-  id: string
-  title: string
-  created_at: string
-  updated_at: string
-  archived?: boolean
-  metadata?: Record<string, unknown>
-}
 
 type SidebarSourceFilter = 'my_chats' | 'all' | 'actions'
 
