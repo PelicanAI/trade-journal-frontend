@@ -3,8 +3,7 @@
 import React, { useRef, useEffect, useState, useCallback } from 'react'
 import Image from 'next/image'
 import { useRouter } from 'next/navigation'
-import { X, Send, Loader2, RefreshCw } from 'lucide-react'
-import { ArrowsOut } from '@phosphor-icons/react'
+import { X, PaperPlaneRight, SpinnerGap, ArrowsClockwise, ArrowsOut } from '@phosphor-icons/react'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 import { motion } from 'framer-motion'
@@ -61,7 +60,7 @@ function PanelMessage({ message, isStreaming = false, isAutoPrompt = false }: Pa
             </div>
             {isAutoPrompt && (
               <div className="flex justify-end mt-1.5">
-                <span className="text-[10px] text-blue-400/60 bg-blue-500/10 px-2 py-0.5 rounded-full">
+                <span className="text-[10px] text-[var(--accent-primary)]/60 bg-[var(--accent-muted)] px-2 py-0.5 rounded-full">
                   Auto-prompt
                 </span>
               </div>
@@ -226,7 +225,7 @@ function PelicanChatPanelInternal({
               onClick={onClose}
               className="h-9 w-9"
             >
-              <X className="h-5 w-5" />
+              <X className="h-5 w-5" weight="bold" />
             </Button>
           </div>
         </div>
@@ -259,19 +258,19 @@ function PelicanChatPanelInternal({
               onKeyDown={handleKeyDown}
               placeholder="Ask Pelican anything..."
               disabled={isStreaming}
-              className="flex-1 bg-white/[0.06] border border-[var(--border-subtle)] rounded-lg px-3 py-2 text-sm leading-relaxed text-[var(--text-primary)] resize-none focus:outline-none focus:ring-1 focus:ring-blue-500 disabled:opacity-50 min-h-[40px] max-h-[120px]"
+              className="flex-1 bg-white/[0.06] border border-[var(--border-subtle)] rounded-lg px-3 py-2 text-sm leading-relaxed text-[var(--text-primary)] resize-none focus:outline-none focus:ring-1 focus:ring-[var(--accent-primary)] disabled:opacity-50 min-h-[40px] max-h-[120px]"
               rows={1}
             />
             <Button
               onClick={handleSend}
               disabled={!inputValue.trim() || isStreaming}
               size="icon"
-              className="h-10 w-10 bg-blue-600 hover:bg-blue-500 disabled:opacity-50 disabled:cursor-not-allowed flex-shrink-0"
+              className="h-10 w-10 bg-[var(--accent-primary)] hover:bg-[var(--accent-hover)] disabled:opacity-50 disabled:cursor-not-allowed flex-shrink-0"
             >
               {isStreaming ? (
-                <Loader2 className="h-4 w-4 animate-spin" />
+                <SpinnerGap className="h-4 w-4 animate-spin" weight="bold" />
               ) : (
-                <Send className="h-4 w-4" />
+                <PaperPlaneRight className="h-4 w-4" weight="fill" />
               )}
             </Button>
           </div>
@@ -327,7 +326,7 @@ function PelicanChatPanelInternal({
               onClick={onClose}
               className="h-8 w-8 hover:bg-white/[0.06]"
             >
-              <X className="h-4 w-4" />
+              <X className="h-4 w-4" weight="bold" />
             </Button>
           </div>
         </div>
@@ -352,9 +351,9 @@ function PelicanChatPanelInternal({
                   variant="ghost"
                   size="sm"
                   onClick={onRegenerate}
-                  className="text-xs text-[var(--text-muted)] hover:text-blue-400 hover:bg-blue-500/10"
+                  className="text-xs text-[var(--text-muted)] hover:text-[var(--accent-primary)] hover:bg-[var(--accent-muted)]"
                 >
-                  <RefreshCw className="h-3 w-3 mr-1.5" />
+                  <ArrowsClockwise className="h-3 w-3 mr-1.5" weight="bold" />
                   Regenerate
                 </Button>
               </div>
@@ -389,19 +388,19 @@ function PelicanChatPanelInternal({
               onKeyDown={handleKeyDown}
               placeholder="Ask Pelican anything..."
               disabled={isStreaming}
-              className="flex-1 bg-white/[0.06] border border-[var(--border-subtle)] rounded-lg px-3 py-2 text-sm leading-relaxed text-[var(--text-primary)] resize-none focus:outline-none focus:ring-1 focus:ring-blue-500 disabled:opacity-50 min-h-[40px] max-h-[120px]"
+              className="flex-1 bg-white/[0.06] border border-[var(--border-subtle)] rounded-lg px-3 py-2 text-sm leading-relaxed text-[var(--text-primary)] resize-none focus:outline-none focus:ring-1 focus:ring-[var(--accent-primary)] disabled:opacity-50 min-h-[40px] max-h-[120px]"
               rows={1}
             />
             <Button
               onClick={handleSend}
               disabled={!inputValue.trim() || isStreaming}
               size="icon"
-              className="h-10 w-10 bg-blue-600 hover:bg-blue-500 disabled:opacity-50 disabled:cursor-not-allowed flex-shrink-0"
+              className="h-10 w-10 bg-[var(--accent-primary)] hover:bg-[var(--accent-hover)] disabled:opacity-50 disabled:cursor-not-allowed flex-shrink-0"
             >
               {isStreaming ? (
-                <Loader2 className="h-4 w-4 animate-spin" />
+                <SpinnerGap className="h-4 w-4 animate-spin" weight="bold" />
               ) : (
-                <Send className="h-4 w-4" />
+                <PaperPlaneRight className="h-4 w-4" weight="fill" />
               )}
             </Button>
           </div>

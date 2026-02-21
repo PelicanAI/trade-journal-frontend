@@ -1,18 +1,9 @@
 "use client"
 
 import useSWR from "swr"
+import { type EarningsEvent } from '@/types/earnings'
 
-export interface EarningsEvent {
-  date: string
-  symbol: string
-  epsActual: number | null
-  epsEstimate: number | null
-  revenueActual: number | null
-  revenueEstimate: number | null
-  hour: 'bmo' | 'amc' | 'dmh' | null
-  quarter: number
-  year: number
-}
+export { type EarningsEvent } from '@/types/earnings'
 
 export interface UseEarningsReturn {
   events: EarningsEvent[]

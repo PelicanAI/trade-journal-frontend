@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server"
 import { createClient } from "@/lib/supabase/server"
 import { createUserRateLimiter, rateLimitResponse } from "@/lib/rate-limit"
+import { type EarningsEvent } from '@/types/earnings'
 
 export const dynamic = "force-dynamic"
 
@@ -8,19 +9,7 @@ const earningsLimiter = createUserRateLimiter('earnings', 20, '1 m')
 
 const FINNHUB_API_KEY = process.env.FINNHUB_API_KEY
 
-export interface EarningsEvent {
-  date: string
-  symbol: string
-  epsActual: number | null
-  epsEstimate: number | null
-  revenueActual: number | null
-  revenueEstimate: number | null
-  hour: 'bmo' | 'amc' | 'dmh' | null // before market open, after market close, during market hours
-  quarter: number
-  year: number
-}
-
-export interface EarningsResponse {
+interface EarningsResponse {
   events: EarningsEvent[]
   lastUpdated: string
 }
