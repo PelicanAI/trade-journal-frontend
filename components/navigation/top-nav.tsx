@@ -1,12 +1,13 @@
 "use client"
 
-import React from 'react'
+import React, { useMemo } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import Image from 'next/image'
 import { cn } from '@/lib/utils'
 import { useStreaks } from '@/hooks/use-streaks'
 import { useCreditsContext } from '@/providers/credits-provider'
+import { useTraderProfile } from '@/hooks/use-trader-profile'
 
 // =============================================================================
 // TYPES
@@ -20,6 +21,10 @@ interface NavTab {
   key: string
   label: string
   href: string
+  /** Which markets this tab is relevant to. Omit or leave undefined for always-show. */
+  markets?: string[]
+  /** If true, tab is always visible regardless of trader profile. */
+  alwaysShow?: boolean
 }
 
 // =============================================================================
@@ -27,13 +32,13 @@ interface NavTab {
 // =============================================================================
 
 const NAV_TABS: NavTab[] = [
-  { key: 'brief', label: 'Brief', href: '/morning' },
-  { key: 'chat', label: 'Chat', href: '/chat' },
-  { key: 'positions', label: 'Positions', href: '/positions' },
-  { key: 'journal', label: 'Journal', href: '/journal' },
-  { key: 'heatmap', label: 'Heatmap', href: '/heatmap' },
-  { key: 'correlations', label: 'Correlations', href: '/correlations' },
-  { key: 'earnings', label: 'Earnings', href: '/earnings' },
+  { key: 'brief', label: 'Brief', href: '/morning', alwaysShow: true },
+  { key: 'chat', label: 'Chat', href: '/chat', alwaysShow: true },
+  { key: 'positions', label: 'Positions', href: '/positions', alwaysShow: true },
+  { key: 'journal', label: 'Journal', href: '/journal', alwaysShow: true },
+  { key: 'heatmap', label: 'Heatmap', href: '/heatmap', alwaysShow: true },
+  { key: 'correlations', label: 'Correlations', href: '/correlations', alwaysShow: true },
+  { key: 'earnings', label: 'Earnings', href: '/earnings', markets: ['stocks', 'options'] },
 ]
 
 // =============================================================================
@@ -44,6 +49,29 @@ export function TopNav({ className }: TopNavProps) {
   const pathname = usePathname()
   const { journalStreak } = useStreaks()
   const { credits } = useCreditsContext()
+  const { survey } = useTraderProfile()
+
+  // Derive market flags from survey (default to stocks if no survey yet)
+  const marketsTraded = survey?.markets_traded || ['stocks']
+  const hasSurvey = !!survey
+  const tradesForex = marketsTraded.includes('forex')
+  const tradesFutures = marketsTraded.includes('futures')
+
+  // Filter tabs based on trader profile markets
+  // If no survey (onboarding incomplete), show all tabs
+  const visibleTabs = useMemo(() => {
+    if (!hasSurvey) return NAV_TABS
+    return NAV_TABS.filter(tab => {
+      if (tab.alwaysShow) return true
+      return tab.markets?.some(m => marketsTraded.includes(m))
+    })
+  }, [hasSurvey, marketsTraded])
+
+  // Resolve display label — rename "Earnings" to "Calendar" for forex/futures traders
+  const getTabLabel = (tab: NavTab): string => {
+    if (tab.key === 'earnings' && (tradesForex || tradesFutures)) return 'Calendar'
+    return tab.label
+  }
 
   // Determine active tab based on pathname
   const getActiveTab = (): string => {
@@ -86,7 +114,7 @@ export function TopNav({ className }: TopNavProps) {
 
           {/* Tabs — horizontal scroll on mobile, inline on desktop */}
           <div className="flex items-center gap-1 overflow-x-auto scrollbar-hide flex-1 mx-2 sm:mx-4 md:mx-0 md:flex-initial">
-            {NAV_TABS.map((tab) => {
+            {visibleTabs.map((tab) => {
               const isActive = activeTab === tab.key
 
               return (
@@ -113,7 +141,7 @@ export function TopNav({ className }: TopNavProps) {
                       : "text-[var(--text-secondary)] hover:text-[var(--text-primary)] active:bg-[var(--surface-hover)]"
                   )}
                 >
-                  {tab.label}
+                  {getTabLabel(tab)}
                   {isActive && (
                     <span className="hidden md:block absolute bottom-0 left-0 right-0 h-0.5 bg-[var(--accent-primary)] rounded-full shadow-[0_0_8px_var(--accent-muted)]" />
                   )}
