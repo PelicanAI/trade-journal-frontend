@@ -278,9 +278,9 @@ export default function CorrelationsPageClient() {
                     </div>
                   </div>
 
-                  <div className="xl:col-span-1 flex flex-col gap-4 xl:max-h-[calc(100vh-220px)] xl:overflow-y-auto">
+                  <div className="xl:col-span-1 flex flex-col xl:max-h-[calc(100vh-220px)]">
                     {selectedPair && (
-                      <div ref={detailPanelRef} className="flex-shrink-0">
+                      <div ref={detailPanelRef} className="flex-shrink-0 border-b" style={{ borderColor: 'var(--border-default)' }}>
                         <PairDetailPanel
                           assetA={selectedPair.assetA}
                           assetB={selectedPair.assetB}
@@ -290,13 +290,15 @@ export default function CorrelationsPageClient() {
                         />
                       </div>
                     )}
-                    <SignalCards
-                      correlations={data.correlations}
-                      correlations90d={period === '30d' ? data90d?.correlations : undefined}
-                      assets={data.assets}
-                      beginnerMode={beginnerMode}
-                      onSelectPair={handleSelectPair}
-                    />
+                    <div className="flex-1 min-h-0 overflow-y-auto">
+                      <SignalCards
+                        correlations={data.correlations}
+                        correlations90d={period === '30d' ? data90d?.correlations : undefined}
+                        assets={data.assets}
+                        beginnerMode={beginnerMode}
+                        onSelectPair={handleSelectPair}
+                      />
+                    </div>
                   </div>
                 </div>
               </motion.div>
