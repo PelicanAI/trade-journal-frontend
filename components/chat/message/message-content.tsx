@@ -5,9 +5,45 @@ import { motion } from "framer-motion"
 import { EnhancedTypingDots } from "../enhanced-typing-dots"
 import { detectDataTable } from "@/lib/data-parsers"
 import { DataTable } from "@/components/chat/data-visualizations/data-table"
+import { TradeGradeCard } from "@/components/grading/trade-grade-card"
+import type { TradeGrade } from "@/lib/grading/trade-grader"
 import { parseContentSegments } from "./format-utils"
 import { CodeBlock } from "./code-block"
 import { TextSegment } from "./text-segment"
+
+/**
+ * Detect raw JSON trade grade in message content.
+ * Returns parsed TradeGrade + any surrounding text, or null.
+ */
+function detectTradeGradeJson(content: string): { grade: TradeGrade; preText: string; postText: string } | null {
+  // Look for JSON object with trade grade signature fields
+  const jsonMatch = content.match(/(\{[\s\S]*"overall_grade"[\s\S]*"overall_score"[\s\S]*\})/)
+  if (!jsonMatch?.[1]) return null
+
+  try {
+    const parsed = JSON.parse(jsonMatch[1])
+    // Validate it has the required trade grade shape
+    if (
+      typeof parsed.overall_grade === 'string' &&
+      typeof parsed.overall_score === 'number' &&
+      typeof parsed.summary === 'string' &&
+      parsed.risk_management &&
+      parsed.entry_quality &&
+      parsed.exit_execution
+    ) {
+      const matchStart = content.indexOf(jsonMatch[1])
+      const matchEnd = matchStart + jsonMatch[1].length
+      return {
+        grade: parsed as TradeGrade,
+        preText: content.slice(0, matchStart).trim(),
+        postText: content.slice(matchEnd).trim(),
+      }
+    }
+  } catch {
+    // Not valid JSON
+  }
+  return null
+}
 
 interface MessageContentProps {
   content: string
@@ -32,6 +68,12 @@ export const MessageContent = memo(function MessageContent({
   // Only parse data table when NOT streaming (expensive operation)
   const parsedData = useMemo(
     () => (!isStreaming ? detectDataTable(safeContent) : null),
+    [safeContent, isStreaming]
+  )
+
+  // Detect raw JSON trade grade responses
+  const gradeData = useMemo(
+    () => (!isStreaming ? detectTradeGradeJson(safeContent) : null),
     [safeContent, isStreaming]
   )
 
@@ -75,6 +117,21 @@ export const MessageContent = memo(function MessageContent({
           : {})}
         onToggle={() => setShowRawText(true)}
       />
+    )
+  }
+
+  // Render raw JSON grade responses as structured grade cards
+  if (gradeData && !showRawText) {
+    return (
+      <div className="space-y-3">
+        {gradeData.preText && (
+          <p className="text-sm text-foreground leading-relaxed">{gradeData.preText}</p>
+        )}
+        <TradeGradeCard grade={gradeData.grade} />
+        {gradeData.postText && (
+          <p className="text-sm text-foreground leading-relaxed">{gradeData.postText}</p>
+        )}
+      </div>
     )
   }
 
