@@ -23,17 +23,20 @@ interface LearningModeContextValue {
 const LearningModeContext = createContext<LearningModeContextValue | null>(null)
 
 const STORAGE_KEY = "pelican-learning-mode"
+const LEARN_TAB_KEY = "pelican-learn-tab-active"
 
 export function LearningModeProvider({ children }: { children: ReactNode }) {
   const [enabled, setEnabledState] = useState(false)
   const [selectedTerm, setSelectedTerm] = useState<TermInfo | null>(null)
-  const [learnTabActive, setLearnTabActive] = useState(false)
+  const [learnTabActive, setLearnTabActiveState] = useState(false)
 
   // Hydrate from localStorage after mount (SSR-safe)
   useEffect(() => {
     try {
       const stored = localStorage.getItem(STORAGE_KEY)
       if (stored === "true") setEnabledState(true)
+      const learnTab = localStorage.getItem(LEARN_TAB_KEY)
+      if (learnTab === "true") setLearnTabActiveState(true)
     } catch {
       // localStorage unavailable
     }
@@ -52,10 +55,19 @@ export function LearningModeProvider({ children }: { children: ReactNode }) {
     }
   }, [])
 
+  const setLearnTabActive = useCallback((active: boolean) => {
+    setLearnTabActiveState(active)
+    try {
+      localStorage.setItem(LEARN_TAB_KEY, String(active))
+    } catch {
+      // localStorage unavailable
+    }
+  }, [])
+
   const selectTerm = useCallback((term: TermInfo) => {
     setSelectedTerm(term)
     setLearnTabActive(true)
-  }, [])
+  }, [setLearnTabActive])
 
   const clearTerm = useCallback(() => {
     setSelectedTerm(null)
