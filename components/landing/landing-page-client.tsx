@@ -8,6 +8,7 @@ import { DayWithPelican } from './day-with-pelican'
 import { FlywheelSection } from './flywheel-section'
 import { MultiAssetSection } from './multi-asset-section'
 import { FeatureGrid } from './feature-grid'
+import { StrategyShowcase } from './strategy-showcase'
 import { CreditTiersSection } from './credit-tiers-section'
 import { PricingSection } from './pricing-section'
 import { TeamSection } from './team-section'
@@ -25,6 +26,7 @@ export default function LandingPageClient() {
       <FlywheelSection />
       <MultiAssetSection />
       <FeatureGrid />
+      <StrategyShowcase />
       <CreditTiersSection />
       <PricingSection />
       <TeamSection />
