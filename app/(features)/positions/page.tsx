@@ -9,6 +9,7 @@ import { ArrowsClockwise, Brain } from "@phosphor-icons/react"
 import { usePortfolioSummary } from "@/hooks/use-portfolio-summary"
 import { useBehavioralInsights } from "@/hooks/use-behavioral-insights"
 import { useTodaysWarnings } from "@/hooks/use-todays-warnings"
+import { usePositionEarnings } from "@/hooks/use-position-earnings"
 import { usePelicanPanelContext } from "@/providers/pelican-panel-provider"
 import { useTrades } from "@/hooks/use-trades"
 import { useTickerHistory } from "@/hooks/use-ticker-history"
@@ -26,6 +27,7 @@ import { SessionIndicator } from "@/components/positions/session-indicator"
 import { MarketSessionsStrip } from "@/components/positions/market-sessions-strip"
 import Link from "next/link"
 import { PelicanButton, pageEnter } from "@/components/ui/pelican"
+import { trackEvent } from "@/lib/tracking"
 import { computePortfolioGrade } from "@/lib/portfolio-grade"
 import type { PortfolioPosition } from "@/types/portfolio"
 
@@ -49,6 +51,7 @@ export default function PositionsPage() {
   const { data: portfolio, isLoading: portfolioLoading, refresh: refreshPortfolio } = usePortfolioSummary()
   const { data: insights } = useBehavioralInsights()
   const { warnings } = useTodaysWarnings()
+  const { warnings: earningsWarnings } = usePositionEarnings()
   const { openWithPrompt } = usePelicanPanelContext()
   const { closeTrade, refetch: refetchTrades, logTrade } = useTrades()
   const { survey } = useTraderProfile()
@@ -107,6 +110,7 @@ export default function PositionsPage() {
       'Give me: current technicals, whether my thesis is still valid, key levels to watch, and your honest recommendation — hold, add, trim, or exit. Be specific.',
     ].filter(Boolean).join(' ')
 
+    trackEvent({ eventType: 'position_monitored', feature: 'positions', ticker: position.ticker })
     await openWithPrompt(position.ticker, parts, "journal", 'position_scan')
   }, [openWithPrompt])
 
@@ -246,7 +250,10 @@ export default function PositionsPage() {
       {warnings.length > 0 && (
         <WarningBanner
           warnings={warnings}
-          onAction={(w) => handleSendMessage(`I have a trading warning: ${w.title}. ${w.message} What should I do?`)}
+          onAction={(w) => {
+            trackEvent({ eventType: 'alert_acted', feature: 'positions', data: { alertType: w.title } })
+            handleSendMessage(`I have a trading warning: ${w.title}. ${w.message} What should I do?`)
+          }}
         />
       )}
 
@@ -255,6 +262,7 @@ export default function PositionsPage() {
         positions={portfolio.positions}
         insights={insights}
         warnings={warnings}
+        earningsWarnings={earningsWarnings}
         portfolioStats={portfolio.portfolio}
         riskSummary={portfolio.risk}
         onAction={handleSendMessage}
@@ -393,6 +401,7 @@ export default function PositionsPage() {
                   className="flex-1"
                   onClick={() => {
                     const p = showPostCloseReview
+                    trackEvent({ eventType: 'trade_graded', feature: 'positions', ticker: p.ticker })
                     handleSendMessage(
                       `I just closed my ${p.ticker} ${p.direction.toUpperCase()} position. ` +
                       `Entry: $${p.entry_price}. Size: ${formatNum(p.position_size_usd)}. ` +

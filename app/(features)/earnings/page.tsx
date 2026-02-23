@@ -20,6 +20,7 @@ import { EarningsGridSkeleton } from "@/components/earnings/earnings-grid-skelet
 import { EarningsEmptyState } from "@/components/earnings/earnings-empty-state"
 import { EconomicCalendar } from "@/components/calendar/economic-calendar"
 import type { EnrichedEarningsEvent, EarningsFilters as EarningsFiltersType } from "@/types/earnings"
+import { trackEvent } from "@/lib/tracking"
 
 const DEFAULT_FILTERS: EarningsFiltersType = {
   myPortfolio: false,
@@ -105,6 +106,7 @@ export default function EarningsPage() {
 
   // Handle ticker click - open Pelican panel with contextual prompt
   const handleClick = useCallback((event: EnrichedEarningsEvent) => {
+    trackEvent({ eventType: 'earnings_event_clicked', feature: 'earnings', ticker: event.symbol })
     const hourText = event.hour === 'bmo'
       ? 'before market open'
       : event.hour === 'amc'

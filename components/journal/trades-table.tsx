@@ -1,7 +1,7 @@
 "use client"
 
 import { Trade } from "@/hooks/use-trades"
-import { CaretUp, CaretDown, CaretUpDown, PlayCircle, ArrowRight, X as XIcon } from "@phosphor-icons/react"
+import { CaretUp, CaretDown, CaretUpDown, PlayCircle, ArrowRight, X as XIcon, PencilSimple } from "@phosphor-icons/react"
 import { useState } from "react"
 import Link from "next/link"
 import { motion } from "framer-motion"
@@ -18,6 +18,7 @@ interface TradesTableProps {
   onScanTrade?: (trade: Trade) => void
   onAskPelican?: (prompt: string) => void
   onReplayTrade?: (trade: Trade) => void
+  onEditTrade?: (trade: Trade) => void
 }
 
 function getUnrealizedPnL(trade: Trade, quotes: Record<string, Quote>) {
@@ -46,7 +47,7 @@ type SortField = 'entry_date' | 'exit_date' | 'ticker' | 'pnl_amount' | 'pnl_per
 type SortDirection = 'asc' | 'desc'
 type StatusFilter = 'all' | 'open' | 'closed' | 'cancelled'
 
-export function TradesTable({ trades, onSelectTrade, selectedTradeId, onScanTrade, onAskPelican, onReplayTrade }: TradesTableProps) {
+export function TradesTable({ trades, onSelectTrade, selectedTradeId, onScanTrade, onAskPelican, onReplayTrade, onEditTrade }: TradesTableProps) {
   const [sortField, setSortField] = useState<SortField>('exit_date')
   const [sortDirection, setSortDirection] = useState<SortDirection>('desc')
   const [statusFilter, setStatusFilter] = useState<StatusFilter>('closed')
@@ -445,44 +446,59 @@ export function TradesTable({ trades, onSelectTrade, selectedTradeId, onScanTrad
                   )}
                 </td>
                 <td className="py-3 px-4 text-right">
-                  {trade.status === 'open' ? (
-                    <a
-                      href="/positions"
-                      onClick={(e) => e.stopPropagation()}
-                      className="text-xs text-[var(--accent-primary)] hover:text-[var(--accent-hover)] font-medium transition-colors whitespace-nowrap"
-                    >
-                      Monitor &rarr;
-                    </a>
-                  ) : (
-                    <div className="flex items-center justify-end gap-1.5">
-                      {onReplayTrade && (
-                        <IconTooltip label="Replay trade" side="top">
-                          <button
-                            onClick={(e) => {
-                              e.stopPropagation()
-                              onReplayTrade(trade)
-                            }}
-                            className="p-1.5 rounded-lg text-[var(--accent-primary)] hover:bg-[var(--accent-muted)] transition-colors active:scale-95"
-                          >
-                            <PlayCircle size={16} weight="fill" />
-                          </button>
-                        </IconTooltip>
-                      )}
-                      {onScanTrade && (
-                        <PelicanButton
-                          variant="secondary"
-                          size="sm"
+                  <div className="flex items-center justify-end gap-1.5">
+                    {onEditTrade && (
+                      <IconTooltip label="Edit trade" side="top">
+                        <button
                           onClick={(e) => {
                             e.stopPropagation()
-                            onScanTrade(trade)
+                            onEditTrade(trade)
                           }}
-                          className="text-[10px] font-bold"
+                          className="p-1.5 rounded-lg text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-elevated)] transition-colors active:scale-95"
                         >
-                          SCAN
-                        </PelicanButton>
-                      )}
-                    </div>
-                  )}
+                          <PencilSimple size={14} weight="regular" />
+                        </button>
+                      </IconTooltip>
+                    )}
+                    {trade.status === 'open' ? (
+                      <a
+                        href="/positions"
+                        onClick={(e) => e.stopPropagation()}
+                        className="text-xs text-[var(--accent-primary)] hover:text-[var(--accent-hover)] font-medium transition-colors whitespace-nowrap"
+                      >
+                        Monitor &rarr;
+                      </a>
+                    ) : (
+                      <>
+                        {onReplayTrade && (
+                          <IconTooltip label="Replay trade" side="top">
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation()
+                                onReplayTrade(trade)
+                              }}
+                              className="p-1.5 rounded-lg text-[var(--accent-primary)] hover:bg-[var(--accent-muted)] transition-colors active:scale-95"
+                            >
+                              <PlayCircle size={16} weight="fill" />
+                            </button>
+                          </IconTooltip>
+                        )}
+                        {onScanTrade && (
+                          <PelicanButton
+                            variant="secondary"
+                            size="sm"
+                            onClick={(e) => {
+                              e.stopPropagation()
+                              onScanTrade(trade)
+                            }}
+                            className="text-[10px] font-bold"
+                          >
+                            SCAN
+                          </PelicanButton>
+                        )}
+                      </>
+                    )}
+                  </div>
                 </td>
               </tr>
             )
@@ -613,44 +629,57 @@ export function TradesTable({ trades, onSelectTrade, selectedTradeId, onScanTrad
                       {trade.status === 'open' && <div className="w-1.5 h-1.5 rounded-full bg-[var(--status-open)] animate-pulse" />}
                       {trade.status}
                     </span>
-                    {trade.status === 'open' ? (
-                      <a
-                        href="/positions"
-                        onClick={(e) => e.stopPropagation()}
-                        className="text-xs text-[var(--accent-primary)] hover:text-[var(--accent-hover)] font-medium transition-colors"
-                      >
-                        Monitor &rarr;
-                      </a>
-                    ) : (
-                      <div className="flex items-center gap-1.5">
-                        {onReplayTrade && (
-                          <IconTooltip label="Replay trade" side="top">
-                            <button
+                    <div className="flex items-center gap-1.5">
+                      {onEditTrade && (
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation()
+                            onEditTrade(trade)
+                          }}
+                          className="p-1.5 rounded-lg text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-elevated)] transition-colors active:scale-95 min-h-[44px] min-w-[44px] flex items-center justify-center"
+                        >
+                          <PencilSimple size={14} weight="regular" />
+                        </button>
+                      )}
+                      {trade.status === 'open' ? (
+                        <a
+                          href="/positions"
+                          onClick={(e) => e.stopPropagation()}
+                          className="text-xs text-[var(--accent-primary)] hover:text-[var(--accent-hover)] font-medium transition-colors"
+                        >
+                          Monitor &rarr;
+                        </a>
+                      ) : (
+                        <>
+                          {onReplayTrade && (
+                            <IconTooltip label="Replay trade" side="top">
+                              <button
+                                onClick={(e) => {
+                                  e.stopPropagation()
+                                  onReplayTrade(trade)
+                                }}
+                                className="p-1.5 rounded-lg text-[var(--accent-primary)] hover:bg-[var(--accent-muted)] transition-colors active:scale-95 min-h-[44px] min-w-[44px] flex items-center justify-center"
+                              >
+                                <PlayCircle size={16} weight="fill" />
+                              </button>
+                            </IconTooltip>
+                          )}
+                          {onScanTrade && (
+                            <PelicanButton
+                              variant="secondary"
+                              size="sm"
                               onClick={(e) => {
                                 e.stopPropagation()
-                                onReplayTrade(trade)
+                                onScanTrade(trade)
                               }}
-                              className="p-1.5 rounded-lg text-[var(--accent-primary)] hover:bg-[var(--accent-muted)] transition-colors active:scale-95 min-h-[44px] min-w-[44px] flex items-center justify-center"
+                              className="text-[10px] font-bold min-h-[44px]"
                             >
-                              <PlayCircle size={16} weight="fill" />
-                            </button>
-                          </IconTooltip>
-                        )}
-                        {onScanTrade && (
-                          <PelicanButton
-                            variant="secondary"
-                            size="sm"
-                            onClick={(e) => {
-                              e.stopPropagation()
-                              onScanTrade(trade)
-                            }}
-                            className="text-[10px] font-bold min-h-[44px]"
-                          >
-                            SCAN
-                          </PelicanButton>
-                        )}
-                      </div>
-                    )}
+                              SCAN
+                            </PelicanButton>
+                          )}
+                        </>
+                      )}
+                    </div>
                   </div>
                 </div>
               </PelicanCard>

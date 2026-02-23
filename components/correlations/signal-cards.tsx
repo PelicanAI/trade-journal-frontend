@@ -5,6 +5,7 @@ import { Warning, TrendUp, ArrowsClockwise, ArrowRight, Lightning } from '@phosp
 import { findSignalForPair } from '@/lib/correlation-signals'
 import { detectDynamicSignals, type DynamicSignal } from '@/lib/correlations/dynamic-signals'
 import { usePelicanPanelContext } from '@/providers/pelican-panel-provider'
+import { trackEvent } from '@/lib/tracking'
 import type { CorrelationPair, CorrelationAsset } from '@/types/correlations'
 
 interface SignalCardsProps {
@@ -23,7 +24,7 @@ const severityStyles = {
 
 function buildStaticSignals(correlations: CorrelationPair[]): DynamicSignal[] {
   return correlations
-    .filter(p => Math.abs(p.z_score) > 1.5 || p.regime === 'breakdown' || p.regime === 'inversion')
+    .filter(p => Math.abs(p.z_score) > 1.0 || p.regime === 'breakdown' || p.regime === 'inversion')
     .map(p => {
       const found = findSignalForPair(p.asset_a, p.asset_b)
       const severity = p.regime === 'breakdown' || p.regime === 'inversion'
@@ -60,6 +61,11 @@ export function SignalCards({ correlations, correlations90d, beginnerMode, onSel
   }, [correlations, correlations90d])
 
   const handleAskPelican = (sig: DynamicSignal) => {
+    trackEvent({
+      eventType: 'correlation_ask_pelican',
+      feature: 'correlations',
+      data: { assetA: sig.pair[0], assetB: sig.pair[1], correlation: sig.correlation, zScore: sig.z_score },
+    })
     const visibleMessage = `Analyze the ${sig.pair[0]} / ${sig.pair[1]} correlation signal`
     const fullPrompt = `The ${sig.pair[0]}/${sig.pair[1]} correlation is showing a ${sig.type} signal. Current correlation: ${sig.correlation.toFixed(2)}, z-score: ${sig.z_score.toFixed(1)}σ, regime: ${sig.regime}. ${sig.description} What does this mean for current market conditions?`
     openWithPrompt(null, { visibleMessage, fullPrompt }, 'correlations', 'correlation_ask')

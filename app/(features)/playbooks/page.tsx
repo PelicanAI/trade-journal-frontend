@@ -21,6 +21,7 @@ import { PlaybookDetail } from "@/components/playbooks/playbook-detail"
 import { CreatePlaybookModal } from "@/components/playbooks/create-playbook-modal"
 import type { PlaybookFormData } from "@/hooks/use-playbooks"
 import type { Playbook } from "@/types/trading"
+import { trackEvent } from "@/lib/tracking"
 
 const tabs = [
   { key: 'all', label: 'All' },
@@ -97,6 +98,7 @@ export default function PlaybooksPage() {
   )
 
   const handleScan = useCallback((playbook: Playbook) => {
+    trackEvent({ eventType: 'playbook_scanned', feature: 'playbooks', data: { playbookName: playbook.name } })
     const hasStats = playbook.total_trades > 0
     const visibleMessage = hasStats
       ? `Review my "${playbook.name}" playbook performance`

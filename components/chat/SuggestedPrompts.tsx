@@ -7,6 +7,8 @@ import { useTodaysWarnings } from "@/hooks/use-todays-warnings"
 import { useBehavioralInsights } from "@/hooks/use-behavioral-insights"
 import { useTrades } from "@/hooks/use-trades"
 import { useTraderProfile } from "@/hooks/use-trader-profile"
+import { useTradePatterns } from "@/hooks/use-trade-patterns"
+import { trackEvent } from "@/lib/tracking"
 import {
   Warning,
   Fire,
@@ -68,6 +70,7 @@ export function SuggestedPrompts({ onSelect, disabled }: SuggestedPromptsProps) 
   const { data: insights } = useBehavioralInsights()
   const { openTrades, closedTrades } = useTrades()
   const { survey } = useTraderProfile()
+  const { patterns: activePatterns } = useTradePatterns()
   const primaryMarket = survey?.markets_traded?.[0] || 'stocks'
 
   const chips = useMemo((): SuggestedChip[] => {
@@ -83,6 +86,23 @@ export function SuggestedPrompts({ onSelect, disabled }: SuggestedPromptsProps) 
         severity: w.severity,
       })
     })
+
+    // Priority 1: Critical detected patterns (not already surfaced as warnings)
+    if (activePatterns.length > 0) {
+      const warningTitles = new Set(warnings.map(w => w.title))
+      const criticalPatterns = activePatterns.filter(
+        p => p.severity === 'critical' && !warningTitles.has(p.title)
+      )
+      criticalPatterns.slice(0, 1).forEach(p => {
+        result.push({
+          icon: Warning,
+          label: p.title.length > 30 ? p.title.slice(0, 30) + '...' : p.title,
+          prompt: `Pelican, I have a detected pattern: "${p.title}" — ${p.description}. Analyze this and tell me what to change.`,
+          priority: 1,
+          severity: 'critical',
+        })
+      })
+    }
 
     // Priority 1: Losing streak
     if (insights?.streaks?.current_streak_type === 'losing' && insights.streaks.current_streak_count >= 2) {
@@ -195,7 +215,7 @@ export function SuggestedPrompts({ onSelect, disabled }: SuggestedPromptsProps) 
 
     // Sort by priority, take top 6
     return result.sort((a, b) => a.priority - b.priority).slice(0, 6)
-  }, [warnings, insights, openTrades, closedTrades, primaryMarket])
+  }, [warnings, insights, openTrades, closedTrades, primaryMarket, activePatterns])
 
   // Fall back to defaults if no personalized chips
   const hasPersonalized = chips.some(c => c.priority < 5)
@@ -211,7 +231,11 @@ export function SuggestedPrompts({ onSelect, disabled }: SuggestedPromptsProps) 
               initial={{ opacity: 0, y: 6 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.25, delay: 0.05 + index * 0.04 }}
-              onClick={() => !disabled && onSelect(chip.prompt)}
+              onClick={() => {
+                if (disabled) return
+                trackEvent({ eventType: 'suggested_prompt_clicked', feature: 'chat', data: { prompt: chip.label } })
+                onSelect(chip.prompt)
+              }}
               whileHover={disabled ? undefined : { scale: 1.02 }}
               disabled={disabled}
               className={cn(
@@ -237,7 +261,11 @@ export function SuggestedPrompts({ onSelect, disabled }: SuggestedPromptsProps) 
             initial={{ opacity: 0, y: 6 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.25, delay: 0.05 + index * 0.04 }}
-            onClick={() => !disabled && onSelect(prompt)}
+            onClick={() => {
+              if (disabled) return
+              trackEvent({ eventType: 'suggested_prompt_clicked', feature: 'chat', data: { prompt } })
+              onSelect(prompt)
+            }}
             whileHover={disabled ? undefined : { scale: 1.02 }}
             disabled={disabled}
             className={cn(

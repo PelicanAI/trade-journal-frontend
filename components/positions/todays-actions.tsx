@@ -12,11 +12,14 @@ import {
   CheckCircle,
   TrendUp,
   TrendDown,
+  CalendarBlank,
 } from '@phosphor-icons/react'
 import type { IconProps } from '@phosphor-icons/react'
 import type { PortfolioPosition, PortfolioStats, RiskSummary } from '@/types/portfolio'
 import type { BehavioralInsights } from '@/hooks/use-behavioral-insights'
 import type { TodayWarning } from '@/hooks/use-todays-warnings'
+import type { PositionEarningsWarning } from '@/hooks/use-position-earnings'
+import { trackEvent } from '@/lib/tracking'
 
 // ============================================================================
 // Types
@@ -26,6 +29,7 @@ interface TodaysActionsProps {
   positions: PortfolioPosition[]
   insights: BehavioralInsights | null
   warnings: TodayWarning[]
+  earningsWarnings?: PositionEarningsWarning[]
   portfolioStats?: PortfolioStats
   riskSummary?: RiskSummary
   onAction: (chatPrompt: string) => void
@@ -42,6 +46,7 @@ interface Action {
   actionType: 'chat' | 'edit'
   chatPrompt?: string
   position?: PortfolioPosition
+  onTrack?: () => void
 }
 
 // ============================================================================
@@ -71,7 +76,7 @@ function buildScanPrompt(p: PortfolioPosition): string {
 // Component
 // ============================================================================
 
-export function TodaysActions({ positions, insights, warnings, portfolioStats, riskSummary, onAction, onEditPosition }: TodaysActionsProps) {
+export function TodaysActions({ positions, insights, warnings, earningsWarnings, portfolioStats, riskSummary, onAction, onEditPosition }: TodaysActionsProps) {
   const avgSize = useMemo(() => {
     if (positions.length === 0) return 0
     return positions.reduce((s, p) => s + p.position_size_usd, 0) / positions.length
@@ -216,6 +221,42 @@ export function TodaysActions({ positions, insights, warnings, portfolioStats, r
       }
     }
 
+    // Priority 2 — Earnings warnings from positions
+    if (earningsWarnings && earningsWarnings.length > 0) {
+      const sorted = [...earningsWarnings].sort((a, b) => a.days_until_earnings - b.days_until_earnings)
+      for (const ew of sorted) {
+        const isCritical = ew.days_until_earnings <= 2
+        const daysLabel = ew.days_until_earnings === 0
+          ? 'reports earnings TODAY'
+          : ew.days_until_earnings === 1
+            ? 'reports earnings tomorrow'
+            : `earnings in ${ew.days_until_earnings} days`
+        const hourLabel = ew.earnings_hour === 'bmo' ? 'before open' : ew.earnings_hour === 'amc' ? 'after close' : ''
+        const estimatesLine = [
+          ew.eps_estimate ? `EPS est: $${ew.eps_estimate}` : '',
+          ew.revenue_estimate ? `Rev est: $${(ew.revenue_estimate / 1e9).toFixed(1)}B` : '',
+        ].filter(Boolean).join(' \u00b7 ')
+
+        const earningsPrompt = `My ${ew.ticker} ${ew.direction} position has earnings in ${ew.days_until_earnings} days (${ew.earnings_date} ${ew.earnings_hour}).
+Entry: $${ew.entry_price} \u00b7 Size: $${ew.position_size_usd?.toLocaleString()}
+${ew.eps_estimate ? `EPS estimate: $${ew.eps_estimate}` : ''}${ew.revenue_estimate ? ` \u00b7 Revenue estimate: $${(ew.revenue_estimate / 1e9).toFixed(1)}B` : ''}
+
+Help me plan: should I hold through earnings, trim my position, add a hedge, or close before the event? What's the historical expected move?`
+
+        list.push({
+          priority: isCritical ? 2 : 2,
+          icon: CalendarBlank,
+          iconColor: isCritical ? 'text-red-400' : 'text-amber-400',
+          label: `${ew.ticker} ${daysLabel}${hourLabel ? ` (${hourLabel})` : ''}`,
+          detail: `${ew.direction.toUpperCase()} from $${ew.entry_price}${ew.position_size_usd ? ` \u00b7 ${formatNum(ew.position_size_usd)}` : ''}${estimatesLine ? ` \u00b7 ${estimatesLine}` : ''}`,
+          actionLabel: 'Plan with Pelican \u2192',
+          actionType: 'chat' as const,
+          chatPrompt: earningsPrompt,
+          onTrack: () => trackEvent({ eventType: 'earnings_event_clicked', feature: 'positions', ticker: ew.ticker, data: { daysUntil: ew.days_until_earnings } }),
+        })
+      }
+    }
+
     // Priority 3 — Losing streak
     if (insights?.streaks?.current_streak_type === 'losing' && insights.streaks.current_streak_count >= 2) {
       list.push({
@@ -229,7 +270,7 @@ export function TodaysActions({ positions, insights, warnings, portfolioStats, r
 
     list.sort((a, b) => a.priority - b.priority)
     return list.slice(0, 5)
-  }, [positions, insights, warnings, avgSize, portfolioStats, riskSummary])
+  }, [positions, insights, warnings, earningsWarnings, avgSize, portfolioStats, riskSummary])
 
   // ── Empty / all-clear state ──────────────────────────────────────────────
   if (actions.length === 0) {
@@ -278,7 +319,11 @@ export function TodaysActions({ positions, insights, warnings, portfolioStats, r
               <p className="text-xs text-[var(--text-muted)]">{a.detail}</p>
             </div>
             <button
-              onClick={() => a.actionType === 'chat' && a.chatPrompt ? onAction(a.chatPrompt) : a.position ? onEditPosition(a.position) : undefined}
+              onClick={() => {
+                a.onTrack?.()
+                if (a.actionType === 'chat' && a.chatPrompt) onAction(a.chatPrompt)
+                else if (a.position) onEditPosition(a.position)
+              }}
               className="text-xs text-[var(--accent-primary)] hover:text-[var(--accent-hover)] font-medium whitespace-nowrap transition-colors mt-0.5"
             >
               {a.actionLabel}

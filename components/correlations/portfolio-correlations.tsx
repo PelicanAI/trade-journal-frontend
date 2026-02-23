@@ -2,9 +2,11 @@
 
 import React, { useMemo } from 'react'
 import { motion } from 'framer-motion'
-import { Warning, ShieldCheck, Link as LinkIcon, Eye, ArrowRight, Briefcase } from '@phosphor-icons/react'
+import { Warning, ShieldCheck, Link as LinkIcon, Eye, ArrowRight, Briefcase, Lightning } from '@phosphor-icons/react'
 import { useTrades } from '@/hooks/use-trades'
 import { getCorrelationProxy, getProxyLabel, groupByProxy } from '@/lib/correlations/portfolio-proxy'
+import { usePelicanPanelContext } from '@/providers/pelican-panel-provider'
+import { trackEvent } from '@/lib/tracking'
 import type { CorrelationPair, CorrelationAsset } from '@/types/correlations'
 
 // --- Color utilities (shared with main matrix) ---
@@ -60,6 +62,7 @@ export function PortfolioCorrelations({
   correlations, assets, beginnerMode, onSelectPair,
 }: PortfolioCorrelationsProps) {
   const { openTrades, isLoading } = useTrades({ status: 'open' })
+  const { openWithPrompt } = usePelicanPanelContext()
 
   // Build correlation lookup
   const corrMap = useMemo(() => {
@@ -133,6 +136,30 @@ export function PortfolioCorrelations({
 
     return { avgCorr, concentrationLevel, highest, bestDiv, concentrated, crossCorrs }
   }, [uniqueProxies, proxyGroups, getCorr])
+
+  const handleReviewRisk = () => {
+    if (!riskMetrics) return
+    trackEvent({
+      eventType: 'correlation_ask_pelican',
+      feature: 'correlations',
+      data: { type: 'portfolio_review', avgCorrelation: riskMetrics.avgCorr, positionCount: positions.length },
+    })
+    const tickers = positions.map(p => p.ticker).join(', ')
+    const visibleMessage = 'Review my portfolio correlation risk'
+    const fullPrompt = [
+      `Review the correlation risk in my portfolio.`,
+      `I hold ${positions.length} positions: ${tickers}.`,
+      `Average cross-correlation: ${riskMetrics.avgCorr.toFixed(2)} (${riskMetrics.concentrationLevel} concentration).`,
+      `Most correlated pair: ${riskMetrics.highest.a}/${riskMetrics.highest.b} at ${riskMetrics.highest.value.toFixed(2)}.`,
+      `Best diversifier: ${riskMetrics.bestDiv.proxy} (avg correlation ${riskMetrics.bestDiv.avg.toFixed(2)}).`,
+      riskMetrics.concentrated.length > 0
+        ? `Hidden exposure: ${riskMetrics.concentrated.map(([proxy, tickers]) => `${proxy} (${tickers.join(', ')})`).join('; ')}.`
+        : 'No hidden concentration detected.',
+      '',
+      'Am I diversified enough? What is my biggest hidden risk? Should I rebalance or add a hedge?',
+    ].join(' ')
+    openWithPrompt(null, { visibleMessage, fullPrompt }, 'correlations', 'correlation_ask')
+  }
 
   // --- Loading state ---
   if (isLoading) {
@@ -253,6 +280,22 @@ export function PortfolioCorrelations({
             beginner={beginnerMode ? 'Sectors where you hold 3+ similar stocks' : undefined}
           />
         </div>
+      )}
+
+      {/* Review Risk with Pelican */}
+      {riskMetrics && (
+        <button
+          onClick={handleReviewRisk}
+          className="flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-medium transition-all hover:brightness-110 active:scale-[0.98] w-full sm:w-auto"
+          style={{
+            background: 'var(--bg-elevated)',
+            border: '1px solid var(--border-subtle)',
+            color: 'var(--text-secondary)',
+          }}
+        >
+          <Lightning weight="bold" className="w-3.5 h-3.5" style={{ color: 'var(--accent-indigo)' }} />
+          Review Risk with Pelican
+        </button>
       )}
 
       {/* Mini Correlation Matrix */}

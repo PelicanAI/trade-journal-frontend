@@ -1,7 +1,7 @@
 "use client"
 
 import { Trade } from "@/hooks/use-trades"
-import { X, PlayCircle } from "@phosphor-icons/react"
+import { X, PlayCircle, PencilSimple } from "@phosphor-icons/react"
 import { IconTooltip } from "@/components/ui/icon-tooltip"
 import { PelicanCard, PelicanButton, DataCell } from "@/components/ui/pelican"
 import { TradeGradeCard } from "@/components/grading/trade-grade-card"
@@ -15,7 +15,7 @@ interface TradeDetailPanelProps {
   onReplay?: (trade: Trade) => void
 }
 
-export function TradeDetailPanel({ trade, onClose, onCloseTrade, onReplay }: TradeDetailPanelProps) {
+export function TradeDetailPanel({ trade, onClose, onEdit, onCloseTrade, onReplay }: TradeDetailPanelProps) {
   const isWinner = trade.pnl_amount !== null && trade.pnl_amount > 0
   const isLoser = trade.pnl_amount !== null && trade.pnl_amount < 0
 
@@ -260,6 +260,18 @@ export function TradeDetailPanel({ trade, onClose, onCloseTrade, onReplay }: Tra
 
       {/* Actions */}
       <div className="flex-shrink-0 p-4 border-t border-[var(--border-subtle)] space-y-2">
+        {/* Edit trade button */}
+        {onEdit && (
+          <PelicanButton
+            variant="secondary"
+            size="lg"
+            onClick={() => onEdit(trade)}
+            className="w-full"
+          >
+            <PencilSimple size={16} weight="regular" />
+            Edit Trade
+          </PelicanButton>
+        )}
         {/* Close trade button for open trades */}
         {trade.status === 'open' && onCloseTrade && (
           <PelicanButton

@@ -6,6 +6,7 @@ import { formatLine, applyTickerLinks } from "./format-utils"
 import { useChart } from "@/providers/chart-provider"
 import { useLearningMode } from "@/providers/learning-mode-provider"
 import { applyLearningHighlights } from "@/lib/glossary/term-matcher"
+import { trackEvent } from "@/lib/tracking"
 
 interface TextSegmentProps {
   content: string
@@ -29,6 +30,7 @@ export function TextSegment({ content, index, isStreaming, isLargeContent, ticke
       const learningTerm = target.getAttribute("data-learning-term")
       if (learningTerm) {
         e.preventDefault()
+        trackEvent({ eventType: 'learning_term_clicked', feature: 'chat', data: { term: learningTerm } })
         const fullName = target.getAttribute("data-term-full") || ""
         const shortDef = target.getAttribute("data-term-def") || ""
         selectTerm({ term: learningTerm, fullName, shortDef, category: "" })

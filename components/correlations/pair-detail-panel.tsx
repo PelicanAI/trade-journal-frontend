@@ -9,6 +9,7 @@ import { useCorrelationPair } from '@/hooks/use-correlations'
 import { usePelicanPanelContext } from '@/providers/pelican-panel-provider'
 import { useTrades } from '@/hooks/use-trades'
 import { interpretCorrelation, getStrengthLabel, getCorrelationTrend } from '@/lib/correlations/interpret'
+import { trackEvent } from '@/lib/tracking'
 import type { CorrelationAsset } from '@/types/correlations'
 
 interface PairDetailPanelProps {
@@ -95,6 +96,11 @@ export function PairDetailPanel({
   }, beginnerMode) : ''
 
   const handleAskPelican = () => {
+    trackEvent({
+      eventType: 'correlation_ask_pelican',
+      feature: 'correlations',
+      data: { assetA, assetB, correlation: currentData.correlation, zScore: currentData.z_score },
+    })
     const visibleMessage = `Analyze the ${nameA} / ${nameB} correlation`
     const fullPrompt = [
       `Analyze the current ${nameA} (${assetA}) / ${nameB} (${assetB}) correlation.`,

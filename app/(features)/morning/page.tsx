@@ -39,6 +39,7 @@ import { NewsHeadlines } from "@/components/morning/news-headlines"
 import { Sparkline } from "@/components/morning/sparkline"
 import { useTodaysWarnings } from "@/hooks/use-todays-warnings"
 import { useBehavioralInsights } from "@/hooks/use-behavioral-insights"
+import { useTradePatterns } from "@/hooks/use-trade-patterns"
 import { WarningBanner } from "@/components/insights/warning-banner"
 import { EdgeSummary } from "@/components/insights/edge-summary"
 import { useToast } from "@/hooks/use-toast"
@@ -47,6 +48,7 @@ import { useMarketData } from "@/hooks/use-market-data"
 import { useSparklineData } from "@/hooks/use-sparkline-data"
 import { useTraderProfile } from "@/hooks/use-trader-profile"
 import type { Mover } from "@/hooks/use-morning-brief"
+import { trackEvent } from "@/lib/tracking"
 import {
   MAG7,
   SP500_TICKERS,
@@ -271,6 +273,7 @@ export default function MorningPage() {
   useEffect(() => { completeMilestone("visited_brief") }, [completeMilestone])
   const { warnings: todaysWarnings, warningCount } = useTodaysWarnings()
   const { data: behavioralInsights } = useBehavioralInsights()
+  const { patterns: activePatterns } = useTradePatterns()
   const { primaryMarket } = useTraderProfile()
   const marketType = (primaryMarket as MarketType) || 'stocks'
   const briefConfig = BRIEF_CONFIGS[marketType] ?? BRIEF_CONFIGS.stocks
@@ -467,6 +470,15 @@ export default function MorningPage() {
       ? watchlistItems.map(w => w.ticker).join(', ')
       : 'No watchlist items'
 
+    // Watchlist custom alert prompts
+    const watchlistAlerts = watchlistItems.filter(w => w.custom_prompt)
+    let watchlistAlertContext = ''
+    if (watchlistAlerts.length > 0) {
+      watchlistAlertContext = '\n\nUSER\'S CUSTOM WATCHLIST ALERTS:\n' +
+        watchlistAlerts.map(w => `${w.ticker}: "${w.custom_prompt}"`).join('\n') +
+        '\n\nPlease check these custom alert conditions and report on their status in the WATCHLIST OPPORTUNITIES section.'
+    }
+
     const topMovers = [...movers.gainers, ...movers.losers]
       .sort((a, b) => Math.abs(b.changePercent) - Math.abs(a.changePercent))
     const moversSummary = topMovers.slice(0, 10).map(m =>
@@ -536,12 +548,26 @@ ${briefConfig.gamePlan}
 
 Keep it dense, actionable, and personalized to MY positions and watchlist. Use markdown headers for each section.`
 
+    // Append watchlist custom alert context
+    if (watchlistAlertContext) {
+      prompt += watchlistAlertContext
+    }
+
     if (todaysWarnings.length > 0) {
       prompt += `\n\nIMPORTANT CONTEXT — MY ACTIVE TRADING WARNINGS (based on my historical patterns):\n`
       todaysWarnings.forEach(w => {
         prompt += `- [${w.severity.toUpperCase()}] ${w.title}: ${w.message}\n`
       })
       prompt += `\nPlease acknowledge these warnings in my brief and factor them into your risk assessment and game plan sections.`
+    }
+
+    // Detected trading patterns from historical analysis
+    if (activePatterns.length > 0) {
+      prompt += `\n\nDETECTED TRADING PATTERNS (from my trade history analysis):\n`
+      activePatterns.forEach(p => {
+        prompt += `- [${(p.severity ?? 'info').toUpperCase()}] ${p.title}: ${p.description}\n`
+      })
+      prompt += `\nPlease factor these detected patterns into your risk warnings and game plan. If any pattern is critical, call it out prominently.`
     }
 
     // Setups for You — only if user has active playbooks
@@ -562,12 +588,13 @@ Keep it dense, actionable, and personalized to MY positions and watchlist. Use m
     }
 
     return prompt
-  }, [openTrades, watchlistItems, movers.gainers, movers.losers, todaysWarnings, marketType, briefConfig, activePlaybooks])
+  }, [openTrades, watchlistItems, movers.gainers, movers.losers, todaysWarnings, marketType, briefConfig, activePlaybooks, activePatterns])
 
   const supabase = useMemo(() => createClient(), [])
   const briefAbortRef = useRef<AbortController | null>(null)
 
   const handleGenerateBrief = useCallback(async () => {
+    trackEvent({ eventType: 'brief_opened', feature: 'morning_brief' })
     // Abort any in-flight brief request
     briefAbortRef.current?.abort()
     briefAbortRef.current = new AbortController()
@@ -761,6 +788,7 @@ Keep it dense, actionable, and personalized to MY positions and watchlist. Use m
                   variant="ghost"
                   size="sm"
                   onClick={() => {
+                    trackEvent({ eventType: 'brief_section_engaged', feature: 'morning_brief', data: { action: 'discuss' } })
                     openWithPrompt(null, `Let's discuss today's morning brief. Based on my current positions and the market conditions outlined in the brief, what are the most important things I should focus on today? What actionable steps should I take?`, 'morning', 'brief_action')
                   }}
                 >

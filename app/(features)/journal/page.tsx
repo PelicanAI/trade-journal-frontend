@@ -21,6 +21,7 @@ import { buildReplayNarrationPrompt } from "@/lib/journal/build-replay-prompt"
 import { PelicanButton, pageEnter, tabContent, backdrop } from "@/components/ui/pelican"
 import { Plus, ChartBar, Funnel, ClipboardText, Brain, UserCircle, X as XIcon } from "@phosphor-icons/react"
 import { useOnboardingProgress } from "@/hooks/use-onboarding-progress"
+import { trackEvent } from "@/lib/tracking"
 
 const PerformanceTab = dynamicImport(
   () => import("@/components/journal/performance-tab").then((m) => ({ default: m.PerformanceTab })),
@@ -67,6 +68,7 @@ export default function JournalPage() {
   const [tradeTypeFilter, setTradeTypeFilter] = useState<'all' | 'real' | 'paper'>('all')
   const [showProfileModal, setShowProfileModal] = useState(false)
   const [replayTrade, setReplayTrade] = useState<Trade | null>(null)
+  const [editTrade, setEditTrade] = useState<Trade | null>(null)
 
   const { trades, isLoading: tradesLoading, logTrade, closeTrade, refetch, updateTrade } = useTrades()
 
@@ -135,6 +137,7 @@ export default function JournalPage() {
   const { quotes } = useLiveQuotes(openTickersWithTypes)
 
   const handleScanTrade = async (trade: Trade) => {
+    trackEvent({ eventType: 'trade_scanned', feature: 'journal', ticker: trade.ticker })
     const quote = quotes[trade.ticker]
     const currentPrice = quote?.price
 
@@ -247,6 +250,23 @@ export default function JournalPage() {
 
   const handleAskPelican = async (prompt: string) => {
     await openWithPrompt(null, prompt, "journal", 'journal_review')
+  }
+
+  const handleEditTrade = (trade: Trade) => {
+    trackEvent({ eventType: 'trade_scanned', feature: 'journal', ticker: trade.ticker, data: { action: 'edit' } })
+    setEditTrade(trade)
+    setShowLogTradeModal(true)
+  }
+
+  const handleEditComplete = () => {
+    setEditTrade(null)
+    setShowLogTradeModal(false)
+    refetch()
+    // Refresh detail panel if open
+    if (selectedTrade && editTrade && selectedTrade.id === editTrade.id) {
+      const updated = trades.find(t => t.id === editTrade.id)
+      if (updated) setSelectedTrade(updated)
+    }
   }
 
   const handleReplayTrade = (trade: Trade) => {
@@ -404,6 +424,7 @@ export default function JournalPage() {
                   selectedTradeId={selectedTrade?.id}
                   onAskPelican={handleAskPelican}
                   onReplayTrade={handleReplayTrade}
+                  onEditTrade={handleEditTrade}
                 />
               </motion.div>
             )}
@@ -432,6 +453,7 @@ export default function JournalPage() {
                 initial="hidden"
                 animate="visible"
                 exit="exit"
+                onAnimationComplete={() => trackEvent({ eventType: 'insight_viewed', feature: 'journal' })}
               >
                 <InsightsTab
                   onAskPelican={handleAskPelican}
@@ -457,6 +479,7 @@ export default function JournalPage() {
             <TradeDetailPanel
               trade={selectedTrade}
               onClose={handleCloseDetailPanel}
+              onEdit={handleEditTrade}
               onCloseTrade={handleOpenCloseTrade}
               onReplay={handleReplayTrade}
             />
@@ -476,8 +499,13 @@ export default function JournalPage() {
       {/* Modals */}
       <LogTradeModal
         open={showLogTradeModal}
-        onOpenChange={setShowLogTradeModal}
+        onOpenChange={(open) => {
+          setShowLogTradeModal(open)
+          if (!open) setEditTrade(null)
+        }}
         onSubmit={handleLogTrade}
+        editTrade={editTrade}
+        onEditComplete={handleEditComplete}
       />
 
       {selectedTrade && (
@@ -602,6 +630,7 @@ export default function JournalPage() {
               <TradeDetailPanel
                 trade={selectedTrade}
                 onClose={handleCloseDetailPanel}
+                onEdit={handleEditTrade}
                 onCloseTrade={handleOpenCloseTrade}
                 onReplay={handleReplayTrade}
               />

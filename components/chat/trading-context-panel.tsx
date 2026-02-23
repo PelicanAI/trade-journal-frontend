@@ -1,7 +1,7 @@
 "use client"
 
 import { Card } from "@/components/ui/card"
-import { TrendUp, TrendDown, Pulse, Star, CaretDown, CaretUp, CaretRight, GraduationCap, X, Plus, ChartLineUp, ChatCircle, Briefcase, Trash, MagnifyingGlass } from "@phosphor-icons/react"
+import { TrendUp, TrendDown, Pulse, Star, CaretDown, CaretUp, CaretRight, GraduationCap, X, Plus, ChartLineUp, ChatCircle, Briefcase, Trash, MagnifyingGlass, Bell, BellRinging } from "@phosphor-icons/react"
 import { IconTooltip } from "@/components/ui/icon-tooltip"
 import { cn, normalizeTicker } from "@/lib/utils"
 import { useState, useRef } from "react"
@@ -53,6 +53,7 @@ interface WatchlistTicker {
   symbol: string
   price: number | null
   changePercent: number | null
+  customPrompt: string | null
 }
 
 // --- Market-adaptive panel configuration ---
@@ -221,7 +222,10 @@ export function TradingContextPanel({
   const addInputRef = useRef<HTMLInputElement>(null)
 
   // Real watchlist from Supabase
-  const { items: watchlistItems, addToWatchlist, removeFromWatchlist, loading: watchlistLoading } = useWatchlist()
+  const { items: watchlistItems, addToWatchlist, removeFromWatchlist, updateCustomPrompt, loading: watchlistLoading } = useWatchlist()
+  const [alertEditTicker, setAlertEditTicker] = useState<string | null>(null)
+  const [alertInput, setAlertInput] = useState("")
+  const alertInputRef = useRef<HTMLInputElement>(null)
 
   // Live quotes for watchlist tickers
   const watchlistSymbols = watchlistItems.map(item => item.ticker)
@@ -232,6 +236,7 @@ export function TradingContextPanel({
     symbol: item.ticker,
     price: watchlistQuotes[item.ticker]?.price ?? null,
     changePercent: watchlistQuotes[item.ticker]?.changePercent ?? null,
+    customPrompt: item.custom_prompt ?? null,
   }))
 
   // Open trades
@@ -530,46 +535,119 @@ export function TradingContextPanel({
                           </button>
                         </>
                       ) : (
-                        <DropdownMenu>
-                          <DropdownMenuTrigger asChild>
-                            <button className="w-full flex items-center justify-between p-2 rounded-lg bg-[var(--bg-surface)] border border-[var(--border-subtle)] hover:border-[var(--border-hover)] hover:bg-[var(--bg-elevated)] cursor-pointer transition-all duration-150 text-left">
-                              <span className="text-xs font-semibold text-[var(--text-primary)]">{ticker.symbol}</span>
-                              <div className="flex flex-col items-end">
-                                <span className="text-xs font-medium font-mono tabular-nums text-[var(--text-primary)]">{formatPrice(ticker.price, ticker.symbol)}</span>
-                                <div
-                                  className={cn(
-                                    "text-[10px] font-medium font-mono tabular-nums px-1.5 py-0.5 rounded",
-                                    getChangeBg(ticker.changePercent),
-                                    getChangeColor(ticker.changePercent),
+                        <div className="w-full">
+                          <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                              <button className="w-full flex items-center justify-between p-2 rounded-lg bg-[var(--bg-surface)] border border-[var(--border-subtle)] hover:border-[var(--border-hover)] hover:bg-[var(--bg-elevated)] cursor-pointer transition-all duration-150 text-left">
+                                <div className="flex items-center gap-1.5">
+                                  <span className="text-xs font-semibold text-[var(--text-primary)]">{ticker.symbol}</span>
+                                  {ticker.customPrompt && (
+                                    <BellRinging size={10} weight="fill" className="text-[var(--accent-primary)]" />
                                   )}
-                                >
-                                  {formatPercent(ticker.changePercent)}
                                 </div>
+                                <div className="flex flex-col items-end">
+                                  <span className="text-xs font-medium font-mono tabular-nums text-[var(--text-primary)]">{formatPrice(ticker.price, ticker.symbol)}</span>
+                                  <div
+                                    className={cn(
+                                      "text-[10px] font-medium font-mono tabular-nums px-1.5 py-0.5 rounded",
+                                      getChangeBg(ticker.changePercent),
+                                      getChangeColor(ticker.changePercent),
+                                    )}
+                                  >
+                                    {formatPercent(ticker.changePercent)}
+                                  </div>
+                                </div>
+                              </button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align="end" className="w-48">
+                              <DropdownMenuItem onClick={() => showChart(ticker.symbol)}>
+                                <ChartLineUp size={14} weight="regular" className="mr-2" />
+                                Open Chart
+                              </DropdownMenuItem>
+                              <DropdownMenuItem onClick={() => onPrefillChat?.(`Analyze ${ticker.symbol}`)}>
+                                <ChatCircle size={14} weight="regular" className="mr-2" />
+                                Ask Pelican
+                              </DropdownMenuItem>
+                              <DropdownMenuItem onClick={() => onPrefillChat?.(`Deep dive on ${ticker.symbol} — technicals, fundamentals, and sentiment`)}>
+                                <MagnifyingGlass size={14} weight="regular" className="mr-2" />
+                                Deep Dive
+                              </DropdownMenuItem>
+                              <DropdownMenuItem
+                                onClick={() => {
+                                  setAlertEditTicker(ticker.symbol)
+                                  setAlertInput(ticker.customPrompt || "")
+                                  setTimeout(() => alertInputRef.current?.focus(), 50)
+                                }}
+                              >
+                                <Bell size={14} weight="regular" className="mr-2" />
+                                {ticker.customPrompt ? 'Edit Custom Alert...' : 'Set Custom Alert...'}
+                              </DropdownMenuItem>
+                              <DropdownMenuItem
+                                onClick={() => removeFromWatchlist(ticker.symbol)}
+                                className="text-[var(--data-negative)] focus:text-[var(--data-negative)]"
+                              >
+                                <Trash size={14} weight="regular" className="mr-2" />
+                                Remove
+                              </DropdownMenuItem>
+                            </DropdownMenuContent>
+                          </DropdownMenu>
+
+                          {/* Custom Alert Inline Editor */}
+                          {alertEditTicker === ticker.symbol && (
+                            <div className="mt-1.5 p-2 rounded-lg bg-[var(--bg-elevated)] border border-[var(--accent-primary)]/30">
+                              <div className="flex items-center gap-1.5 mb-1.5">
+                                <BellRinging size={12} weight="bold" className="text-[var(--accent-primary)]" />
+                                <span className="text-[10px] font-medium text-[var(--accent-primary)]">Custom Alert</span>
                               </div>
-                            </button>
-                          </DropdownMenuTrigger>
-                          <DropdownMenuContent align="end" className="w-48">
-                            <DropdownMenuItem onClick={() => showChart(ticker.symbol)}>
-                              <ChartLineUp size={14} weight="regular" className="mr-2" />
-                              Open Chart
-                            </DropdownMenuItem>
-                            <DropdownMenuItem onClick={() => onPrefillChat?.(`Analyze ${ticker.symbol}`)}>
-                              <ChatCircle size={14} weight="regular" className="mr-2" />
-                              Ask Pelican
-                            </DropdownMenuItem>
-                            <DropdownMenuItem onClick={() => onPrefillChat?.(`Deep dive on ${ticker.symbol} — technicals, fundamentals, and sentiment`)}>
-                              <MagnifyingGlass size={14} weight="regular" className="mr-2" />
-                              Deep Dive
-                            </DropdownMenuItem>
-                            <DropdownMenuItem
-                              onClick={() => removeFromWatchlist(ticker.symbol)}
-                              className="text-[var(--data-negative)] focus:text-[var(--data-negative)]"
-                            >
-                              <Trash size={14} weight="regular" className="mr-2" />
-                              Remove
-                            </DropdownMenuItem>
-                          </DropdownMenuContent>
-                        </DropdownMenu>
+                              <input
+                                ref={alertInputRef}
+                                type="text"
+                                value={alertInput}
+                                onChange={(e) => setAlertInput(e.target.value)}
+                                onKeyDown={(e) => {
+                                  if (e.key === "Enter") {
+                                    updateCustomPrompt(ticker.symbol, alertInput.trim() || null)
+                                    setAlertEditTicker(null)
+                                  }
+                                  if (e.key === "Escape") {
+                                    setAlertEditTicker(null)
+                                  }
+                                }}
+                                placeholder="e.g., Alert when NVDA breaks above 950"
+                                className="w-full bg-[var(--bg-surface)] text-xs text-[var(--text-primary)] placeholder:text-[var(--text-muted)] px-2 py-1.5 rounded border border-[var(--border-subtle)] outline-none focus:border-[var(--accent-primary)] transition-colors"
+                                maxLength={200}
+                              />
+                              <div className="flex items-center gap-1.5 mt-1.5">
+                                <button
+                                  onClick={() => {
+                                    updateCustomPrompt(ticker.symbol, alertInput.trim() || null)
+                                    setAlertEditTicker(null)
+                                  }}
+                                  className="px-2 py-1 rounded text-[10px] font-medium bg-[var(--accent-primary)] text-white hover:bg-[var(--accent-hover)] transition-colors"
+                                >
+                                  Save
+                                </button>
+                                <button
+                                  onClick={() => setAlertEditTicker(null)}
+                                  className="px-2 py-1 rounded text-[10px] font-medium text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-surface)] transition-colors"
+                                >
+                                  Cancel
+                                </button>
+                                {ticker.customPrompt && (
+                                  <button
+                                    onClick={() => {
+                                      updateCustomPrompt(ticker.symbol, null)
+                                      setAlertEditTicker(null)
+                                    }}
+                                    className="px-2 py-1 rounded text-[10px] font-medium text-[var(--data-negative)] hover:bg-[var(--data-negative)]/10 transition-colors ml-auto"
+                                  >
+                                    Remove
+                                  </button>
+                                )}
+                              </div>
+                            </div>
+                          )}
+                        </div>
                       )}
                     </div>
                   ))}

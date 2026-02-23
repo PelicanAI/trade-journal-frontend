@@ -23,6 +23,7 @@ import { getMarketStatus } from "@/hooks/use-market-data"
 import { PageHeader, DataCell, pageEnter } from "@/components/ui/pelican"
 import type { HeatmapStock } from "@/app/api/heatmap/route"
 import { cn } from "@/lib/utils"
+import { trackEvent } from "@/lib/tracking"
 
 // ── Types ────────────────────────────────────────────────────────────────────
 
@@ -253,6 +254,7 @@ function HeatmapPageInner() {
 
   // Reset sectors when switching markets
   const handleMarketChange = useCallback((market: HeatmapMarket) => {
+    trackEvent({ eventType: 'heatmap_view_changed', feature: 'heatmap', data: { market } })
     setActiveMarket(market)
     setSelectedSectors(getSectorsForMarket(market))
     setHighlightedSector(null)
@@ -361,6 +363,7 @@ function HeatmapPageInner() {
 
   const handleStockClick = useCallback((ticker: string, name: string) => {
     const stock = stocks.find(s => s.ticker === ticker)
+    trackEvent({ eventType: 'heatmap_ticker_clicked', feature: 'heatmap', ticker, data: { market: activeMarket, changePercent: stock?.changePercent ?? null } })
     if (stock) {
       openWithPrompt(ticker, buildAnalysisPrompt(stock, heatmapContext, activeMarket), 'heatmap', 'heatmap_click')
     } else {
@@ -379,6 +382,7 @@ function HeatmapPageInner() {
   }, [])
 
   const handleSectorHighlight = useCallback((sector: string) => {
+    trackEvent({ eventType: 'heatmap_sector_drilled', feature: 'heatmap', data: { sector } })
     setHighlightedSector(prev => prev === sector ? null : sector)
   }, [])
 

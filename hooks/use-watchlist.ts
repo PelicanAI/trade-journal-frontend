@@ -12,6 +12,7 @@ interface WatchlistItem {
   notes: string | null
   alert_price_above: number | null
   alert_price_below: number | null
+  custom_prompt: string | null
   created_at: string
 }
 
@@ -24,7 +25,7 @@ export function useWatchlist() {
     async () => {
       const { data, error } = await supabase
         .from('watchlist')
-        .select('id, ticker, notes, alert_price_above, alert_price_below, created_at')
+        .select('id, ticker, notes, alert_price_above, alert_price_below, custom_prompt, created_at')
         .order('created_at', { ascending: false })
 
       if (error) throw error
@@ -78,6 +79,7 @@ export function useWatchlist() {
       notes: null,
       alert_price_above: null,
       alert_price_below: null,
+      custom_prompt: null,
       created_at: new Date().toISOString(),
     }
 
@@ -150,6 +152,37 @@ export function useWatchlist() {
     }
   }, [items, mutate, supabase])
 
+  const updateCustomPrompt = useCallback(async (
+    rawTicker: string,
+    customPrompt: string | null
+  ): Promise<boolean> => {
+    const ticker = normalizeTicker(rawTicker)
+    const existing = items.find(i => normalizeTicker(i.ticker) === ticker)
+    if (!existing) return false
+
+    // Optimistic update
+    const updatedItems = items.map(i =>
+      normalizeTicker(i.ticker) === ticker
+        ? { ...i, custom_prompt: customPrompt }
+        : i
+    )
+    mutate(updatedItems, false)
+
+    try {
+      const { error } = await supabase
+        .from('watchlist')
+        .update({ custom_prompt: customPrompt })
+        .eq('id', existing.id)
+
+      if (error) throw error
+      mutate()
+      return true
+    } catch {
+      mutate(items, false)
+      return false
+    }
+  }, [items, mutate, supabase])
+
   const isOnWatchlist = useCallback((rawTicker: string): boolean => {
     const ticker = normalizeTicker(rawTicker)
     return items.some(i => normalizeTicker(i.ticker) === ticker)
@@ -167,6 +200,7 @@ export function useWatchlist() {
     error: error ?? null,
     addToWatchlist,
     removeFromWatchlist,
+    updateCustomPrompt,
     isOnWatchlist,
     refetch: mutate,
   }

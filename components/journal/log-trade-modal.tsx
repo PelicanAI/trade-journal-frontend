@@ -3,7 +3,7 @@
 import { useState, useEffect, useMemo } from "react"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog"
 import { TickerAutocomplete } from "./ticker-autocomplete"
-import { TradeFormData, useTrades } from "@/hooks/use-trades"
+import { Trade, TradeFormData, useTrades } from "@/hooks/use-trades"
 import { useTradingPlan } from "@/hooks/use-trading-plan"
 import { checkTradeAgainstPlan, deriveComplianceData } from "@/lib/trading/plan-check"
 import { PelicanButton } from "@/components/ui/pelican"
@@ -19,9 +19,12 @@ interface LogTradeModalProps {
   onOpenChange: (open: boolean) => void
   onSubmit: (data: TradeFormData) => Promise<void>
   initialTicker?: string
+  editTrade?: Trade | null
+  onEditComplete?: () => void
 }
 
-export function LogTradeModal({ open, onOpenChange, onSubmit, initialTicker = "" }: LogTradeModalProps) {
+export function LogTradeModal({ open, onOpenChange, onSubmit, initialTicker = "", editTrade, onEditComplete }: LogTradeModalProps) {
+  const isEditMode = !!editTrade
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [ticker, setTicker] = useState(initialTicker)
@@ -30,7 +33,7 @@ export function LogTradeModal({ open, onOpenChange, onSubmit, initialTicker = ""
 
   // Plan integration
   const { plan } = useTradingPlan()
-  const { trades: existingTrades } = useTrades()
+  const { trades: existingTrades, updateTrade } = useTrades()
   const { checkTrade, isReady: insightsReady } = useAntiTradeCheck()
 
   // Playbook integration
@@ -75,6 +78,26 @@ export function LogTradeModal({ open, onOpenChange, onSubmit, initialTicker = ""
   const [setupTags, setSetupTags] = useState("")
   const [conviction, setConviction] = useState("5")
   const [isPaper, setIsPaper] = useState(false)
+
+  // Pre-fill fields when editing an existing trade
+  useEffect(() => {
+    if (open && editTrade) {
+      setTicker(editTrade.ticker)
+      setAssetType(editTrade.asset_type || 'stock')
+      setDirection(editTrade.direction)
+      setQuantity(String(editTrade.quantity))
+      setEntryPrice(String(editTrade.entry_price))
+      setStopLoss(editTrade.stop_loss != null ? String(editTrade.stop_loss) : "")
+      setTakeProfit(editTrade.take_profit != null ? String(editTrade.take_profit) : "")
+      setEntryDate(editTrade.entry_date ? editTrade.entry_date.split('T')[0] : new Date().toISOString().split('T')[0])
+      setThesis(editTrade.thesis || "")
+      setNotes(editTrade.notes || "")
+      setSetupTags(editTrade.setup_tags?.join(', ') || "")
+      setConviction(String(editTrade.conviction ?? 5))
+      setIsPaper(editTrade.is_paper || false)
+      setPlaybookId(editTrade.playbook_id || null)
+    }
+  }, [open, editTrade])
 
   // Forex lot sizes
   const FOREX_LOT_SIZES = {
@@ -209,7 +232,7 @@ export function LogTradeModal({ open, onOpenChange, onSubmit, initialTicker = ""
         ...(playbookChecklistCompleted || {}),
       }
 
-      await onSubmit({
+      const formData: TradeFormData = {
         ticker: normalizedTicker,
         asset_type: assetType,
         direction,
@@ -226,7 +249,33 @@ export function LogTradeModal({ open, onOpenChange, onSubmit, initialTicker = ""
         playbook_id: playbookId,
         ...planComplianceData,
         plan_checklist_completed: Object.keys(mergedChecklist).length > 0 ? mergedChecklist : undefined,
-      })
+      }
+
+      if (isEditMode && editTrade) {
+        // Update existing trade
+        await updateTrade(editTrade.id, {
+          ticker: formData.ticker,
+          asset_type: formData.asset_type || 'stock',
+          direction: formData.direction,
+          quantity: formData.quantity,
+          entry_price: formData.entry_price,
+          stop_loss: formData.stop_loss ?? null,
+          take_profit: formData.take_profit ?? null,
+          entry_date: formData.entry_date,
+          thesis: formData.thesis ?? null,
+          notes: formData.notes ?? null,
+          setup_tags: formData.setup_tags || [],
+          conviction: formData.conviction ?? null,
+          is_paper: formData.is_paper ?? false,
+          playbook_id: formData.playbook_id || null,
+          plan_rules_followed: formData.plan_rules_followed || [],
+          plan_rules_violated: formData.plan_rules_violated || [],
+          plan_checklist_completed: formData.plan_checklist_completed || {},
+        })
+        onEditComplete?.()
+      } else {
+        await onSubmit(formData)
+      }
 
       // Reset form
       setTicker("")
@@ -263,9 +312,9 @@ export function LogTradeModal({ open, onOpenChange, onSubmit, initialTicker = ""
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="w-[calc(100vw-2rem)] sm:max-w-2xl max-h-[90vh] overflow-y-auto bg-[var(--bg-elevated)] border-[var(--border-subtle)] rounded-2xl shadow-[0_4px_8px_rgba(0,0,0,0.5),0_16px_48px_rgba(0,0,0,0.25)]">
         <DialogHeader>
-          <DialogTitle className="text-[var(--text-primary)]">Log New Position</DialogTitle>
+          <DialogTitle className="text-[var(--text-primary)]">{isEditMode ? 'Edit Trade' : 'Log New Position'}</DialogTitle>
           <DialogDescription className="text-[var(--text-secondary)]">
-            Record a new position with entry details
+            {isEditMode ? 'Update trade details' : 'Record a new position with entry details'}
           </DialogDescription>
         </DialogHeader>
 
@@ -818,7 +867,7 @@ export function LogTradeModal({ open, onOpenChange, onSubmit, initialTicker = ""
               disabled={isSubmitting || !ticker || !quantity || !entryPrice}
               className="flex-1"
             >
-              {isSubmitting ? 'Logging...' : 'Log Trade'}
+              {isSubmitting ? (isEditMode ? 'Saving...' : 'Logging...') : (isEditMode ? 'Save Changes' : 'Log Trade')}
             </PelicanButton>
           </div>
         </form>
