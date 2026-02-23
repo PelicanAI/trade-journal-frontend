@@ -3,32 +3,28 @@ import type {
   ActionTrade,
   ActionWatchlistItem,
 } from '@/types/action-buttons'
-import { extractTradingMetadata, TRADING_ACRONYMS } from '@/lib/trading-metadata'
-import { normalizeTicker } from '@/lib/utils'
+import {
+  extractTickers as extractNormalizedTickers,
+  type NormalizedTicker,
+} from '@/lib/ticker-normalizer'
+import { normalizeTicker as normalizeTickerString } from '@/lib/utils'
 
 /**
  * Extract tickers from a message.
- * Primary: use backend-extracted tickers from extractTradingMetadata.
- * Fallback: parse $TICKER patterns from content.
+ * Uses the new ticker-normalizer which handles blocklist, pair normalization,
+ * and deduplication in one pass.
+ *
+ * Returns display-form strings for backward compatibility.
  */
 export function extractTickers(content: string): string[] {
-  // First try $TICKER patterns (most reliable — explicit intent)
-  const dollarMatches = content.match(/\$([A-Z]{1,5})\b/g)
-  if (dollarMatches && dollarMatches.length > 0) {
-    const tickers = dollarMatches
-      .map(m => m.slice(1))
-      .filter(t => !TRADING_ACRONYMS.has(t))
-    const unique = [...new Set(tickers)]
-    if (unique.length > 0) return unique.slice(0, 5)
-  }
+  return extractNormalizedTickers(content).map(t => t.display)
+}
 
-  // Fall back to extractTradingMetadata (uppercase word matching with blocklist)
-  const meta = extractTradingMetadata(content)
-  if (meta.tickers && meta.tickers.length > 0) {
-    return meta.tickers.slice(0, 5)
-  }
-
-  return []
+/**
+ * Extract full NormalizedTicker objects (canonical + display + assetType).
+ */
+export function extractNormalizedTickerObjects(content: string): NormalizedTicker[] {
+  return extractNormalizedTickers(content)
 }
 
 /**
@@ -50,88 +46,90 @@ export function resolveActions(
 
   const tradeMap = new Map<string, ActionTrade>()
   for (const t of trades) {
-    tradeMap.set(t.ticker.toUpperCase(), t)
+    tradeMap.set(normalizeTickerString(t.ticker), t)
   }
-  const watchlistSet = new Set(watchlist.map(w => normalizeTicker(w.ticker)))
+  const watchlistSet = new Set(watchlist.map(w => normalizeTickerString(w.ticker)))
 
   for (const ticker of tickers) {
-    const upper = ticker.toUpperCase()
-    const trade = tradeMap.get(upper)
+    // Use canonical form for lookups (strip separators)
+    const canonical = normalizeTickerString(ticker)
+    const display = ticker // Already in display form from extractTickers
+    const trade = tradeMap.get(canonical)
 
     if (trade && trade.status === 'open') {
       actions.push({
-        id: `view-${upper}`,
+        id: `view-${canonical}`,
         type: 'view_position',
-        label: `${upper} Position`,
-        ticker: upper,
+        label: `${display} Position`,
+        ticker: canonical,
         tradeId: trade.id,
         tradeStatus: 'open',
         priority: 1,
       })
       actions.push({
-        id: `scan-${upper}`,
+        id: `scan-${canonical}`,
         type: 'pelican_scan',
-        label: `Scan ${upper}`,
-        ticker: upper,
+        label: `Scan ${display}`,
+        ticker: canonical,
         tradeId: trade.id,
         tradeStatus: 'open',
         priority: 2,
       })
       actions.push({
-        id: `close-${upper}`,
+        id: `close-${canonical}`,
         type: 'close_trade',
-        label: `Close ${upper}`,
-        ticker: upper,
+        label: `Close ${display}`,
+        ticker: canonical,
         tradeId: trade.id,
         tradeStatus: 'open',
         priority: 8,
       })
     } else if (trade && trade.status === 'closed') {
       actions.push({
-        id: `review-${upper}`,
+        id: `review-${canonical}`,
         type: 'review_trade',
-        label: `Review ${upper} Trade`,
-        ticker: upper,
+        label: `Review ${display} Trade`,
+        ticker: canonical,
         tradeId: trade.id,
         tradeStatus: 'closed',
         priority: 4,
       })
     } else {
       actions.push({
-        id: `log-${upper}`,
+        id: `log-${canonical}`,
         type: 'log_trade',
-        label: `Log ${upper}`,
-        ticker: upper,
+        label: `Log ${display}`,
+        ticker: canonical,
         priority: 3,
       })
     }
 
     // Watchlist: only if NOT an open position
     if (!trade || trade.status !== 'open') {
-      if (watchlistSet.has(normalizeTicker(upper))) {
+      if (watchlistSet.has(canonical)) {
         actions.push({
-          id: `unwatch-${upper}`,
+          id: `unwatch-${canonical}`,
           type: 'remove_watchlist',
-          label: `Unwatch ${upper}`,
-          ticker: upper,
+          label: `Unwatch ${display}`,
+          ticker: canonical,
           priority: 7,
         })
       } else {
         actions.push({
-          id: `watch-${upper}`,
+          id: `watch-${canonical}`,
           type: 'add_watchlist',
-          label: `Watch ${upper}`,
-          ticker: upper,
+          label: `Watch ${display}`,
+          ticker: canonical,
           priority: 3,
         })
       }
     }
 
     actions.push({
-      id: `dive-${upper}`,
+      id: `dive-${canonical}`,
       type: 'deep_dive',
-      label: `Deep Dive ${upper}`,
-      ticker: upper,
+      label: `Deep Dive ${display}`,
+      ticker: canonical,
       priority: 6,
     })
   }
