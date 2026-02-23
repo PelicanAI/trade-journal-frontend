@@ -24,6 +24,8 @@ import { Plus, ChartBar, Funnel, ClipboardText, Brain, UserCircle, X as XIcon } 
 import { useOnboardingProgress } from "@/hooks/use-onboarding-progress"
 import { trackEvent } from "@/lib/tracking"
 import { toast } from "@/hooks/use-toast"
+import { useRouter } from "next/navigation"
+import { FirstTradeCelebration, hasSeenFirstTradeCelebration } from "@/components/onboarding/first-trade-celebration"
 
 const PerformanceTab = dynamicImport(
   () => import("@/components/journal/performance-tab").then((m) => ({ default: m.PerformanceTab })),
@@ -71,6 +73,9 @@ export default function JournalPage() {
   const [showProfileModal, setShowProfileModal] = useState(false)
   const [replayTrade, setReplayTrade] = useState<Trade | null>(null)
   const [editTrade, setEditTrade] = useState<Trade | null>(null)
+  const [showFirstTradeCelebration, setShowFirstTradeCelebration] = useState(false)
+  const [celebrationTicker, setCelebrationTicker] = useState<string | undefined>()
+  const router = useRouter()
 
   const { trades, isLoading: tradesLoading, logTrade, closeTrade, refetch, updateTrade } = useTrades()
 
@@ -231,6 +236,8 @@ export default function JournalPage() {
   const { completeMilestone } = useOnboardingProgress()
 
   const handleLogTrade = async (data: Parameters<typeof logTrade>[0]) => {
+    const isFirstTrade = trades.length === 0 && !hasSeenFirstTradeCelebration()
+
     // Let errors propagate to the modal's error handler
     await logTrade(data)
     refetch()
@@ -241,6 +248,12 @@ export default function JournalPage() {
     completeMilestone("first_trade")
     const totalTrades = trades.length + 1
     if (totalTrades >= 5) completeMilestone("five_trades")
+
+    // Show first-trade celebration modal after log modal exit animation
+    if (isFirstTrade) {
+      setCelebrationTicker(data.ticker)
+      setTimeout(() => setShowFirstTradeCelebration(true), 300)
+    }
   }
 
   const handleCloseTrade = async (data: Parameters<typeof closeTrade>[1]) => {
@@ -629,6 +642,17 @@ export default function JournalPage() {
           </motion.div>
         )}
       </AnimatePresence>
+
+      {/* First Trade Celebration */}
+      <FirstTradeCelebration
+        isOpen={showFirstTradeCelebration}
+        onClose={() => setShowFirstTradeCelebration(false)}
+        onViewPosition={() => {
+          setShowFirstTradeCelebration(false)
+          router.push("/positions")
+        }}
+        ticker={celebrationTicker}
+      />
 
       {/* Mobile: Trade Detail Bottom Sheet */}
       <AnimatePresence>
