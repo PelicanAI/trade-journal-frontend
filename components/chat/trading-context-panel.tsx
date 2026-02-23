@@ -13,6 +13,7 @@ import dynamic from "next/dynamic"
 import { EducationChat } from "./EducationChat"
 import { useWatchlist } from "@/hooks/use-watchlist"
 import { useLiveQuotes } from "@/hooks/use-live-quotes"
+import { KNOWN_FOREX_PAIRS } from "@/lib/ticker-blocklist"
 import { useTrades } from "@/hooks/use-trades"
 import { formatPercent } from "@/lib/formatters"
 import { useOnboardingProgress } from "@/hooks/use-onboarding-progress"
@@ -280,8 +281,14 @@ export function TradingContextPanel({
     addInputRef.current?.focus()
   }
 
-  const formatPrice = (price: number | null) => {
+  const formatPrice = (price: number | null, symbol?: string) => {
     if (price === null) return "---"
+    // Forex pairs need 4-5 decimal places; JPY pairs use 2-3
+    if (symbol && KNOWN_FOREX_PAIRS.has(symbol.toUpperCase())) {
+      const isJpyPair = symbol.toUpperCase().includes('JPY')
+      const decimals = isJpyPair ? 3 : 5
+      return price.toLocaleString("en-US", { minimumFractionDigits: decimals, maximumFractionDigits: decimals })
+    }
     return price.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })
   }
 
@@ -512,7 +519,7 @@ export function TradingContextPanel({
                           <div className="flex-1 flex items-center justify-between p-2 rounded-lg bg-[var(--bg-surface)] border border-[var(--border-subtle)]">
                             <span className="text-xs font-semibold text-[var(--text-primary)]">{ticker.symbol}</span>
                             <div className="flex flex-col items-end">
-                              <span className="text-xs font-medium font-mono tabular-nums text-[var(--text-primary)]">{formatPrice(ticker.price)}</span>
+                              <span className="text-xs font-medium font-mono tabular-nums text-[var(--text-primary)]">{formatPrice(ticker.price, ticker.symbol)}</span>
                             </div>
                           </div>
                           <button
@@ -528,7 +535,7 @@ export function TradingContextPanel({
                             <button className="w-full flex items-center justify-between p-2 rounded-lg bg-[var(--bg-surface)] border border-[var(--border-subtle)] hover:border-[var(--border-hover)] hover:bg-[var(--bg-elevated)] cursor-pointer transition-all duration-150 text-left">
                               <span className="text-xs font-semibold text-[var(--text-primary)]">{ticker.symbol}</span>
                               <div className="flex flex-col items-end">
-                                <span className="text-xs font-medium font-mono tabular-nums text-[var(--text-primary)]">{formatPrice(ticker.price)}</span>
+                                <span className="text-xs font-medium font-mono tabular-nums text-[var(--text-primary)]">{formatPrice(ticker.price, ticker.symbol)}</span>
                                 <div
                                   className={cn(
                                     "text-[10px] font-medium font-mono tabular-nums px-1.5 py-0.5 rounded",

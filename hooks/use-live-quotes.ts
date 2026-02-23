@@ -1,6 +1,7 @@
 'use client'
 
 import useSWR from 'swr'
+import { KNOWN_FOREX_PAIRS, KNOWN_CRYPTO_PAIRS } from '@/lib/ticker-blocklist'
 
 export interface Quote {
   price: number
@@ -20,6 +21,30 @@ interface UseLiveQuotesReturn {
   refetch: () => void
 }
 
+/**
+ * Detect asset type from a normalized ticker string.
+ * Returns 'forex', 'crypto', or 'stock'.
+ */
+function detectAssetType(ticker: string): 'stock' | 'forex' | 'crypto' {
+  const upper = ticker.toUpperCase()
+  if (KNOWN_FOREX_PAIRS.has(upper)) return 'forex'
+  if (KNOWN_CRYPTO_PAIRS.has(upper)) return 'crypto'
+  return 'stock'
+}
+
+/**
+ * Build the query param value with asset type annotations.
+ * e.g. ["AAPL", "EURUSD", "BTCUSD"] → "AAPL:stock,EURUSD:forex,BTCUSD:crypto"
+ */
+function buildTickerParam(tickers: string[]): string {
+  return tickers
+    .map(t => {
+      const type = detectAssetType(t)
+      return type === 'stock' ? t : `${t}:${type}`
+    })
+    .join(',')
+}
+
 function isMarketHours(): boolean {
   const now = new Date()
   const et = new Date(now.toLocaleString('en-US', { timeZone: 'America/New_York' }))
@@ -37,17 +62,22 @@ function isMarketHours(): boolean {
 export function useLiveQuotes(tickers: string[]): UseLiveQuotesReturn {
   const tickerKey = [...tickers].sort().join(',')
 
+  // Check if any ticker is forex/crypto (24hr markets) for refresh interval
+  const has24hrAsset = tickers.some(t => detectAssetType(t) !== 'stock')
+
   const { data, error, isLoading, mutate } = useSWR<Record<string, Quote>>(
     tickerKey ? ['live-quotes', tickerKey] : null,
     async () => {
       if (!tickerKey) return {}
-      const res = await fetch(`/api/market/quotes?tickers=${tickerKey}`)
+      const param = buildTickerParam(tickers)
+      const res = await fetch(`/api/market/quotes?tickers=${encodeURIComponent(param)}`)
       if (!res.ok) throw new Error('Failed to fetch quotes')
-      const data = await res.json()
-      return data.quotes || {}
+      const json = await res.json()
+      return json.quotes || {}
     },
     {
-      refreshInterval: isMarketHours() ? 60000 : 300000, // 60s market hours, 5min after
+      // 60s during stock market hours or if any 24hr asset present; 5min otherwise
+      refreshInterval: (isMarketHours() || has24hrAsset) ? 60000 : 300000,
       revalidateOnFocus: false,
       dedupingInterval: 30000,
     }
