@@ -77,12 +77,25 @@ export function EducationChat({ selectedTerm, onClear }: EducationChatProps) {
         }),
       })
 
+      if (!response.ok) {
+        const errorMsg = response.status === 401
+          ? 'Please sign in to use education chat.'
+          : response.status === 429
+            ? 'Too many requests. Please wait a moment and try again.'
+            : 'Education chat is temporarily unavailable. Try asking your question in the main chat instead.'
+        setMessages(prev => [
+          ...prev,
+          { type: 'bot', content: errorMsg },
+        ])
+        return
+      }
+
       const data = await response.json()
 
       if (data.error) {
         setMessages(prev => [
           ...prev,
-          { type: 'bot', content: 'Sorry, something went wrong. Please try again.' },
+          { type: 'bot', content: 'Education chat is temporarily unavailable. Try asking your question in the main chat instead.' },
         ])
       } else {
         setMessages(prev => [...prev, { type: 'bot', content: data.reply }])
@@ -90,7 +103,7 @@ export function EducationChat({ selectedTerm, onClear }: EducationChatProps) {
     } catch {
       setMessages(prev => [
         ...prev,
-        { type: 'bot', content: "Sorry, I couldn't connect. Please try again." },
+        { type: 'bot', content: "Couldn't connect to education chat. Check your internet connection or try asking in the main chat instead." },
       ])
     } finally {
       setIsLoading(false)
