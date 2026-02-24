@@ -189,6 +189,10 @@ export function HowToUsePage() {
                   <a
                     key={section.id}
                     href={`#${section.id}`}
+                    onClick={(e) => {
+                      e.preventDefault()
+                      document.getElementById(section.id)?.scrollIntoView({ behavior: 'smooth' })
+                    }}
                     className="flex items-center gap-2.5 rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm font-medium text-slate-600 shadow-sm hover:shadow-md hover:border-slate-300 transition-all"
                   >
                     <Icon weight="duotone" className="h-4 w-4 text-blue-600 shrink-0" />
