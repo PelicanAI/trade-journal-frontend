@@ -37,7 +37,7 @@ export function LandingNav() {
         {/* Center: Nav links (hidden on mobile) */}
         <div className="hidden items-center gap-8 md:flex">
           <a
-            href="#platform"
+            href="/#platform"
             className="text-sm text-slate-500 transition-colors duration-150 hover:text-slate-900"
           >
             Platform
@@ -49,13 +49,13 @@ export function LandingNav() {
             How It Works
           </Link>
           <a
-            href="#pricing"
+            href="/#pricing"
             className="text-sm text-slate-500 transition-colors duration-150 hover:text-slate-900"
           >
             Pricing
           </a>
           <a
-            href="#faq"
+            href="/#faq"
             className="text-sm text-slate-500 transition-colors duration-150 hover:text-slate-900"
           >
             FAQ
@@ -96,7 +96,7 @@ export function LandingNav() {
         <div className="border-b border-slate-200 bg-white px-6 py-4 md:hidden">
           <div className="flex flex-col gap-3">
             <a
-              href="#platform"
+              href="/#platform"
               onClick={() => setMobileOpen(false)}
               className="text-sm text-slate-600 transition-colors hover:text-slate-900"
             >
@@ -110,14 +110,14 @@ export function LandingNav() {
               How It Works
             </Link>
             <a
-              href="#pricing"
+              href="/#pricing"
               onClick={() => setMobileOpen(false)}
               className="text-sm text-slate-600 transition-colors hover:text-slate-900"
             >
               Pricing
             </a>
             <a
-              href="#faq"
+              href="/#faq"
               onClick={() => setMobileOpen(false)}
               className="text-sm text-slate-600 transition-colors hover:text-slate-900"
             >
