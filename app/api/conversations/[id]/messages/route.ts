@@ -1,5 +1,8 @@
 import { createClient } from '@/lib/supabase/server'
 import { NextRequest, NextResponse } from 'next/server'
+import { createUserRateLimiter, rateLimitResponse } from '@/lib/rate-limit'
+
+const messagesLimiter = createUserRateLimiter('conversation-messages', 30, '1 m')
 
 interface ImageMeta {
   storagePath: string
@@ -33,6 +36,9 @@ export async function GET(
     if (authError || !user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
+
+    const { success: rateLimitOk } = await messagesLimiter.limit(user.id)
+    if (!rateLimitOk) return rateLimitResponse()
 
     // Include metadata to reconstruct image attachments
     const { data: messages, error } = await supabase

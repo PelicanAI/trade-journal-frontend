@@ -1,6 +1,9 @@
 import { NextRequest, NextResponse } from "next/server"
 import { createClient } from "@/lib/supabase/server"
 import { computeTradeGrade } from "@/lib/grading/trade-grader"
+import { createUserRateLimiter, rateLimitResponse } from "@/lib/rate-limit"
+
+const gradeLimiter = createUserRateLimiter('grade-trade', 10, '1 m')
 
 export async function POST(req: NextRequest) {
   try {
@@ -9,6 +12,9 @@ export async function POST(req: NextRequest) {
     if (authError || !user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
+
+    const { success: rateLimitOk } = await gradeLimiter.limit(user.id)
+    if (!rateLimitOk) return rateLimitResponse()
 
     const body = await req.json()
     const tradeId = body?.trade_id
