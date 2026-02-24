@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useCallback, useEffect } from "react"
+import { useState, useCallback, useEffect, useRef } from "react"
 import { motion } from "framer-motion"
 import { ArrowsClockwise, Lightning, ChatCircleDots, X, Info } from "@phosphor-icons/react"
 import { useBehavioralInsights } from "@/hooks/use-behavioral-insights"
@@ -238,9 +238,13 @@ export function InsightsTab({ onAskPelican, onLogTrade }: InsightsTabProps) {
     }
   }, [plan, complianceStats, tradeStats, onAskPelican])
 
-  // Milestone: first insight unlocked
+  // Milestone: first insight unlocked (ref guard prevents re-fire on revalidation)
+  const insightMilestoneRef = useRef(false)
   useEffect(() => {
-    if (insights?.has_enough_data) completeMilestone("first_insight")
+    if (insights?.has_enough_data && !insightMilestoneRef.current) {
+      insightMilestoneRef.current = true
+      completeMilestone("first_insight")
+    }
   }, [insights?.has_enough_data, completeMilestone])
 
   const handleRefresh = useCallback(async () => {
