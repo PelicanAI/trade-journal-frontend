@@ -65,16 +65,16 @@ export function PrivacySection({ user }: PrivacySectionProps) {
       </Card>
 
       {user && (
-        <Card className="border-red-200">
+        <Card className="border-[var(--border-subtle)]">
           <CardHeader>
-            <CardTitle className="text-red-600">Sign Out</CardTitle>
+            <CardTitle className="text-[var(--text-secondary)]">Sign Out</CardTitle>
             <CardDescription>End your session and log out of your account</CardDescription>
           </CardHeader>
           <CardContent>
             <Button
-              variant="destructive"
+              variant="outline"
               onClick={handleLogout}
-              className="w-full bg-red-600 hover:bg-red-700"
+              className="w-full border-red-500/30 text-red-400 hover:bg-red-500/10 hover:text-red-300"
             >
               <LogOut className="h-4 w-4 mr-2" />
               Log Out
