@@ -17,6 +17,12 @@ interface HeatmapTooltipProps {
   data: TooltipData | null
   position: { x: number; y: number }
   visible: boolean
+  market?: string
+}
+
+function formatPrice(price: number, market?: string): string {
+  if (market === 'forex') return price.toFixed(price < 10 ? 5 : 3)
+  return `$${price.toFixed(2)}`
 }
 
 function formatLargeNumber(n: number): string {
@@ -27,7 +33,7 @@ function formatLargeNumber(n: number): string {
   return n.toLocaleString()
 }
 
-export function HeatmapTooltip({ data, position, visible }: HeatmapTooltipProps) {
+export function HeatmapTooltip({ data, position, visible, market }: HeatmapTooltipProps) {
   if (!data || !visible) return null
 
   const change = data.changePercent ?? 0
@@ -58,7 +64,7 @@ export function HeatmapTooltip({ data, position, visible }: HeatmapTooltipProps)
         <div className="flex items-baseline justify-between mb-1">
           {data.price != null && (
             <span className="text-lg font-mono font-semibold tabular-nums text-[var(--text-primary)]">
-              ${data.price.toFixed(2)}
+              {formatPrice(data.price, market)}
             </span>
           )}
           <span className={cn(

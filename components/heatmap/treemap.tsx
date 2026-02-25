@@ -21,6 +21,7 @@ interface TreemapProps {
   positionPnl?: Map<string, number>
   earningsToday?: Set<string>
   tickerWinRates?: Map<string, number>
+  market?: string
 }
 
 type StockNode = {
@@ -151,6 +152,7 @@ export function Treemap({
   positionPnl,
   earningsToday,
   tickerWinRates,
+  market,
 }: TreemapProps) {
 
   // Cache CSS color vars once per render cycle (not per tile)
@@ -396,7 +398,7 @@ export function Treemap({
       })}
 
       {/* Tooltip (rendered outside cell loop) */}
-      <HeatmapTooltip data={tooltipData} position={tooltipPos} visible={tooltipVisible} />
+      <HeatmapTooltip data={tooltipData} position={tooltipPos} visible={tooltipVisible} market={market} />
     </div>
   )
 }

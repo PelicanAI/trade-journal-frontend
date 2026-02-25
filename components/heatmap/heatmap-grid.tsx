@@ -7,9 +7,15 @@ import { ArrowUp, ArrowDown, Minus } from "lucide-react"
 interface HeatmapGridProps {
   stocks: HeatmapStock[]
   onStockClick?: (ticker: string, name: string) => void
+  market?: string
 }
 
-export function HeatmapGrid({ stocks, onStockClick }: HeatmapGridProps) {
+function formatGridPrice(price: number, market?: string): string {
+  if (market === 'forex') return price.toFixed(price < 10 ? 5 : 3)
+  return `$${price.toFixed(2)}`
+}
+
+export function HeatmapGrid({ stocks, onStockClick, market }: HeatmapGridProps) {
   if (stocks.length === 0) {
     return (
       <div className="flex items-center justify-center border border-[var(--border-subtle)] rounded-lg bg-surface-1 p-12">
@@ -61,7 +67,7 @@ export function HeatmapGrid({ stocks, onStockClick }: HeatmapGridProps) {
             {/* Price */}
             {stock.price !== null && (
               <div className="mt-1 text-[10px] text-foreground/50 font-mono tabular-nums">
-                ${stock.price.toFixed(2)}
+                {formatGridPrice(stock.price, market)}
               </div>
             )}
 

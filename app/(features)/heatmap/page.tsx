@@ -662,13 +662,14 @@ function HeatmapPageInner() {
                     positionPnl={positionPnl}
                     earningsToday={emptyEarnings}
                     tickerWinRates={tickerWinRates}
+                    market={activeMarket}
                   />
                 </div>
               )}
 
               {viewMode === 'grid' && (
                 <div className="hidden sm:block">
-                  <HeatmapGrid stocks={filteredStocks} onStockClick={handleStockClick} />
+                  <HeatmapGrid stocks={filteredStocks} onStockClick={handleStockClick} market={activeMarket} />
                 </div>
               )}
 
