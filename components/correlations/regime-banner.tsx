@@ -7,6 +7,7 @@ interface RegimeBannerProps {
   regime: MarketRegime | null
   correlations: CorrelationPair[]
   beginnerMode: boolean
+  activeSignalCount?: number
 }
 
 const FALLBACK = { border: 'var(--border-default)', bg: 'transparent', icon: Minus } as const
@@ -65,7 +66,7 @@ function getRegimeNarrative(
   }
 }
 
-export function RegimeBanner({ regime, correlations, beginnerMode }: RegimeBannerProps) {
+export function RegimeBanner({ regime, correlations, beginnerMode, activeSignalCount }: RegimeBannerProps) {
   if (!regime) return null
 
   const config = bannerConfig[regime.overall_regime] ?? FALLBACK
@@ -96,7 +97,7 @@ export function RegimeBanner({ regime, correlations, beginnerMode }: RegimeBanne
         {narrative}
       </p>
       <span className="text-[10px] font-medium" style={{ color: 'var(--text-muted)' }}>
-        {regime.signals.length} active signal{regime.signals.length !== 1 ? 's' : ''}
+        {activeSignalCount ?? regime.signals.length} active signal{(activeSignalCount ?? regime.signals.length) !== 1 ? 's' : ''}
       </span>
     </div>
   )

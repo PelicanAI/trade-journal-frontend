@@ -244,6 +244,7 @@ export default function CorrelationsPageClient() {
             regime={regime}
             correlations={data.correlations}
             beginnerMode={beginnerMode}
+            activeSignalCount={activeSignalCount}
           />
         )}
 
