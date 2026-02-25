@@ -224,6 +224,7 @@ export default function PlaybooksPage() {
     return (
       <div className="h-full overflow-y-auto p-4 sm:p-6">
         <PlaybookDetail
+          key={selectedPlaybook.id}
           playbook={selectedPlaybook}
           onBack={handleBack}
           onArchive={handleArchive}
