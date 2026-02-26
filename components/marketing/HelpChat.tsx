@@ -3,6 +3,7 @@
 import { useState, useRef, useEffect, FormEvent } from 'react';
 import Image from 'next/image';
 import DOMPurify from 'isomorphic-dompurify';
+import { formatLine } from '@/components/chat/message/format-utils';
 
 interface Message {
   type: 'user' | 'bot';
@@ -80,11 +81,17 @@ export default function HelpChat({ logoUrl = '/pelican-logo-transparent.webp' }:
   };
 
   const formatMessage = (content: string) => {
+    // Use shared formatLine for markdown (headers, bold, lists, etc.)
+    let html = content
+      .split('\n')
+      .map((line) => formatLine(line))
+      .join('<br />');
     // Convert email addresses to clickable links
-    return content.replace(
+    html = html.replace(
       /support@pelicantrading\.ai/g,
       '<a href="mailto:support@pelicantrading.ai" style="color: var(--primary); text-decoration: underline;">support@pelicantrading.ai</a>'
     );
+    return html;
   };
 
   return (

@@ -545,9 +545,12 @@
   .prose-sm,
   .prose-invert,
   .message-content *,
-  [class*="hyphens-auto"] {
+  [class*="panel"] p,
+  [class*="sidebar"] p,
+  [class*="brief"] p {
     hyphens: none !important;
     -webkit-hyphens: none !important;
+    -ms-hyphens: none !important;
   }
 
   .code-block {

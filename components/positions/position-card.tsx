@@ -19,6 +19,7 @@ import { PelicanButton } from '@/components/ui/pelican'
 import type { PortfolioPosition } from '@/types/portfolio'
 import type { PositionHealth, PositionAlert } from '@/lib/position-health'
 import type { TickerHistory } from '@/hooks/use-ticker-history'
+import type { Quote } from '@/hooks/use-live-quotes'
 
 // ============================================================================
 // Types
@@ -29,6 +30,7 @@ interface PositionCardProps {
   healthScore: PositionHealth
   smartAlerts: PositionAlert[]
   tickerHistory: TickerHistory | null
+  quote: Quote | null
   isWatching?: boolean
   onScanWithPelican: (position: PortfolioPosition) => void
   onEdit: (position: PortfolioPosition) => void
@@ -53,6 +55,27 @@ function formatExposure(value: number): string {
   if (abs >= 1_000_000) return `$${(value / 1_000_000).toFixed(1)}M`
   if (abs >= 1_000) return `$${(value / 1_000).toFixed(1)}K`
   return `$${value.toLocaleString('en-US', { maximumFractionDigits: 0 })}`
+}
+
+function formatPnlCurrency(value: number): string {
+  const abs = Math.abs(value)
+  if (abs >= 1_000_000) return `$${(abs / 1_000_000).toFixed(2)}M`
+  if (abs >= 10_000) return `$${(abs / 1_000).toFixed(1)}K`
+  if (abs >= 1_000) return `$${(abs / 1_000).toFixed(2)}K`
+  return `$${abs.toFixed(2)}`
+}
+
+function computeUnrealizedPnl(
+  position: PortfolioPosition,
+  quote: Quote | null,
+): { pnlAmount: number; pnlPercent: number; hasQuote: boolean } {
+  if (!quote || !position.entry_price || !position.quantity) {
+    return { pnlAmount: 0, pnlPercent: 0, hasQuote: false }
+  }
+  const direction = position.direction === 'long' ? 1 : -1
+  const pnlAmount = (quote.price - position.entry_price) * position.quantity * direction
+  const pnlPercent = ((quote.price - position.entry_price) / position.entry_price) * 100 * direction
+  return { pnlAmount, pnlPercent, hasQuote: true }
 }
 
 const healthDotColor: Record<PositionHealth['color'], string> = {
@@ -134,6 +157,7 @@ export function PositionCard({
   healthScore,
   smartAlerts,
   tickerHistory,
+  quote,
   isWatching,
   onScanWithPelican,
   onEdit,
@@ -141,6 +165,9 @@ export function PositionCard({
   isExpanded,
   onToggleExpand,
 }: PositionCardProps) {
+  const { pnlAmount, pnlPercent, hasQuote } = computeUnrealizedPnl(position, quote)
+  const pnlColor = pnlAmount >= 0 ? 'var(--data-positive)' : 'var(--data-negative)'
+
   const ChevronIcon = isExpanded ? CaretUp : CaretDown
   const convictionColor =
     position.conviction !== null
@@ -179,6 +206,16 @@ export function PositionCard({
         <span className="ml-auto font-mono tabular-nums text-sm text-[var(--text-primary)]">
           {formatExposure(position.position_size_usd)}
         </span>
+        {hasQuote ? (
+          <span className="font-mono tabular-nums text-sm font-semibold" style={{ color: pnlColor }}>
+            {pnlAmount >= 0 ? '+' : '-'}{formatPnlCurrency(pnlAmount)}
+            <span className="text-xs font-normal ml-1" style={{ color: pnlColor }}>
+              ({pnlPercent >= 0 ? '+' : ''}{pnlPercent.toFixed(2)}%)
+            </span>
+          </span>
+        ) : (
+          <span className="font-mono tabular-nums text-xs text-[var(--text-muted)]">P&L --</span>
+        )}
         {position.risk_reward_ratio !== null && (
           <span className="font-mono tabular-nums text-xs text-[var(--text-secondary)]">
             {position.risk_reward_ratio > 10 ? '>10R' : `${position.risk_reward_ratio.toFixed(1)}R`}
@@ -197,6 +234,11 @@ export function PositionCard({
         <span className="text-[var(--text-secondary)]">
           Entry <span className="font-mono tabular-nums text-[var(--text-primary)]">${formatCompactPrice(position.entry_price)}</span>
         </span>
+        {hasQuote && (
+          <span className="text-[var(--text-secondary)]">
+            Now <span className="font-mono tabular-nums" style={{ color: pnlColor }}>${formatCompactPrice(quote!.price)}</span>
+          </span>
+        )}
         {position.has_stop_loss ? (
           <span className="text-red-400">
             Stop <span className="font-mono tabular-nums">${formatCompactPrice(position.stop_loss!)}</span>

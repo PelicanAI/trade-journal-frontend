@@ -14,6 +14,7 @@ import { usePositionEarnings } from "@/hooks/use-position-earnings"
 import { usePelicanPanelContext } from "@/providers/pelican-panel-provider"
 import { useTrades } from "@/hooks/use-trades"
 import { useTickerHistory } from "@/hooks/use-ticker-history"
+import { useLiveQuotes } from "@/hooks/use-live-quotes"
 import { useTraderProfile } from "@/hooks/use-trader-profile"
 import { WarningBanner } from "@/components/insights/warning-banner"
 import { TodaysActions } from "@/components/positions/todays-actions"
@@ -70,6 +71,7 @@ export default function PositionsPage() {
     [portfolio?.positions]
   )
   const { data: tickerHistory } = useTickerHistory(openTickers)
+  const { quotes } = useLiveQuotes(openTickers)
 
   const [activeFilter, setActiveFilter] = useState('all')
   const [sortBy, setSortBy] = useState('size_desc')
@@ -316,6 +318,7 @@ export default function PositionsPage() {
         portfolioStats={portfolio.portfolio}
         insights={insights}
         tickerHistory={tickerHistory}
+        quotes={quotes}
         watchlistTickers={watchlistTickers}
         activeFilter={activeFilter}
         sortBy={sortBy}

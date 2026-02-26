@@ -97,7 +97,7 @@ export function TopNav({ className }: TopNavProps) {
     )}>
       <div className="flex items-center justify-between h-14 px-4">
         {/* Left: Logo + Tabs */}
-        <div className="flex items-center gap-6">
+        <div className="flex items-center gap-4 sm:gap-6 min-w-0 flex-1 overflow-hidden">
           {/* Logo */}
           <Link
             href="/chat"
@@ -116,7 +116,10 @@ export function TopNav({ className }: TopNavProps) {
           </Link>
 
           {/* Tabs — horizontal scroll on mobile, inline on desktop */}
-          <div className="flex items-center gap-1 overflow-x-auto scrollbar-hide flex-1 mx-2 sm:mx-4 md:mx-0 md:flex-initial">
+          <div
+            className="flex items-center gap-1 overflow-x-auto scrollbar-hide min-w-0 flex-1"
+            style={{ WebkitOverflowScrolling: 'touch' }}
+          >
             {visibleTabs.map((tab) => {
               const isActive = activeTab === tab.key
 

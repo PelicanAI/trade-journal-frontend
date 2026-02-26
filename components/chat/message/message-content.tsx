@@ -139,7 +139,7 @@ export const MessageContent = memo(function MessageContent({
 
   return (
     <motion.div
-      className="leading-relaxed tracking-normal font-normal break-words overflow-wrap-anywhere hyphens-auto max-w-full text-rendering-optimizeLegibility"
+      className="leading-relaxed tracking-normal font-normal break-words overflow-wrap-anywhere max-w-full text-rendering-optimizeLegibility"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.3 }}

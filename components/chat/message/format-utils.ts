@@ -71,6 +71,48 @@ export function parseContentSegments(content: string): ContentSegment[] {
   return segments
 }
 
+/** Apply inline markdown formatting (bold, italic, links) to already-escaped HTML. */
+function applyInlineFormatting(escaped: string): string {
+  // Handle bold text
+  let result = escaped.replace(/\*\*(.*?)\*\*/g, (_, content) => {
+    if (content.endsWith(':')) {
+      return `<strong class="font-semibold">${content}</strong>`
+    }
+    return `<strong class="font-[600]">${content}</strong>`
+  })
+
+  // Also handle non-bold section headers (word followed by colon at start of line)
+  if (/^[A-Z][a-zA-Z\s]+:/.test(result) && !result.includes('<strong')) {
+    result = result.replace(/^([A-Z][a-zA-Z\s]+:)/, '<strong class="font-semibold">$1</strong>')
+  }
+
+  // Handle italic (after bold, so **bold** isn't caught by single *)
+  result = result.replace(/\*(.*?)\*/g, '<em>$1</em>')
+
+  // Safe link handling with URL validation
+  result = result.replace(LINK_REGEX, (match) => {
+    try {
+      const url = new URL(match)
+      if (!['http:', 'https:'].includes(url.protocol)) {
+        return match
+      }
+      const sanitizedUrl = DOMPurify.sanitize(match, {ALLOWED_TAGS: []})
+      return `<a href="${sanitizedUrl}" target="_blank" rel="noopener noreferrer" class="text-teal-600 font-[500] break-all">${match}</a>`
+    } catch {
+      return match
+    }
+  })
+
+  return result
+}
+
+/** Shared DOMPurify config for formatLine output. */
+const LINE_SANITIZE_CONFIG = {
+  ALLOWED_TAGS: ["strong", "em", "a", "span", "br", "div", "hr"],
+  ALLOWED_ATTR: ["class", "href", "target", "rel"],
+  ALLOWED_URI_REGEXP: /^https?:\/\//i,
+}
+
 export function formatLine(line: string): string {
   // Step 1: Check for markdown headers BEFORE escaping (need raw # characters)
   const headerMatch = line.match(/^(#{1,6})\s+(.+)$/)
@@ -92,45 +134,46 @@ export function formatLine(line: string): string {
     )
   }
 
-  // Step 2: Escape HTML first
-  let escaped = escapeHtml(line)
-
-  // Step 3: Apply markdown formatting on escaped content
-  // Handle bold text
-  escaped = escaped.replace(/\*\*(.*?)\*\*/g, (_, content) => {
-    if (content.endsWith(':')) {
-      return `<strong class="font-semibold">${content}</strong>`
-    }
-    return `<strong class="font-[600]">${content}</strong>`
-  })
-
-  // Also handle non-bold section headers (word followed by colon at start of line)
-  if (/^[A-Z][a-zA-Z\s]+:/.test(escaped) && !escaped.includes('<strong')) {
-    escaped = escaped.replace(/^([A-Z][a-zA-Z\s]+:)/, '<strong class="font-semibold">$1</strong>')
+  // Step 2: Horizontal rules (---, ***, ___)
+  if (/^(\s*[-*_]\s*){3,}$/.test(line)) {
+    return '<hr class="my-3 border-[var(--border-subtle)]" />'
   }
 
-  escaped = escaped.replace(/\*(.*?)\*/g, '<em>$1</em>')
+  // Step 3: Unordered list items (- item or * item, with optional indentation)
+  const ulMatch = line.match(/^(\s*)[-*+]\s+(.+)$/)
+  if (ulMatch) {
+    const indent = ulMatch[1]!.length
+    const itemContent = escapeHtml(ulMatch[2]!)
+    const formatted = applyInlineFormatting(itemContent)
+    const paddingClass = indent >= 4 ? 'pl-8' : indent >= 2 ? 'pl-4' : 'pl-4'
+    return DOMPurify.sanitize(
+      `<div class="${paddingClass} relative before:content-['•'] before:absolute before:left-0 before:text-[var(--text-muted)]">${formatted}</div>`,
+      LINE_SANITIZE_CONFIG,
+    )
+  }
 
-  // Step 4: Safe link handling with URL validation
-  escaped = escaped.replace(LINK_REGEX, (match) => {
-    try {
-      const url = new URL(match)
-      if (!['http:', 'https:'].includes(url.protocol)) {
-        return match
-      }
-      const sanitizedUrl = DOMPurify.sanitize(match, {ALLOWED_TAGS: []})
-      return `<a href="${sanitizedUrl}" target="_blank" rel="noopener noreferrer" class="text-teal-600 font-[500] break-all">${match}</a>`
-    } catch {
-      return match
-    }
-  })
+  // Step 4: Ordered list items (1. item, 2. item, etc.)
+  const olMatch = line.match(/^(\s*)(\d+)[.)]\s+(.+)$/)
+  if (olMatch) {
+    const indent = olMatch[1]!.length
+    const num = olMatch[2]!
+    const itemContent = escapeHtml(olMatch[3]!)
+    const formatted = applyInlineFormatting(itemContent)
+    const paddingClass = indent >= 4 ? 'pl-8' : indent >= 2 ? 'pl-4' : 'pl-4'
+    return DOMPurify.sanitize(
+      `<div class="${paddingClass} relative"><span class="absolute left-0 text-[var(--text-muted)] font-mono text-sm">${num}.</span>${formatted}</div>`,
+      LINE_SANITIZE_CONFIG,
+    )
+  }
 
-  // Step 5: Final sanitization with strict URI regexp
-  return DOMPurify.sanitize(escaped, {
-    ALLOWED_TAGS: ["strong", "em", "a", "span", "br"],
-    ALLOWED_ATTR: ["class", "href", "target", "rel"],
-    ALLOWED_URI_REGEXP: /^https?:\/\//i
-  })
+  // Step 5: Escape HTML first for regular lines
+  const escaped = escapeHtml(line)
+
+  // Step 6: Apply inline formatting (bold, italic, links)
+  const formatted = applyInlineFormatting(escaped)
+
+  // Step 7: Final sanitization with strict URI regexp
+  return DOMPurify.sanitize(formatted, LINE_SANITIZE_CONFIG)
 }
 
 /**
@@ -194,7 +237,7 @@ export function applyTickerLinks(
 
   // Re-sanitize with data-ticker, data-economic-term, and learning-mode attrs allowed
   return DOMPurify.sanitize(result, {
-    ALLOWED_TAGS: ["strong", "em", "a", "span", "br", "h1", "h2", "h3", "h4", "h5", "h6"],
+    ALLOWED_TAGS: ["strong", "em", "a", "span", "br", "div", "hr", "h1", "h2", "h3", "h4", "h5", "h6"],
     ALLOWED_ATTR: ["class", "href", "target", "rel"],
     ADD_ATTR: ["data-ticker", "data-economic-term", "data-learning-term", "data-term-full", "data-term-def"],
     ALLOWED_URI_REGEXP: /^https?:\/\//i,

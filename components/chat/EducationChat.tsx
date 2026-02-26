@@ -4,7 +4,7 @@ import { useState, useRef, useEffect, FormEvent } from 'react'
 import { GraduationCap, Send, Trash2 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { motion, AnimatePresence } from 'framer-motion'
-import DOMPurify from 'isomorphic-dompurify'
+import { formatLine } from '@/components/chat/message/format-utils'
 
 interface EducationChatProps {
   selectedTerm: {
@@ -119,14 +119,10 @@ export function EducationChat({ selectedTerm, onClear }: EducationChatProps) {
   }
 
   const formatMarkdown = (content: string): string => {
-    let formatted = content
-    // Bold
-    formatted = formatted.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-    // Italic
-    formatted = formatted.replace(/\*(.*?)\*/g, '<em>$1</em>')
-    // Line breaks
-    formatted = formatted.replace(/\n/g, '<br />')
-    return formatted
+    return content
+      .split('\n')
+      .map((line) => formatLine(line))
+      .join('<br />')
   }
 
   // Placeholder state when no term is selected
@@ -185,9 +181,7 @@ export function EducationChat({ selectedTerm, onClear }: EducationChatProps) {
                     : 'bg-[var(--bg-elevated)] border border-[var(--border-subtle)] text-foreground rounded-bl-sm'
                 )}
                 dangerouslySetInnerHTML={{
-                  __html: DOMPurify.sanitize(
-                    msg.type === 'bot' ? formatMarkdown(msg.content) : msg.content
-                  ),
+                  __html: msg.type === 'bot' ? formatMarkdown(msg.content) : msg.content,
                 }}
               />
             </motion.div>

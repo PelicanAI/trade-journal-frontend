@@ -17,6 +17,7 @@ import {
 } from 'lucide-react'
 import Link from 'next/link'
 import { IconTooltip } from '@/components/ui/icon-tooltip'
+import { formatLine } from '@/components/chat/message/format-utils'
 
 interface UserDetailProps {
   user: {
@@ -103,9 +104,21 @@ function MessageBubble({ msg }: { msg: ConvoMessage }) {
         <p className="text-[10px] text-muted-foreground mb-1">
           {isUser ? 'User' : 'Assistant'} &middot; {formatTime(msg.created_at)}
         </p>
-        <p className="whitespace-pre-wrap break-words">
-          {isLong && !expanded ? msg.content.slice(0, 500) + '...' : msg.content}
-        </p>
+        {isUser ? (
+          <p className="whitespace-pre-wrap break-words">
+            {isLong && !expanded ? msg.content.slice(0, 500) + '...' : msg.content}
+          </p>
+        ) : (
+          <div
+            className="break-words space-y-1"
+            dangerouslySetInnerHTML={{
+              __html: (() => {
+                const text = isLong && !expanded ? msg.content.slice(0, 500) + '...' : msg.content
+                return text.split('\n').map((line) => formatLine(line)).join('<br />')
+              })(),
+            }}
+          />
+        )}
         {isLong && (
           <button
             onClick={(e) => { e.stopPropagation(); setExpanded(!expanded) }}

@@ -5,6 +5,7 @@ import { PortfolioPosition, PortfolioStats } from '@/types/portfolio'
 import { BehavioralInsights } from '@/hooks/use-behavioral-insights'
 import { computePositionHealth, computeSmartAlerts, PositionHealth, PositionAlert } from '@/lib/position-health'
 import type { TickerHistory } from '@/hooks/use-ticker-history'
+import type { Quote } from '@/hooks/use-live-quotes'
 import { PositionCard } from './position-card'
 import { Plus, FunnelSimple } from '@phosphor-icons/react'
 import { PelicanButton } from '@/components/ui/pelican'
@@ -14,6 +15,7 @@ interface PositionListProps {
   portfolioStats: PortfolioStats
   insights: BehavioralInsights | null
   tickerHistory: Record<string, TickerHistory>
+  quotes: Record<string, Quote>
   watchlistTickers?: Set<string>
   activeFilter: string
   sortBy: string
@@ -35,6 +37,7 @@ export function PositionList({
   portfolioStats,
   insights,
   tickerHistory,
+  quotes,
   watchlistTickers,
   activeFilter,
   sortBy,
@@ -145,6 +148,7 @@ export function PositionList({
           healthScore={data.health}
           smartAlerts={data.alerts}
           tickerHistory={tickerHistory[data.position.ticker] ?? null}
+          quote={quotes[data.position.ticker] ?? null}
           isWatching={watchlistTickers?.has(data.position.ticker.toUpperCase()) ?? false}
           isExpanded={expandedId === data.position.id}
           onToggleExpand={() => handleToggle(data.position.id)}

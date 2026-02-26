@@ -648,9 +648,22 @@ Keep it dense, actionable, and personalized to MY positions and watchlist. Use m
       const decoder = new TextDecoder()
       let buffer = ''
       let fullContent = ''
+      let streamDone = false
+      const STREAM_IDLE_TIMEOUT = 10000 // 10s idle timeout after content starts
 
       while (true) {
-        const { done, value } = await reader.read()
+        // Race reader.read() against an idle timeout once we have content
+        let readResult: ReadableStreamReadResult<Uint8Array>
+        if (fullContent.length > 0) {
+          const timeoutPromise = new Promise<{ done: true; value: undefined }>((resolve) =>
+            setTimeout(() => resolve({ done: true, value: undefined }), STREAM_IDLE_TIMEOUT)
+          )
+          readResult = await Promise.race([reader.read(), timeoutPromise])
+        } else {
+          readResult = await reader.read()
+        }
+
+        const { done, value } = readResult
         if (done) break
 
         buffer += decoder.decode(value, { stream: true })
@@ -664,10 +677,21 @@ Keep it dense, actionable, and personalized to MY positions and watchlist. Use m
           const jsonStr = trimmed.slice(6).trim()
           if (!jsonStr) continue
 
+          // Handle OpenAI-style [DONE] termination signal
+          if (jsonStr === '[DONE]') {
+            streamDone = true
+            continue
+          }
+
           try {
             const parsed = JSON.parse(jsonStr)
             if (parsed.error) {
               throw new Error(parsed.message || parsed.error)
+            }
+            // Backend sends type: "done" when streaming is complete
+            if (parsed.type === 'done' || parsed.done) {
+              streamDone = true
+              continue
             }
             // Backend sends "delta" for content chunks
             const chunk = parsed.delta || parsed.content
@@ -680,6 +704,35 @@ Keep it dense, actionable, and personalized to MY positions and watchlist. Use m
               throw e
             }
           }
+        }
+
+        // If backend signaled done, stop reading even if connection stays open
+        if (streamDone) break
+      }
+
+      // Cancel the reader to free the connection
+      reader.cancel().catch(() => {})
+
+      // Process any remaining data left in the buffer
+      if (buffer.trim()) {
+        try {
+          const trimmed = buffer.trim()
+          if (trimmed.startsWith('data: ')) {
+            const jsonStr = trimmed.slice(6).trim()
+            if (jsonStr) {
+              const parsed = JSON.parse(jsonStr)
+              // Check for done signal in remaining buffer too
+              if (parsed.type !== 'done' && !parsed.done) {
+                const chunk = parsed.delta || parsed.content
+                if (chunk) {
+                  fullContent += chunk
+                  setBriefContent(fullContent)
+                }
+              }
+            }
+          }
+        } catch {
+          // Ignore trailing buffer parse errors
         }
       }
 
@@ -694,6 +747,13 @@ Keep it dense, actionable, and personalized to MY positions and watchlist. Use m
       setBriefLoading(false)
     }
   }, [buildMorningBriefPrompt, supabase])
+
+  // Cleanup: abort any in-flight brief request on unmount
+  useEffect(() => {
+    return () => {
+      briefAbortRef.current?.abort()
+    }
+  }, [])
 
   // Auto-generate brief if no cache exists (runs once on mount)
   const [autoGenTriggered, setAutoGenTriggered] = useState(false)
