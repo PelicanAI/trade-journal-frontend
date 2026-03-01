@@ -16,6 +16,7 @@ import {
 } from '@phosphor-icons/react'
 import { toast } from '@/hooks/use-toast'
 import { IconTooltip } from '@/components/ui/icon-tooltip'
+import { ConfirmDestructiveAction, useDestructiveAction } from '@/components/ui/confirm-destructive-action'
 import type { Trade } from '@/hooks/use-trades'
 import { useTradingPlan, type CreatePlanData } from '@/hooks/use-trading-plan'
 import type { TradingPlan, RuleComplianceStat } from '@/types/trading'
@@ -174,6 +175,7 @@ function ToggleSwitch({
 
 export function TradingPlanTab({ trades, onAskPelican, complianceStats, tradeStats }: TradingPlanTabProps) {
   const { plan, isLoading, createPlan, updatePlan, deletePlan } = useTradingPlan()
+  const destructive = useDestructiveAction()
   const [mode, setMode] = useState<'view' | 'create' | 'edit'>('view')
   const [form, setForm] = useState<CreatePlanData>(DEFAULT_FORM)
   const [saving, setSaving] = useState(false)
@@ -254,15 +256,22 @@ export function TradingPlanTab({ trades, onAskPelican, complianceStats, tradeSta
     }
   }
 
-  const handleDelete = async () => {
+  const handleDelete = () => {
     if (!plan) return
-    try {
-      await deletePlan(plan.id)
-      toast({ title: 'Trading plan deleted' })
-      setMode('view')
-    } catch (err) {
-      toast({ title: 'Failed to delete plan', description: err instanceof Error ? err.message : 'Please try again.', variant: 'destructive' })
-    }
+    destructive.requestConfirmation({
+      title: `Delete "${plan.name}"?`,
+      description: 'This will permanently remove your trading plan and all its rules. This cannot be undone.',
+      itemCount: 1,
+      itemType: 'trading plan',
+      confirmText: 'Delete Plan',
+      requireTypedConfirmation: true,
+      typedConfirmationValue: plan.name,
+      onConfirm: async () => {
+        await deletePlan(plan.id)
+        toast({ title: 'Trading plan deleted' })
+        setMode('view')
+      },
+    })
   }
 
   const addChecklistItem = () => {
@@ -482,6 +491,7 @@ export function TradingPlanTab({ trades, onAskPelican, complianceStats, tradeSta
 
   // ── View Mode ──
   return (
+    <>
     <motion.div variants={staggerContainer} initial="hidden" animate="visible" className="space-y-4">
       {/* Plan Header */}
       <motion.div variants={staggerItem}>
@@ -712,5 +722,20 @@ export function TradingPlanTab({ trades, onAskPelican, complianceStats, tradeSta
         </PelicanCard>
       </motion.div>
     </motion.div>
+
+      <ConfirmDestructiveAction
+        open={destructive.state.isOpen}
+        onOpenChange={destructive.setOpen}
+        title={destructive.state.title}
+        description={destructive.state.description}
+        itemCount={destructive.state.itemCount}
+        itemType={destructive.state.itemType}
+        confirmText={destructive.state.confirmText}
+        requireTypedConfirmation={destructive.state.requireTypedConfirmation}
+        typedConfirmationValue={destructive.state.typedConfirmationValue}
+        onConfirm={destructive.state.onConfirm}
+        onCancel={destructive.state.onCancel}
+      />
+    </>
   )
 }

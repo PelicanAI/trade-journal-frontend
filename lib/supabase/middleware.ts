@@ -20,7 +20,7 @@ const PUBLIC_PATHS = [
 ];
 
 /** Marketing and landing pages that don't require login */
-const PUBLIC_PREFIXES = ["/pricing", "/privacy", "/terms", "/faq", "/how-to-use", "/guide", "/strategies"];
+const PUBLIC_PREFIXES = ["/pricing", "/privacy", "/terms", "/faq", "/how-to-use", "/guide", "/strategies", "/api/health", "/api/help-chat", "/api/stripe/webhook", "/api/strategies"];
 
 function isPublicPath(pathname: string): boolean {
   if (pathname === "/") return true;
@@ -62,6 +62,13 @@ export const updateSession = async (request: NextRequest) => {
     const { data: { user } } = await supabase.auth.getUser();
 
     if (!isPublicPath(pathname) && !user) {
+      // API routes get 401 JSON, page routes get redirected to login
+      if (pathname.startsWith('/api/')) {
+        return NextResponse.json(
+          { error: 'Authentication required' },
+          { status: 401 }
+        )
+      }
       const loginUrl = request.nextUrl.clone();
       loginUrl.pathname = "/auth/login";
       loginUrl.searchParams.set("redirectTo", pathname);

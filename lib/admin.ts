@@ -44,7 +44,8 @@ export async function requireAdmin() {
     }
   }
 
-  const { data: credits, error: creditsError } = await supabase
+  const serviceClient = getServiceClient()
+  const { data: credits, error: creditsError } = await serviceClient
     .from('user_credits')
     .select('is_admin')
     .eq('user_id', user.id)
@@ -77,7 +78,8 @@ export async function requireAdminPage() {
     redirect('/auth/login?redirect=/admin/dashboard')
   }
 
-  const { data: credits } = await supabase
+  const serviceClient = getServiceClient()
+  const { data: credits } = await serviceClient
     .from('user_credits')
     .select('is_admin')
     .eq('user_id', user.id)

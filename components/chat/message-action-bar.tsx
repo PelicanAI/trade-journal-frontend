@@ -6,6 +6,11 @@ import { ActionButton } from './action-button'
 import { extractTickers, resolveActions } from '@/lib/chat/detect-actions'
 import type { MessageAction, ActionTrade, ActionWatchlistItem } from '@/types/action-buttons'
 import { useToast } from '@/hooks/use-toast'
+import {
+  ConfirmDestructiveAction,
+  useDestructiveAction,
+  isDestructiveAction,
+} from '@/components/ui/confirm-destructive-action'
 
 interface MessageActionBarProps {
   content: string
@@ -50,6 +55,7 @@ export function MessageActionBar({
   const router = useRouter()
   const { toast } = useToast()
   const [loadingId, setLoadingId] = useState<string | null>(null)
+  const destructive = useDestructiveAction()
 
   // Layer 1: ticker extraction (pure function of content, never re-runs)
   const detectedTickers = useMemo(
@@ -103,7 +109,16 @@ export function MessageActionBar({
 
         case 'close_trade': {
           if (action.tradeId) {
-            onOpenCloseTrade(action.tradeId)
+            const trade = allTrades.find(t => t.id === action.tradeId)
+            const ticker = trade?.ticker || action.ticker || 'position'
+            destructive.requestConfirmation({
+              title: `Close ${ticker} position?`,
+              description: `This will mark the trade as closed. You'll need to enter your exit price.`,
+              itemCount: 1,
+              itemType: 'trade',
+              confirmText: 'Close Trade',
+              onConfirm: () => onOpenCloseTrade(action.tradeId!),
+            })
           }
           break
         }
@@ -128,10 +143,20 @@ export function MessageActionBar({
 
         case 'remove_watchlist': {
           if (action.ticker) {
-            const success = await onRemoveFromWatchlist(action.ticker)
-            toast({
-              title: success ? `${action.ticker} removed from watchlist` : `Failed to remove ${action.ticker}`,
-              duration: 2000,
+            const tickerName = action.ticker
+            destructive.requestConfirmation({
+              title: `Remove ${tickerName} from watchlist?`,
+              description: `This will remove ${tickerName} from your watchlist and any associated alerts.`,
+              itemCount: 1,
+              itemType: 'watchlist item',
+              confirmText: 'Remove',
+              onConfirm: async () => {
+                const success = await onRemoveFromWatchlist(tickerName)
+                toast({
+                  title: success ? `${tickerName} removed from watchlist` : `Failed to remove ${tickerName}`,
+                  duration: 2000,
+                })
+              },
             })
           }
           break
@@ -233,32 +258,48 @@ export function MessageActionBar({
   let buttonIndex = 0
 
   return (
-    <div className="space-y-3 mt-3 pt-3 border-t border-border/20">
-      {grouped.map((group) => (
-        <div key={group.label}>
-          <span className="text-[10px] uppercase tracking-wider text-muted-foreground mb-1.5 block">
-            {group.label}
-          </span>
-          <div className="flex flex-wrap items-center gap-1.5">
-            {group.items.map((action) => {
-              const idx = buttonIndex++
-              return (
-                <div
-                  key={action.id}
-                  className="action-button-enter"
-                  style={{ animationDelay: `${idx * 40}ms` }}
-                >
-                  <ActionButton
-                    action={action}
-                    onClick={handleAction}
-                    loading={loadingId === action.id}
-                  />
-                </div>
-              )
-            })}
+    <>
+      <div className="space-y-3 mt-3 pt-3 border-t border-border/20">
+        {grouped.map((group) => (
+          <div key={group.label}>
+            <span className="text-[10px] uppercase tracking-wider text-muted-foreground mb-1.5 block">
+              {group.label}
+            </span>
+            <div className="flex flex-wrap items-center gap-1.5">
+              {group.items.map((action) => {
+                const idx = buttonIndex++
+                return (
+                  <div
+                    key={action.id}
+                    className="action-button-enter"
+                    style={{ animationDelay: `${idx * 40}ms` }}
+                  >
+                    <ActionButton
+                      action={action}
+                      onClick={handleAction}
+                      loading={loadingId === action.id}
+                    />
+                  </div>
+                )
+              })}
+            </div>
           </div>
-        </div>
-      ))}
-    </div>
+        ))}
+      </div>
+
+      <ConfirmDestructiveAction
+        open={destructive.state.isOpen}
+        onOpenChange={destructive.setOpen}
+        title={destructive.state.title}
+        description={destructive.state.description}
+        itemCount={destructive.state.itemCount}
+        itemType={destructive.state.itemType}
+        confirmText={destructive.state.confirmText}
+        requireTypedConfirmation={destructive.state.requireTypedConfirmation}
+        typedConfirmationValue={destructive.state.typedConfirmationValue}
+        onConfirm={destructive.state.onConfirm}
+        onCancel={destructive.state.onCancel}
+      />
+    </>
   )
 }
