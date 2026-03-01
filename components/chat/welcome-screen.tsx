@@ -3,6 +3,7 @@
 import Link from "next/link"
 import { useAuth } from "@/lib/providers/auth-provider"
 import { SuggestedPrompts } from "./SuggestedPrompts"
+import Image from "next/image"
 
 interface WelcomeScreenProps {
   onQuickStart: (message: string) => void
@@ -27,6 +28,15 @@ export function WelcomeScreen({ onQuickStart, disabled }: WelcomeScreenProps) {
         <h1 className="text-2xl sm:text-4xl font-semibold text-balance text-foreground tracking-tight h-auto">
           {getGreeting()}
         </h1>
+
+        <Image
+          src="/pelican-logo-transparent.webp"
+          alt="Pelican AI"
+          width={80}
+          height={80}
+          className="mx-auto w-16 h-16 sm:w-20 sm:h-20 object-contain opacity-90"
+          priority
+        />
 
         <SuggestedPrompts onSelect={onQuickStart} disabled={disabled} />
 
