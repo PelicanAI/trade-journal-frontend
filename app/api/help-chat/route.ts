@@ -3,7 +3,7 @@ import { createIpRateLimiter, getClientIp, rateLimitResponse } from '@/lib/rate-
 
 const MAX_CONTENT_LENGTH = 2000
 
-const helpLimiter = createIpRateLimiter('help-chat', 30, '1 h')
+const helpLimiter = createIpRateLimiter('help-chat', 10, '1 h')
 
 const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
 
@@ -115,6 +115,12 @@ export async function POST(request: NextRequest) {
   const ip = getClientIp(request)
   const { success } = await helpLimiter.limit(ip)
   if (!success) return rateLimitResponse()
+
+  // Reject oversized payloads before parsing
+  const contentLength = parseInt(request.headers.get('content-length') || '0')
+  if (contentLength > 10000) {
+    return NextResponse.json({ error: 'Request too large' }, { status: 413 })
+  }
 
   try {
     const { message, history = [] }: ChatRequest = await request.json();
