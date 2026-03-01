@@ -25,10 +25,6 @@ export function WelcomeScreen({ onQuickStart, disabled }: WelcomeScreenProps) {
   return (
     <div className="flex-1 flex items-center justify-center p-4 pb-8 sm:p-8 bg-transparent">
       <div className="max-w-2xl mx-auto text-center space-y-6 px-2">
-        <h1 className="text-2xl sm:text-4xl font-semibold text-balance text-foreground tracking-tight h-auto">
-          {getGreeting()}
-        </h1>
-
         <Image
           src="/pelican-logo-transparent.webp"
           alt="Pelican AI"
@@ -37,6 +33,10 @@ export function WelcomeScreen({ onQuickStart, disabled }: WelcomeScreenProps) {
           className="mx-auto w-16 h-16 sm:w-20 sm:h-20 object-contain opacity-90"
           priority
         />
+
+        <h1 className="text-2xl sm:text-4xl font-semibold text-balance text-foreground tracking-tight h-auto">
+          {getGreeting()}
+        </h1>
 
         <SuggestedPrompts onSelect={onQuickStart} disabled={disabled} />
 
