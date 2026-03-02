@@ -5,7 +5,7 @@ import Image from "next/image"
 
 import { motion } from "framer-motion"
 import { useState, useCallback, useMemo, useRef, useEffect, memo } from "react"
-import { Copy, Check, PencilSimple, ArrowsClockwise, SpinnerGap, CaretDown, CaretUp } from "@phosphor-icons/react"
+import { Copy, Check, PencilSimple, ArrowsClockwise, SpinnerGap, CaretDown, CaretUp, BookmarkSimple } from "@phosphor-icons/react"
 import { Button } from "@/components/ui/button"
 import { useToast } from "@/hooks/use-toast"
 import { getMessageAnimationVariant } from "@/lib/animation-config"
@@ -13,6 +13,7 @@ import type { Message } from "@/lib/chat-utils"
 import { MessageContent } from "./message/message-content"
 import { AttachmentDisplay } from "./message/attachment-display"
 import { extractTradingMetadata } from "@/lib/trading-metadata"
+import { extractTickers } from '@/lib/chat/detect-actions'
 import { MessageActionBar } from "./message-action-bar"
 import type { ActionTrade, ActionWatchlistItem } from "@/types/action-buttons"
 
@@ -70,6 +71,7 @@ export const MessageBubble = memo(function MessageBubble({
   onSaveInsight,
 }: MessageBubbleProps) {
   const [copied, setCopied] = useState(false)
+  const [insightSaved, setInsightSaved] = useState(false)
   const [isEditing, setIsEditing] = useState(false)
   const [editContent, setEditContent] = useState('')
   const editRef = useRef<HTMLTextAreaElement>(null)
@@ -118,6 +120,19 @@ export const MessageBubble = memo(function MessageBubble({
     },
     [message.content, triggerHapticFeedback, toast],
   )
+
+  const handleSaveInsight = useCallback(async () => {
+    if (!onSaveInsight || message.role !== 'assistant') return
+    const msgContent = typeof message.content === 'string' ? message.content : String(message.content || '')
+    const tickers = extractTickers(msgContent)
+    const success = await onSaveInsight(msgContent, tickers)
+    if (success) {
+      setInsightSaved(true)
+      setTimeout(() => setInsightSaved(false), 2000)
+    } else {
+      toast({ title: 'Failed to save insight', variant: 'destructive', duration: 2000 })
+    }
+  }, [onSaveInsight, message.content, message.role, toast])
 
   const animationVariant = getMessageAnimationVariant(message.role)
 
@@ -347,6 +362,23 @@ export const MessageBubble = memo(function MessageBubble({
                     <ArrowsClockwise size={18} weight="regular" className="mr-1.5" />
                   )}
                   {isRegenerating ? "Regenerating..." : "Regenerate"}
+                </Button>
+              )}
+
+              {message.role === 'assistant' && onSaveInsight && !message.isStreaming && (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={handleSaveInsight}
+                  className="h-11 sm:h-9 px-3 min-h-[44px] sm:min-h-0 text-xs text-muted-foreground hover:text-[var(--accent-primary)] hover:bg-[var(--accent-muted)] rounded-lg transition-colors duration-150"
+                  title={insightSaved ? "Saved!" : "Save this insight"}
+                >
+                  {insightSaved ? (
+                    <Check size={18} weight="regular" className="mr-1.5" />
+                  ) : (
+                    <BookmarkSimple size={18} weight="regular" className="mr-1.5" />
+                  )}
+                  {insightSaved ? "Saved" : "Save Insight"}
                 </Button>
               )}
             </div>

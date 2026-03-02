@@ -147,28 +147,6 @@ export function resolveActions(
     })
   }
 
-  // Plan & profile actions (always available)
-  actions.push({
-    id: 'analyze-behavior',
-    type: 'analyze_behavior',
-    label: 'Analyze My Trading',
-    priority: 15,
-  })
-
-  actions.push({
-    id: 'check-plan',
-    type: 'check_plan',
-    label: 'Check My Plan',
-    priority: 16,
-  })
-
-  // Always available
-  actions.push({
-    id: 'save-insight',
-    type: 'save_insight',
-    label: 'Save Insight',
-    priority: 20,
-  })
 
   // Deduplicate + sort by priority
   const seen = new Set<string>()
