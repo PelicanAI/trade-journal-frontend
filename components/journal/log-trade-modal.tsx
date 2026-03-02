@@ -354,8 +354,6 @@ export function LogTradeModal({ open, onOpenChange, onSubmit, initialTicker = ""
                   detectedAssetType = 'crypto'
                 } else if (result.type === 'FX' || result.market === 'fx') {
                   detectedAssetType = 'forex'
-                } else if (result.type === 'FUTURE' || result.market === 'futures') {
-                  detectedAssetType = 'future'
                 } else if (result.type === 'ETF') {
                   detectedAssetType = 'etf'
                 }
@@ -381,7 +379,6 @@ export function LogTradeModal({ open, onOpenChange, onSubmit, initialTicker = ""
                 { type: 'crypto', label: 'Crypto' },
                 { type: 'etf', label: 'ETF' },
                 { type: 'forex', label: 'Forex' },
-                { type: 'future', label: 'Future' },
               ].map(({ type, label }) => (
                 <button
                   key={type}
@@ -525,7 +522,7 @@ export function LogTradeModal({ open, onOpenChange, onSubmit, initialTicker = ""
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className={labelClass}>
-                    {assetType === 'future' ? 'Contracts' : 'Quantity'} <span className="text-[var(--data-negative)]">*</span>
+                    Quantity <span className="text-[var(--data-negative)]">*</span>
                   </label>
                   <input
                     type="number"
@@ -535,7 +532,7 @@ export function LogTradeModal({ open, onOpenChange, onSubmit, initialTicker = ""
                     min="0"
                     required
                     className={inputClass}
-                    placeholder={assetType === 'future' ? '1' : '100'}
+                    placeholder="100"
                   />
                 </div>
                 <div>

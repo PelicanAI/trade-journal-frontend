@@ -74,7 +74,6 @@ const MARKET_TYPE_OPTIONS = [
   { value: 'options', label: 'Options' },
   { value: 'forex', label: 'Forex' },
   { value: 'crypto', label: 'Crypto' },
-  { value: 'futures', label: 'Futures' },
   { value: 'etf', label: 'ETFs' },
 ] as const
 
@@ -82,7 +81,6 @@ function getInstrumentsPlaceholder(marketType: string): string {
   switch (marketType) {
     case 'forex': return 'e.g. EURUSD, GBPUSD'
     case 'crypto': return 'e.g. BTCUSD, ETHUSD'
-    case 'futures': return 'e.g. ES, NQ, CL'
     case 'etf': return 'e.g. SPY, QQQ, IWM'
     case 'options': return 'e.g. SPY, AAPL, TSLA'
     default: return 'e.g. AAPL, TSLA, NVDA'

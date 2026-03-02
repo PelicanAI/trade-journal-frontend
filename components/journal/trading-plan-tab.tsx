@@ -31,7 +31,7 @@ interface TradingPlanTabProps {
   tradeStats?: TradeStats | null
 }
 
-const ASSET_TYPES = ['stock', 'option', 'future', 'forex', 'crypto', 'etf']
+const ASSET_TYPES = ['stock', 'option', 'forex', 'crypto', 'etf']
 
 const DEFAULT_FORM: CreatePlanData = {
   name: '',
