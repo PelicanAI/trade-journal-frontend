@@ -140,10 +140,10 @@ export function StatsTableCard({ period, rows }: StatsTableProps) {
                   alignItems: "center",
                   borderBottom:
                     i < rows.length - 1
-                      ? "1px solid rgba(255, 255, 255, 0.06)"
+                      ? "1px solid rgba(255, 255, 255, 0.08)"
                       : "none",
-                  paddingTop: 6,
-                  paddingBottom: 6,
+                  paddingTop: 8,
+                  paddingBottom: 8,
                 }}
               >
                 <span

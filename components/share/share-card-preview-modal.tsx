@@ -72,10 +72,19 @@ export function ShareCardPreviewModal({
   const [format, setFormat] = useState<ShareFormat>("og")
   const [imageError, setImageError] = useState(false)
 
-  // Parse stats from highlighted text immediately
+  // Parse stats from highlighted text immediately, cap at 8 rows
   const parsedStats = useMemo(() => {
     if (cardType !== "stats-table" || !headline) return []
-    return parseTextToStats(headline)
+    const allRows = parseTextToStats(headline)
+    const MAX_ROWS = 8
+    if (allRows.length <= MAX_ROWS) return allRows
+    const display = allRows.slice(0, MAX_ROWS)
+    display.push({
+      label: `+ ${allRows.length - MAX_ROWS} more`,
+      value: "",
+      color: "white",
+    })
+    return display
   }, [cardType, headline])
 
   const noStats = cardType === "stats-table" && parsedStats.length === 0
