@@ -7,7 +7,7 @@ import { computePositionHealth, computeSmartAlerts, PositionHealth, PositionAler
 import type { TickerHistory } from '@/hooks/use-ticker-history'
 import type { Quote } from '@/hooks/use-live-quotes'
 import { PositionCard } from './position-card'
-import { Plus, FunnelSimple } from '@phosphor-icons/react'
+import { FunnelSimple } from '@phosphor-icons/react'
 import { PelicanButton } from '@/components/ui/pelican'
 
 interface PositionListProps {
@@ -158,22 +158,6 @@ export function PositionList({
         />
       ))}
 
-      {/* Log New Position card */}
-      {onLogTrade && (
-        <button
-          onClick={onLogTrade}
-          className="w-full group flex items-center justify-center gap-2 py-6 rounded-xl border border-dashed border-[var(--border-subtle)] bg-transparent hover:border-[var(--accent-primary)]/30 hover:bg-[var(--accent-muted)]/30 transition-all duration-200"
-        >
-          <Plus
-            size={18}
-            weight="bold"
-            className="text-[var(--text-muted)] group-hover:text-[var(--accent-primary)] transition-colors"
-          />
-          <span className="text-sm font-medium text-[var(--text-muted)] group-hover:text-[var(--accent-primary)] transition-colors">
-            Log New Position
-          </span>
-        </button>
-      )}
     </div>
   )
 }

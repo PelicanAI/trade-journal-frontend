@@ -1,7 +1,7 @@
 'use client'
 
 import { PortfolioPosition } from '@/types/portfolio'
-import { MagnifyingGlass, SortAscending } from '@phosphor-icons/react'
+import { MagnifyingGlass, SortAscending, Plus } from '@phosphor-icons/react'
 import { useMemo } from 'react'
 
 interface PositionFiltersProps {
@@ -12,6 +12,7 @@ interface PositionFiltersProps {
   onFilterChange: (filter: string) => void
   onSortChange: (sort: string) => void
   onSearchChange: (query: string) => void
+  onLogTrade?: () => void
 }
 
 interface FilterTab {
@@ -28,6 +29,7 @@ export function PositionFilters({
   onFilterChange,
   onSortChange,
   onSearchChange,
+  onLogTrade,
 }: PositionFiltersProps) {
   const tabs = useMemo<FilterTab[]>(() => {
     const longCount = positions.filter((p) => p.direction === 'long').length
@@ -70,8 +72,18 @@ export function PositionFilters({
           ))}
         </div>
 
-        {/* Sort + Search */}
+        {/* Sort + Search + Log */}
         <div className="flex items-center gap-2 w-full sm:w-auto">
+          {onLogTrade && (
+            <button
+              onClick={onLogTrade}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium bg-[var(--accent-primary)] text-white hover:bg-[var(--accent-hover)] transition-colors duration-150 whitespace-nowrap"
+            >
+              <Plus size={14} weight="bold" />
+              <span className="hidden sm:inline">Log Position</span>
+              <span className="sm:hidden">Log</span>
+            </button>
+          )}
           {/* Sort dropdown */}
           <div className="relative">
             <SortAscending

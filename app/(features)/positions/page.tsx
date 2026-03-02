@@ -279,6 +279,7 @@ export default function PositionsPage() {
         onFilterChange={setActiveFilter}
         onSortChange={setSortBy}
         onSearchChange={setSearchQuery}
+        onLogTrade={() => setShowLogTradeModal(true)}
       />
 
       {/* Position cards */}
