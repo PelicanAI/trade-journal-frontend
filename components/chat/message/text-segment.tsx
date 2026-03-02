@@ -83,17 +83,35 @@ export function TextSegment({ content, index, isStreaming, isLargeContent, ticke
 
   const formattedLines = normalized.split("\n").map((line) => formatLine(line))
 
-  // Collapse consecutive empty lines to prevent double-spacing between list items
-  const collapsed: string[] = []
-  let prevEmpty = false
+  // Smart join: block elements (div, h1-h6, hr) create their own line breaks.
+  // Only insert <br /> between consecutive inline text lines.
+  const isBlock = (s: string) => /^<(div|h[1-6]|hr)\b/.test(s.trim())
+
+  const parts: string[] = []
+  let blankCount = 0
+
   for (const line of formattedLines) {
-    const isEmpty = line.trim() === ''
-    if (isEmpty && prevEmpty) continue
-    collapsed.push(line)
-    prevEmpty = isEmpty
+    if (line.trim() === '') {
+      blankCount++
+      continue
+    }
+
+    if (parts.length > 0) {
+      const prev = parts[parts.length - 1]!
+      const bothInline = !isBlock(prev) && !isBlock(line)
+
+      if (bothInline) {
+        // Text-to-text: single <br /> for line breaks, double for paragraph breaks
+        parts.push(blankCount > 0 ? '<br /><br />' : '<br />')
+      }
+      // Block-to-anything or anything-to-block: no <br /> needed
+    }
+
+    blankCount = 0
+    parts.push(line)
   }
 
-  let safeLines = collapsed.join("<br />")
+  let safeLines = parts.join('')
 
   // Apply ticker + economic term highlighting for non-streaming assistant messages
   if (hasLinks && !isStreaming) {
