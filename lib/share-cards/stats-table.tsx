@@ -45,14 +45,28 @@ export function StatsTableCard({ period, rows }: StatsTableProps) {
             marginBottom: 20,
           }}
         >
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src={PELICAN_LOGO_B64}
-            alt=""
-            width={44}
-            height={44}
-            style={{ width: 44, height: 44, borderRadius: 8, marginBottom: 10 }}
-          />
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              width: 52,
+              height: 52,
+              borderRadius: 12,
+              background: "rgba(10, 10, 15, 0.9)",
+              border: "1px solid rgba(139, 92, 246, 0.3)",
+              marginBottom: 10,
+            }}
+          >
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={PELICAN_LOGO_B64}
+              alt=""
+              width={36}
+              height={36}
+              style={{ width: 36, height: 36, borderRadius: 8 }}
+            />
+          </div>
           <span
             style={{
               display: "flex",
