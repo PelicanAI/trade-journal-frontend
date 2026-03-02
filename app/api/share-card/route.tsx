@@ -12,9 +12,19 @@ let logoBase64Cache: string | null = null
 async function getLogoBase64(): Promise<string | undefined> {
   if (logoBase64Cache) return logoBase64Cache
   try {
-    const logoPath = join(process.cwd(), "public", "pelican-logo-transparent.webp")
-    const buf = await readFile(logoPath)
-    logoBase64Cache = `data:image/webp;base64,${buf.toString("base64")}`
+    // Try PNG first (Satori has better support), fall back to webp
+    const pngPath = join(process.cwd(), "public", "demos", "how-to-use", "pelican-logo.png")
+    const webpPath = join(process.cwd(), "public", "pelican-logo-transparent.webp")
+    let buf: Buffer
+    let mime: string
+    try {
+      buf = await readFile(pngPath)
+      mime = "image/png"
+    } catch {
+      buf = await readFile(webpPath)
+      mime = "image/webp"
+    }
+    logoBase64Cache = `data:${mime};base64,${buf.toString("base64")}`
     return logoBase64Cache
   } catch {
     return undefined

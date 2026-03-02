@@ -33,21 +33,20 @@ export function PelicanInsightCard({
             color: CARD_COLORS.textPrimary,
             lineHeight: 1.3,
             letterSpacing: "-0.01em",
-            maxWidth: "90%",
           }}
         >
           {headline}
         </span>
 
-        {(statPrimary || statSecondary) && (
+        {statPrimary || statSecondary ? (
           <div style={{ display: "flex", gap: 24, marginTop: 8 }}>
-            {statPrimary && (
+            {statPrimary ? (
               <div
                 style={{
                   display: "flex",
                   alignItems: "center",
-                  background: "#8b5cf620",
-                  border: "1px solid #8b5cf640",
+                  backgroundColor: "rgba(139, 92, 246, 0.12)",
+                  border: "1px solid rgba(139, 92, 246, 0.25)",
                   borderRadius: 8,
                   padding: "8px 16px",
                 }}
@@ -63,14 +62,14 @@ export function PelicanInsightCard({
                   {statPrimary}
                 </span>
               </div>
-            )}
-            {statSecondary && (
+            ) : null}
+            {statSecondary ? (
               <div
                 style={{
                   display: "flex",
                   alignItems: "center",
-                  background: "#22d3ee15",
-                  border: "1px solid #22d3ee30",
+                  backgroundColor: "rgba(34, 211, 238, 0.08)",
+                  border: "1px solid rgba(34, 211, 238, 0.18)",
                   borderRadius: 8,
                   padding: "8px 16px",
                 }}
@@ -86,31 +85,32 @@ export function PelicanInsightCard({
                   {statSecondary}
                 </span>
               </div>
-            )}
+            ) : null}
           </div>
-        )}
+        ) : null}
 
-        {tickers.length > 0 && (
+        {tickers.length > 0 ? (
           <div style={{ display: "flex", gap: 12, marginTop: 4 }}>
             {tickers.map((ticker, i) => (
               <span
                 key={i}
                 style={{
+                  display: "flex",
                   fontSize: 16,
                   fontWeight: 600,
                   color: CARD_COLORS.textSecondary,
-                  background: CARD_COLORS.cardBg,
+                  backgroundColor: CARD_COLORS.cardBg,
                   border: `1px solid ${CARD_COLORS.border}`,
                   borderRadius: 6,
                   padding: "4px 12px",
                   fontFamily: "Geist Mono, monospace",
                 }}
               >
-                ${ticker}
+                {`$${ticker}`}
               </span>
             ))}
           </div>
-        )}
+        ) : null}
       </div>
 
       <div style={{ display: "flex", alignItems: "center", gap: 8, marginTop: "auto" }}>

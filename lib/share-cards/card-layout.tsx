@@ -27,24 +27,24 @@ export function CardLayout({ children, logoBase64 }: CardLayoutProps) {
         flexDirection: "column",
         width: "100%",
         height: "100%",
-        background: `linear-gradient(145deg, ${CARD_COLORS.bg} 0%, #0d0d14 50%, ${CARD_COLORS.bg} 100%)`,
+        backgroundColor: CARD_COLORS.bg,
         padding: 48,
         fontFamily: "Geist Sans, sans-serif",
       }}
     >
       {/* Top bar */}
       <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 32 }}>
-        {logoBase64 && (
+        {logoBase64 ? (
           // eslint-disable-next-line @next/next/no-img-element
           <img
             src={logoBase64}
             alt=""
             width={32}
             height={32}
-            style={{ width: 32, height: 32, objectFit: "contain" }}
+            style={{ width: 32, height: 32 }}
           />
-        )}
-        <div
+        ) : null}
+        <span
           style={{
             fontSize: 22,
             fontWeight: 700,
@@ -53,7 +53,7 @@ export function CardLayout({ children, logoBase64 }: CardLayoutProps) {
           }}
         >
           PELICAN AI
-        </div>
+        </span>
       </div>
 
       {/* Card content */}

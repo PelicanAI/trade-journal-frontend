@@ -24,6 +24,24 @@ export function TradeRecapCard({ trade, logoBase64 }: TradeRecapProps) {
   const isProfit = pnlAmount >= 0
   const pnlColor = isProfit ? CARD_COLORS.green : CARD_COLORS.red
 
+  const gradeLabel =
+    trade.ai_grade &&
+    typeof trade.ai_grade === "object" &&
+    "letter" in trade.ai_grade &&
+    typeof (trade.ai_grade as Record<string, unknown>).letter === "string"
+      ? ((trade.ai_grade as Record<string, unknown>).letter as string)
+      : null
+
+  const tags = trade.setup_tags && trade.setup_tags.length > 0 ? trade.setup_tags.slice(0, 3) : null
+
+  const exitDate = trade.exit_date
+    ? ` → ${new Date(trade.exit_date).toLocaleDateString("en-US", {
+        month: "short",
+        day: "numeric",
+        year: "numeric",
+      })}`
+    : ""
+
   return (
     <CardLayout logoBase64={logoBase64}>
       {/* Ticker + Direction badge */}
@@ -40,10 +58,12 @@ export function TradeRecapCard({ trade, logoBase64 }: TradeRecapProps) {
         </span>
         <span
           style={{
+            display: "flex",
             fontSize: 16,
             fontWeight: 600,
             color: trade.direction === "long" ? CARD_COLORS.green : CARD_COLORS.red,
-            background: trade.direction === "long" ? "#22c55e20" : "#ef444420",
+            backgroundColor:
+              trade.direction === "long" ? "rgba(34, 197, 94, 0.12)" : "rgba(239, 68, 68, 0.12)",
             padding: "4px 12px",
             borderRadius: 6,
             textTransform: "uppercase",
@@ -51,7 +71,7 @@ export function TradeRecapCard({ trade, logoBase64 }: TradeRecapProps) {
         >
           {trade.direction}
         </span>
-        {trade.asset_type !== "stock" && (
+        {trade.asset_type !== "stock" ? (
           <span
             style={{
               fontSize: 14,
@@ -61,7 +81,7 @@ export function TradeRecapCard({ trade, logoBase64 }: TradeRecapProps) {
           >
             {trade.asset_type}
           </span>
-        )}
+        ) : null}
       </div>
 
       {/* P&L hero number */}
@@ -75,8 +95,7 @@ export function TradeRecapCard({ trade, logoBase64 }: TradeRecapProps) {
             fontFamily: "Geist Mono, monospace",
           }}
         >
-          {isProfit ? "+" : ""}
-          {pnlPercent.toFixed(1)}%
+          {`${isProfit ? "+" : ""}${pnlPercent.toFixed(1)}%`}
         </span>
         <span
           style={{
@@ -86,11 +105,10 @@ export function TradeRecapCard({ trade, logoBase64 }: TradeRecapProps) {
             fontFamily: "Geist Mono, monospace",
           }}
         >
-          {isProfit ? "+" : ""}$
-          {Math.abs(pnlAmount).toLocaleString("en-US", {
+          {`${isProfit ? "+" : ""}$${Math.abs(pnlAmount).toLocaleString("en-US", {
             minimumFractionDigits: 2,
             maximumFractionDigits: 2,
-          })}
+          })}`}
         </span>
       </div>
 
@@ -114,11 +132,11 @@ export function TradeRecapCard({ trade, logoBase64 }: TradeRecapProps) {
               fontFamily: "Geist Mono, monospace",
             }}
           >
-            ${trade.entry_price.toFixed(2)}
+            {`$${trade.entry_price.toFixed(2)}`}
           </span>
         </div>
 
-        {trade.exit_price !== null && (
+        {trade.exit_price !== null ? (
           <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
             <span
               style={{
@@ -137,12 +155,12 @@ export function TradeRecapCard({ trade, logoBase64 }: TradeRecapProps) {
                 fontFamily: "Geist Mono, monospace",
               }}
             >
-              ${trade.exit_price.toFixed(2)}
+              {`$${trade.exit_price.toFixed(2)}`}
             </span>
           </div>
-        )}
+        ) : null}
 
-        {trade.r_multiple !== null && (
+        {trade.r_multiple !== null ? (
           <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
             <span
               style={{
@@ -161,50 +179,47 @@ export function TradeRecapCard({ trade, logoBase64 }: TradeRecapProps) {
                 fontFamily: "Geist Mono, monospace",
               }}
             >
-              {trade.r_multiple > 0 ? "+" : ""}
-              {trade.r_multiple.toFixed(1)}R
+              {`${trade.r_multiple > 0 ? "+" : ""}${trade.r_multiple.toFixed(1)}R`}
             </span>
           </div>
-        )}
+        ) : null}
 
-        {trade.ai_grade &&
-          typeof trade.ai_grade === "object" &&
-          "letter" in trade.ai_grade &&
-          typeof (trade.ai_grade as Record<string, unknown>).letter === "string" && (
-            <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
-              <span
-                style={{
-                  fontSize: 13,
-                  color: CARD_COLORS.textMuted,
-                  textTransform: "uppercase",
-                  letterSpacing: "0.05em",
-                }}
-              >
-                AI Grade
-              </span>
-              <span
-                style={{
-                  fontSize: 22,
-                  color: CARD_COLORS.purple,
-                  fontWeight: 700,
-                }}
-              >
-                {(trade.ai_grade as Record<string, unknown>).letter as string}
-              </span>
-            </div>
-          )}
+        {gradeLabel ? (
+          <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
+            <span
+              style={{
+                fontSize: 13,
+                color: CARD_COLORS.textMuted,
+                textTransform: "uppercase",
+                letterSpacing: "0.05em",
+              }}
+            >
+              AI Grade
+            </span>
+            <span
+              style={{
+                fontSize: 22,
+                color: CARD_COLORS.purple,
+                fontWeight: 700,
+              }}
+            >
+              {gradeLabel}
+            </span>
+          </div>
+        ) : null}
       </div>
 
       {/* Setup tags */}
-      {trade.setup_tags && trade.setup_tags.length > 0 && (
+      {tags ? (
         <div style={{ display: "flex", gap: 8, marginTop: 20, flexWrap: "wrap" }}>
-          {trade.setup_tags.slice(0, 3).map((tag, i) => (
+          {tags.map((tag, i) => (
             <span
               key={i}
               style={{
+                display: "flex",
                 fontSize: 13,
                 color: CARD_COLORS.purpleLight,
-                background: "#8b5cf620",
+                backgroundColor: "rgba(139, 92, 246, 0.12)",
                 padding: "4px 10px",
                 borderRadius: 4,
               }}
@@ -213,21 +228,15 @@ export function TradeRecapCard({ trade, logoBase64 }: TradeRecapProps) {
             </span>
           ))}
         </div>
-      )}
+      ) : null}
 
       {/* Date range */}
       <div style={{ display: "flex", marginTop: "auto", paddingTop: 16 }}>
         <span style={{ fontSize: 14, color: CARD_COLORS.textMuted }}>
-          {new Date(trade.entry_date).toLocaleDateString("en-US", {
+          {`${new Date(trade.entry_date).toLocaleDateString("en-US", {
             month: "short",
             day: "numeric",
-          })}
-          {trade.exit_date &&
-            ` → ${new Date(trade.exit_date).toLocaleDateString("en-US", {
-              month: "short",
-              day: "numeric",
-              year: "numeric",
-            })}`}
+          })}${exitDate}`}
         </span>
       </div>
     </CardLayout>
