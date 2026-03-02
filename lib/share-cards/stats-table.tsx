@@ -94,7 +94,7 @@ export function StatsTableCard({ period, stats }: StatsTableProps) {
   const contextLine =
     period === "All Time"
       ? "Trading Performance"
-      : `Trading Performance \u2014 ${period}`
+      : `Trading Performance - ${period}`
 
   return (
     <CardLayout hideHeader hideFooter>

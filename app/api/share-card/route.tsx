@@ -128,9 +128,17 @@ export async function POST(req: NextRequest) {
       case "stats-table": {
         const { period, stats } = body
         if (!stats) return new Response("Missing stats", { status: 400 })
-        cardContent = (
-          <StatsTableCard period={period || "All Time"} stats={stats} />
-        )
+        try {
+          cardContent = (
+            <StatsTableCard period={period || "All Time"} stats={stats} />
+          )
+        } catch (templateErr) {
+          console.error("Stats template error:", templateErr)
+          return new Response(
+            `Stats template error: ${templateErr instanceof Error ? templateErr.message : String(templateErr)}`,
+            { status: 500 }
+          )
+        }
         break
       }
 
@@ -138,12 +146,23 @@ export async function POST(req: NextRequest) {
         return new Response("POST supports pelican-insight and stats-table", { status: 400 })
     }
 
-    return new ImageResponse(cardContent, {
-      ...dimensions,
-      fonts: getFonts(geistSans, geistMono),
-    })
+    try {
+      return new ImageResponse(cardContent, {
+        ...dimensions,
+        fonts: getFonts(geistSans, geistMono),
+      })
+    } catch (renderErr) {
+      console.error("Satori render error:", renderErr)
+      return new Response(
+        `Satori render error: ${renderErr instanceof Error ? renderErr.message : String(renderErr)}`,
+        { status: 500 }
+      )
+    }
   } catch (error) {
     console.error("Share card POST error:", error)
-    return new Response("Failed to generate card", { status: 500 })
+    return new Response(
+      `POST error: ${error instanceof Error ? error.message : String(error)}`,
+      { status: 500 }
+    )
   }
 }

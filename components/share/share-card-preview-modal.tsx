@@ -57,9 +57,14 @@ export function ShareCardPreviewModal({
         const { data, error } = await supabase.rpc("get_trade_stats", {
           p_is_paper: null,
         })
-        if (error) throw error
+        if (error) {
+          console.error("Stats RPC error:", error)
+          throw error
+        }
+        console.log("Stats RPC data:", data)
         if (!cancelled) setStats(data as StatsData)
-      } catch {
+      } catch (err) {
+        console.error("Stats fetch failed:", err)
         if (!cancelled) setImageError(true)
       } finally {
         if (!cancelled) setStatsLoading(false)
@@ -120,7 +125,11 @@ export function ShareCardPreviewModal({
             format,
           }),
         })
-        if (!res.ok) throw new Error(`Stats card failed: ${res.status}`)
+        if (!res.ok) {
+          const errText = await res.text()
+          console.error("Stats card POST failed:", res.status, errText)
+          throw new Error(`Stats card failed: ${res.status} - ${errText}`)
+        }
         const blob = await res.blob()
         if (!cancelled) {
           if (blobUrlRef.current) URL.revokeObjectURL(blobUrlRef.current)
