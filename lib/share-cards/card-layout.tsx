@@ -16,11 +16,19 @@ export const CARD_COLORS = {
   textMuted: "#71717a",
 } as const
 
+export { PELICAN_LOGO_B64 }
+
 interface CardLayoutProps {
   children: ReactNode
+  hideHeader?: boolean
+  hideFooter?: boolean
 }
 
-export function CardLayout({ children }: CardLayoutProps) {
+export function CardLayout({
+  children,
+  hideHeader = false,
+  hideFooter = false,
+}: CardLayoutProps) {
   return (
     <div
       style={{
@@ -75,49 +83,53 @@ export function CardLayout({ children }: CardLayoutProps) {
         }}
       >
         {/* Top bar: Logo + brand */}
-        <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 32 }}>
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src={PELICAN_LOGO_B64}
-            alt=""
-            width={36}
-            height={36}
-            style={{ width: 36, height: 36, borderRadius: 6 }}
-          />
-          <span
-            style={{
-              fontSize: 24,
-              fontWeight: 700,
-              color: CARD_COLORS.purple,
-              letterSpacing: "-0.02em",
-            }}
-          >
-            PELICAN AI
-          </span>
-        </div>
+        {hideHeader ? null : (
+          <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 32 }}>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={PELICAN_LOGO_B64}
+              alt=""
+              width={36}
+              height={36}
+              style={{ width: 36, height: 36, borderRadius: 6 }}
+            />
+            <span
+              style={{
+                fontSize: 24,
+                fontWeight: 700,
+                color: CARD_COLORS.purple,
+                letterSpacing: "-0.02em",
+              }}
+            >
+              PELICAN AI
+            </span>
+          </div>
+        )}
 
         {/* Card content */}
         <div style={{ display: "flex", flexDirection: "column", flex: 1 }}>{children}</div>
 
         {/* Bottom watermark */}
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "flex-end",
-            marginTop: "auto",
-            paddingTop: 24,
-          }}
-        >
-          <span
+        {hideFooter ? null : (
+          <div
             style={{
-              fontSize: 15,
-              color: CARD_COLORS.textMuted,
-              letterSpacing: "0.05em",
+              display: "flex",
+              justifyContent: "flex-end",
+              marginTop: "auto",
+              paddingTop: 24,
             }}
           >
-            pelicantrading.ai
-          </span>
-        </div>
+            <span
+              style={{
+                fontSize: 15,
+                color: CARD_COLORS.textMuted,
+                letterSpacing: "0.05em",
+              }}
+            >
+              pelicantrading.ai
+            </span>
+          </div>
+        )}
       </div>
     </div>
   )

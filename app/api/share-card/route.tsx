@@ -87,7 +87,9 @@ export async function GET(req: NextRequest) {
           return new Response("Failed to load stats", { status: 500 })
         }
 
-        cardContent = <StatsTableCard period={period} stats={stats} />
+        cardContent = (
+          <StatsTableCard period={period} stats={stats} />
+        )
         break
       }
 
@@ -126,7 +128,9 @@ export async function POST(req: NextRequest) {
       case "stats-table": {
         const { period, stats } = body
         if (!stats) return new Response("Missing stats", { status: 400 })
-        cardContent = <StatsTableCard period={period || "All Time"} stats={stats} />
+        cardContent = (
+          <StatsTableCard period={period || "All Time"} stats={stats} />
+        )
         break
       }
 

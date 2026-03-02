@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useMemo, useCallback, useEffect } from "react"
+import { useState, useMemo, useCallback, useEffect, useRef } from "react"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { X, SpinnerGap } from "@phosphor-icons/react"
 import { ShareButton } from "./share-button"
@@ -94,10 +94,14 @@ export function ShareCardPreviewModal({
 
   // For stats-table, generate image via POST and use blob URL
   const [statsBlobUrl, setStatsBlobUrl] = useState<string>("")
+  const blobUrlRef = useRef<string>("")
 
   useEffect(() => {
     if (cardType !== "stats-table" || !stats || !isOpen) {
-      if (statsBlobUrl) URL.revokeObjectURL(statsBlobUrl)
+      if (blobUrlRef.current) {
+        URL.revokeObjectURL(blobUrlRef.current)
+        blobUrlRef.current = ""
+      }
       setStatsBlobUrl("")
       return
     }
@@ -107,6 +111,7 @@ export function ShareCardPreviewModal({
       try {
         const res = await fetch("/api/share-card", {
           method: "POST",
+          credentials: "include",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             type: "stats-table",
@@ -115,13 +120,13 @@ export function ShareCardPreviewModal({
             format,
           }),
         })
-        if (!res.ok) throw new Error("Failed to generate stats card")
+        if (!res.ok) throw new Error(`Stats card failed: ${res.status}`)
         const blob = await res.blob()
         if (!cancelled) {
-          setStatsBlobUrl((prev) => {
-            if (prev) URL.revokeObjectURL(prev)
-            return URL.createObjectURL(blob)
-          })
+          if (blobUrlRef.current) URL.revokeObjectURL(blobUrlRef.current)
+          const url = URL.createObjectURL(blob)
+          blobUrlRef.current = url
+          setStatsBlobUrl(url)
           setImageError(false)
         }
       } catch {
@@ -139,10 +144,13 @@ export function ShareCardPreviewModal({
 
   const handleClose = useCallback(() => {
     setImageError(false)
-    if (statsBlobUrl) URL.revokeObjectURL(statsBlobUrl)
+    if (blobUrlRef.current) {
+      URL.revokeObjectURL(blobUrlRef.current)
+      blobUrlRef.current = ""
+    }
     setStatsBlobUrl("")
     onClose()
-  }, [onClose, statsBlobUrl])
+  }, [onClose])
 
   const filename = useMemo(() => {
     if (cardType === "stats-table") return `pelican-stats-${period.toLowerCase().replace(" ", "-")}.png`

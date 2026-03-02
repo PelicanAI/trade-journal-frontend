@@ -111,8 +111,15 @@ export function PelicanInsightCard({ headline, tickers }: PelicanInsightProps) {
         ) : null}
       </div>
 
-      <div style={{ display: "flex", alignItems: "center", gap: 8, marginTop: "auto" }}>
-        <span style={{ fontSize: 14, color: CARD_COLORS.textMuted }}>
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          marginTop: "auto",
+        }}
+      >
+        <span style={{ fontSize: 13, color: "rgba(255, 255, 255, 0.3)", letterSpacing: "0.05em" }}>
           Analysis by Pelican AI
         </span>
       </div>
