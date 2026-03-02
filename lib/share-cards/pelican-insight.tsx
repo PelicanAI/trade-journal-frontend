@@ -2,21 +2,21 @@ import { CardLayout, CARD_COLORS } from "./card-layout"
 
 interface PelicanInsightProps {
   headline: string
-  statPrimary: string | null
-  statSecondary: string | null
   tickers: string[]
-  logoBase64?: string
 }
 
-export function PelicanInsightCard({
-  headline,
-  statPrimary,
-  statSecondary,
-  tickers,
-  logoBase64,
-}: PelicanInsightProps) {
+function getFontSize(len: number): number {
+  if (len < 100) return 36
+  if (len < 200) return 28
+  if (len < 400) return 22
+  return 18
+}
+
+export function PelicanInsightCard({ headline, tickers }: PelicanInsightProps) {
+  const fontSize = getFontSize(headline.length)
+
   return (
-    <CardLayout logoBase64={logoBase64}>
+    <CardLayout>
       <div
         style={{
           display: "flex",
@@ -28,66 +28,15 @@ export function PelicanInsightCard({
       >
         <span
           style={{
-            fontSize: 36,
+            fontSize,
             fontWeight: 700,
             color: CARD_COLORS.textPrimary,
-            lineHeight: 1.3,
+            lineHeight: 1.4,
             letterSpacing: "-0.01em",
           }}
         >
           {headline}
         </span>
-
-        {statPrimary || statSecondary ? (
-          <div style={{ display: "flex", gap: 24, marginTop: 8 }}>
-            {statPrimary ? (
-              <div
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  backgroundColor: "rgba(139, 92, 246, 0.12)",
-                  border: "1px solid rgba(139, 92, 246, 0.25)",
-                  borderRadius: 8,
-                  padding: "8px 16px",
-                }}
-              >
-                <span
-                  style={{
-                    fontSize: 20,
-                    fontWeight: 600,
-                    color: CARD_COLORS.purple,
-                    fontFamily: "Geist Mono, monospace",
-                  }}
-                >
-                  {statPrimary}
-                </span>
-              </div>
-            ) : null}
-            {statSecondary ? (
-              <div
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  backgroundColor: "rgba(34, 211, 238, 0.08)",
-                  border: "1px solid rgba(34, 211, 238, 0.18)",
-                  borderRadius: 8,
-                  padding: "8px 16px",
-                }}
-              >
-                <span
-                  style={{
-                    fontSize: 20,
-                    fontWeight: 600,
-                    color: CARD_COLORS.cyan,
-                    fontFamily: "Geist Mono, monospace",
-                  }}
-                >
-                  {statSecondary}
-                </span>
-              </div>
-            ) : null}
-          </div>
-        ) : null}
 
         {tickers.length > 0 ? (
           <div style={{ display: "flex", gap: 12, marginTop: 4 }}>

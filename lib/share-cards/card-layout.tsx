@@ -1,4 +1,5 @@
 import type { ReactNode } from "react"
+import { PELICAN_LOGO_B64 } from "./logo-base64"
 
 export const CARD_COLORS = {
   bg: "#0a0a0f",
@@ -16,10 +17,9 @@ export const CARD_COLORS = {
 
 interface CardLayoutProps {
   children: ReactNode
-  logoBase64?: string
 }
 
-export function CardLayout({ children, logoBase64 }: CardLayoutProps) {
+export function CardLayout({ children }: CardLayoutProps) {
   return (
     <div
       style={{
@@ -32,21 +32,19 @@ export function CardLayout({ children, logoBase64 }: CardLayoutProps) {
         fontFamily: "Geist Sans, sans-serif",
       }}
     >
-      {/* Top bar */}
+      {/* Top bar: Logo + brand */}
       <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 32 }}>
-        {logoBase64 ? (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img
-            src={logoBase64}
-            alt=""
-            width={32}
-            height={32}
-            style={{ width: 32, height: 32 }}
-          />
-        ) : null}
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src={PELICAN_LOGO_B64}
+          alt=""
+          width={32}
+          height={32}
+          style={{ width: 32, height: 32, borderRadius: 4 }}
+        />
         <span
           style={{
-            fontSize: 22,
+            fontSize: 24,
             fontWeight: 700,
             color: CARD_COLORS.purple,
             letterSpacing: "-0.02em",

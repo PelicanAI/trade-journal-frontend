@@ -15,10 +15,9 @@ interface TradeRecapProps {
     ai_grade: Record<string, unknown> | null
     setup_tags: string[] | null
   }
-  logoBase64?: string
 }
 
-export function TradeRecapCard({ trade, logoBase64 }: TradeRecapProps) {
+export function TradeRecapCard({ trade }: TradeRecapProps) {
   const pnlAmount = trade.pnl_amount ?? 0
   const pnlPercent = trade.pnl_percent ?? 0
   const isProfit = pnlAmount >= 0
@@ -43,7 +42,7 @@ export function TradeRecapCard({ trade, logoBase64 }: TradeRecapProps) {
     : ""
 
   return (
-    <CardLayout logoBase64={logoBase64}>
+    <CardLayout>
       {/* Ticker + Direction badge */}
       <div style={{ display: "flex", alignItems: "center", gap: 16, marginBottom: 24 }}>
         <span
@@ -72,13 +71,7 @@ export function TradeRecapCard({ trade, logoBase64 }: TradeRecapProps) {
           {trade.direction}
         </span>
         {trade.asset_type !== "stock" ? (
-          <span
-            style={{
-              fontSize: 14,
-              color: CARD_COLORS.textMuted,
-              textTransform: "uppercase",
-            }}
-          >
+          <span style={{ fontSize: 14, color: CARD_COLORS.textMuted, textTransform: "uppercase" }}>
             {trade.asset_type}
           </span>
         ) : null}
@@ -98,12 +91,7 @@ export function TradeRecapCard({ trade, logoBase64 }: TradeRecapProps) {
           {`${isProfit ? "+" : ""}${pnlPercent.toFixed(1)}%`}
         </span>
         <span
-          style={{
-            fontSize: 28,
-            color: pnlColor,
-            opacity: 0.8,
-            fontFamily: "Geist Mono, monospace",
-          }}
+          style={{ fontSize: 28, color: pnlColor, opacity: 0.8, fontFamily: "Geist Mono, monospace" }}
         >
           {`${isProfit ? "+" : ""}$${Math.abs(pnlAmount).toLocaleString("en-US", {
             minimumFractionDigits: 2,
@@ -115,46 +103,20 @@ export function TradeRecapCard({ trade, logoBase64 }: TradeRecapProps) {
       {/* Stats row */}
       <div style={{ display: "flex", gap: 40 }}>
         <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
-          <span
-            style={{
-              fontSize: 13,
-              color: CARD_COLORS.textMuted,
-              textTransform: "uppercase",
-              letterSpacing: "0.05em",
-            }}
-          >
+          <span style={{ fontSize: 13, color: CARD_COLORS.textMuted, textTransform: "uppercase", letterSpacing: "0.05em" }}>
             Entry
           </span>
-          <span
-            style={{
-              fontSize: 22,
-              color: CARD_COLORS.textPrimary,
-              fontFamily: "Geist Mono, monospace",
-            }}
-          >
+          <span style={{ fontSize: 22, color: CARD_COLORS.textPrimary, fontFamily: "Geist Mono, monospace" }}>
             {`$${trade.entry_price.toFixed(2)}`}
           </span>
         </div>
 
         {trade.exit_price !== null ? (
           <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
-            <span
-              style={{
-                fontSize: 13,
-                color: CARD_COLORS.textMuted,
-                textTransform: "uppercase",
-                letterSpacing: "0.05em",
-              }}
-            >
+            <span style={{ fontSize: 13, color: CARD_COLORS.textMuted, textTransform: "uppercase", letterSpacing: "0.05em" }}>
               Exit
             </span>
-            <span
-              style={{
-                fontSize: 22,
-                color: CARD_COLORS.textPrimary,
-                fontFamily: "Geist Mono, monospace",
-              }}
-            >
+            <span style={{ fontSize: 22, color: CARD_COLORS.textPrimary, fontFamily: "Geist Mono, monospace" }}>
               {`$${trade.exit_price.toFixed(2)}`}
             </span>
           </div>
@@ -162,23 +124,10 @@ export function TradeRecapCard({ trade, logoBase64 }: TradeRecapProps) {
 
         {trade.r_multiple !== null ? (
           <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
-            <span
-              style={{
-                fontSize: 13,
-                color: CARD_COLORS.textMuted,
-                textTransform: "uppercase",
-                letterSpacing: "0.05em",
-              }}
-            >
+            <span style={{ fontSize: 13, color: CARD_COLORS.textMuted, textTransform: "uppercase", letterSpacing: "0.05em" }}>
               R-Multiple
             </span>
-            <span
-              style={{
-                fontSize: 22,
-                color: pnlColor,
-                fontFamily: "Geist Mono, monospace",
-              }}
-            >
+            <span style={{ fontSize: 22, color: pnlColor, fontFamily: "Geist Mono, monospace" }}>
               {`${trade.r_multiple > 0 ? "+" : ""}${trade.r_multiple.toFixed(1)}R`}
             </span>
           </div>
@@ -186,23 +135,10 @@ export function TradeRecapCard({ trade, logoBase64 }: TradeRecapProps) {
 
         {gradeLabel ? (
           <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
-            <span
-              style={{
-                fontSize: 13,
-                color: CARD_COLORS.textMuted,
-                textTransform: "uppercase",
-                letterSpacing: "0.05em",
-              }}
-            >
+            <span style={{ fontSize: 13, color: CARD_COLORS.textMuted, textTransform: "uppercase", letterSpacing: "0.05em" }}>
               AI Grade
             </span>
-            <span
-              style={{
-                fontSize: 22,
-                color: CARD_COLORS.purple,
-                fontWeight: 700,
-              }}
-            >
+            <span style={{ fontSize: 22, color: CARD_COLORS.purple, fontWeight: 700 }}>
               {gradeLabel}
             </span>
           </div>
@@ -233,10 +169,7 @@ export function TradeRecapCard({ trade, logoBase64 }: TradeRecapProps) {
       {/* Date range */}
       <div style={{ display: "flex", marginTop: "auto", paddingTop: 16 }}>
         <span style={{ fontSize: 14, color: CARD_COLORS.textMuted }}>
-          {`${new Date(trade.entry_date).toLocaleDateString("en-US", {
-            month: "short",
-            day: "numeric",
-          })}${exitDate}`}
+          {`${new Date(trade.entry_date).toLocaleDateString("en-US", { month: "short", day: "numeric" })}${exitDate}`}
         </span>
       </div>
     </CardLayout>

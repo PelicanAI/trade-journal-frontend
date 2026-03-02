@@ -2,44 +2,39 @@
 
 import { useState, useMemo, useCallback } from "react"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
-import { SpinnerGap, X } from "@phosphor-icons/react"
+import { X } from "@phosphor-icons/react"
 import { ShareButton } from "./share-button"
-import type { InsightCardData, ShareFormat } from "@/types/share-cards"
+import type { ShareFormat } from "@/types/share-cards"
 
 interface InsightPreviewModalProps {
   isOpen: boolean
   onClose: () => void
-  insightData: InsightCardData | null
-  isLoading: boolean
-  error: string | null
-  onRetry?: () => void
+  headline: string
+  tickers: string[]
 }
 
 export function InsightPreviewModal({
   isOpen,
   onClose,
-  insightData,
-  isLoading,
-  error,
-  onRetry,
+  headline,
+  tickers,
 }: InsightPreviewModalProps) {
   const [format, setFormat] = useState<ShareFormat>("og")
   const [imageError, setImageError] = useState(false)
 
   const imageUrl = useMemo(() => {
-    if (!insightData) return ""
+    if (!headline) return ""
     const params = new URLSearchParams({
       type: "pelican-insight",
-      headline: insightData.headline,
+      headline,
       format,
     })
-    if (insightData.statPrimary) params.set("statPrimary", insightData.statPrimary)
-    if (insightData.statSecondary) params.set("statSecondary", insightData.statSecondary)
-    if (insightData.tickers.length > 0) params.set("tickers", insightData.tickers.join(","))
+    if (tickers.length > 0) params.set("tickers", tickers.join(","))
     return `/api/share-card?${params.toString()}`
-  }, [insightData, format])
+  }, [headline, tickers, format])
 
   const handleClose = useCallback(() => {
+    setImageError(false)
     onClose()
   }, [onClose])
 
@@ -60,89 +55,56 @@ export function InsightPreviewModal({
         </DialogHeader>
 
         <div className="space-y-4">
-          {/* Loading state */}
-          {isLoading && (
-            <div className="flex flex-col items-center justify-center py-12 gap-3">
-              <SpinnerGap size={32} weight="regular" className="animate-spin text-[var(--accent-primary)]" />
-              <span className="text-sm text-[var(--text-muted)]">Formatting insight...</span>
-            </div>
-          )}
+          {/* Format toggle */}
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => setFormat("og")}
+              className={`px-3 py-1.5 text-xs rounded-md transition-colors ${
+                format === "og"
+                  ? "bg-[var(--accent-muted)] text-[var(--accent-primary)] font-medium"
+                  : "text-[var(--text-muted)] hover:text-[var(--text-secondary)]"
+              }`}
+            >
+              Twitter / LinkedIn
+            </button>
+            <button
+              onClick={() => setFormat("square")}
+              className={`px-3 py-1.5 text-xs rounded-md transition-colors ${
+                format === "square"
+                  ? "bg-[var(--accent-muted)] text-[var(--accent-primary)] font-medium"
+                  : "text-[var(--text-muted)] hover:text-[var(--text-secondary)]"
+              }`}
+            >
+              Square (Instagram)
+            </button>
+          </div>
 
-          {/* Error state */}
-          {error && !isLoading && (
-            <div className="flex flex-col items-center justify-center py-12 gap-3">
-              <span className="text-sm text-[var(--data-negative)]">{error}</span>
-              {onRetry && (
-                <button
-                  onClick={onRetry}
-                  className="px-4 py-2 text-sm bg-[var(--accent-primary)] hover:bg-[var(--accent-hover)] text-white rounded-lg transition-colors"
-                >
-                  Try Again
-                </button>
-              )}
-            </div>
-          )}
-
-          {/* Preview */}
-          {insightData && !isLoading && !error && (
-            <>
-              {/* Format toggle */}
-              <div className="flex items-center gap-2">
-                <button
-                  onClick={() => setFormat("og")}
-                  className={`px-3 py-1.5 text-xs rounded-md transition-colors ${
-                    format === "og"
-                      ? "bg-[var(--accent-muted)] text-[var(--accent-primary)] font-medium"
-                      : "text-[var(--text-muted)] hover:text-[var(--text-secondary)]"
-                  }`}
-                >
-                  Twitter / LinkedIn
-                </button>
-                <button
-                  onClick={() => setFormat("square")}
-                  className={`px-3 py-1.5 text-xs rounded-md transition-colors ${
-                    format === "square"
-                      ? "bg-[var(--accent-muted)] text-[var(--accent-primary)] font-medium"
-                      : "text-[var(--text-muted)] hover:text-[var(--text-secondary)]"
-                  }`}
-                >
-                  Square (Instagram)
-                </button>
+          {/* Image preview */}
+          <div className="relative rounded-xl overflow-hidden border border-[var(--border-subtle)] bg-[var(--bg-surface)]">
+            {imageError ? (
+              <div className="flex items-center justify-center py-12">
+                <span className="text-sm text-[var(--data-negative)]">Failed to load card preview</span>
               </div>
+            ) : (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img
+                src={imageUrl}
+                alt="Insight card preview"
+                className="w-full h-auto"
+                style={{ aspectRatio: format === "square" ? "1/1" : "1200/630" }}
+                onError={() => setImageError(true)}
+                onLoad={() => setImageError(false)}
+              />
+            )}
+          </div>
 
-              {/* Image preview */}
-              <div className="relative rounded-xl overflow-hidden border border-[var(--border-subtle)] bg-[var(--bg-surface)]">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                {imageError ? (
-                  <div className="flex items-center justify-center py-12">
-                    <span className="text-sm text-[var(--data-negative)]">Failed to load card preview</span>
-                  </div>
-                ) : (
-                  <img
-                    src={imageUrl}
-                    alt="Insight card preview"
-                    className="w-full h-auto"
-                    style={{ aspectRatio: format === "square" ? "1/1" : "1200/630" }}
-                    onError={() => setImageError(true)}
-                    onLoad={() => setImageError(false)}
-                  />
-                )}
-              </div>
-
-              {/* Share actions */}
-              <div className="flex items-center justify-between">
-                <span className="text-xs text-[var(--text-muted)]">
-                  {insightData.headline.length > 60
-                    ? insightData.headline.slice(0, 60) + "..."
-                    : insightData.headline}
-                </span>
-                <ShareButton
-                  imageUrl={imageUrl}
-                  filename={`pelican-insight-${insightData.tickers[0] || "card"}.png`}
-                />
-              </div>
-            </>
-          )}
+          {/* Share actions */}
+          <div className="flex items-center justify-end">
+            <ShareButton
+              imageUrl={imageUrl}
+              filename={`pelican-insight-${tickers[0] || "card"}.png`}
+            />
+          </div>
         </div>
       </DialogContent>
     </Dialog>

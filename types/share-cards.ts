@@ -19,10 +19,7 @@ export type ShareCardTrade = Pick<
 
 export interface InsightCardData {
   headline: string
-  statPrimary: string | null
-  statSecondary: string | null
   tickers: string[]
-  category?: string
 }
 
 export type ShareFormat = "og" | "square"

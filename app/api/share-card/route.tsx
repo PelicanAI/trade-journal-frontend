@@ -4,7 +4,6 @@ import { getGeistSans, getGeistMono } from "@/lib/share-cards/fonts"
 import { TradeRecapCard } from "@/lib/share-cards/trade-recap"
 import { PelicanInsightCard } from "@/lib/share-cards/pelican-insight"
 import { createClient } from "@/lib/supabase/server"
-import { PELICAN_LOGO_B64 } from "@/lib/share-cards/logo-base64"
 
 export async function GET(req: NextRequest) {
   try {
@@ -15,11 +14,7 @@ export async function GET(req: NextRequest) {
     const dimensions =
       format === "square" ? { width: 1080, height: 1080 } : { width: 1200, height: 630 }
 
-    const [geistSans, geistMono, logoBase64] = await Promise.all([
-      getGeistSans(),
-      getGeistMono(),
-      Promise.resolve(PELICAN_LOGO_B64),
-    ])
+    const [geistSans, geistMono] = await Promise.all([getGeistSans(), getGeistMono()])
 
     let cardContent: React.ReactElement
 
@@ -48,27 +43,17 @@ export async function GET(req: NextRequest) {
           return new Response("Trade not found", { status: 404 })
         }
 
-        cardContent = <TradeRecapCard trade={trade} logoBase64={logoBase64} />
+        cardContent = <TradeRecapCard trade={trade} />
         break
       }
 
       case "pelican-insight": {
         const headline = searchParams.get("headline")
-        const statPrimary = searchParams.get("statPrimary")
-        const statSecondary = searchParams.get("statSecondary")
         const tickers = searchParams.get("tickers")?.split(",").filter(Boolean) || []
 
         if (!headline) return new Response("Missing headline", { status: 400 })
 
-        cardContent = (
-          <PelicanInsightCard
-            headline={headline}
-            statPrimary={statPrimary}
-            statSecondary={statSecondary}
-            tickers={tickers}
-            logoBase64={logoBase64}
-          />
-        )
+        cardContent = <PelicanInsightCard headline={headline} tickers={tickers} />
         break
       }
 
@@ -92,7 +77,7 @@ export async function GET(req: NextRequest) {
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json()
-    const { type, headline, statPrimary, statSecondary, tickers, format } = body
+    const { type, headline, tickers, format } = body
 
     if (type !== "pelican-insight") {
       return new Response("POST only supports pelican-insight", { status: 400 })
@@ -103,20 +88,10 @@ export async function POST(req: NextRequest) {
     const dimensions =
       format === "square" ? { width: 1080, height: 1080 } : { width: 1200, height: 630 }
 
-    const [geistSans, geistMono, logoBase64] = await Promise.all([
-      getGeistSans(),
-      getGeistMono(),
-      Promise.resolve(PELICAN_LOGO_B64),
-    ])
+    const [geistSans, geistMono] = await Promise.all([getGeistSans(), getGeistMono()])
 
     return new ImageResponse(
-      <PelicanInsightCard
-        headline={headline}
-        statPrimary={statPrimary}
-        statSecondary={statSecondary}
-        tickers={tickers || []}
-        logoBase64={logoBase64}
-      />,
+      <PelicanInsightCard headline={headline} tickers={tickers || []} />,
       {
         ...dimensions,
         fonts: [
