@@ -4,27 +4,30 @@ import { getGeistSans, getGeistMono } from "@/lib/share-cards/fonts"
 import { TradeRecapCard } from "@/lib/share-cards/trade-recap"
 import { PelicanInsightCard } from "@/lib/share-cards/pelican-insight"
 import { createClient } from "@/lib/supabase/server"
-import { readFile } from "node:fs/promises"
-import { join } from "node:path"
 
 let logoBase64Cache: string | null = null
+
+function getBaseUrl(): string {
+  if (process.env.VERCEL_URL) return `https://${process.env.VERCEL_URL}`
+  if (process.env.NEXT_PUBLIC_APP_URL) return process.env.NEXT_PUBLIC_APP_URL
+  return "http://localhost:3000"
+}
 
 async function getLogoBase64(): Promise<string | undefined> {
   if (logoBase64Cache) return logoBase64Cache
   try {
-    // Try PNG first (Satori has better support), fall back to webp
-    const pngPath = join(process.cwd(), "public", "demos", "how-to-use", "pelican-logo.png")
-    const webpPath = join(process.cwd(), "public", "pelican-logo-transparent.webp")
-    let buf: Buffer
-    let mime: string
-    try {
-      buf = await readFile(pngPath)
-      mime = "image/png"
-    } catch {
-      buf = await readFile(webpPath)
+    const baseUrl = getBaseUrl()
+    // Try PNG first, then webp
+    let res = await fetch(`${baseUrl}/demos/how-to-use/pelican-logo.png`)
+    let mime = "image/png"
+    if (!res.ok) {
+      res = await fetch(`${baseUrl}/pelican-logo-transparent.webp`)
       mime = "image/webp"
     }
-    logoBase64Cache = `data:${mime};base64,${buf.toString("base64")}`
+    if (!res.ok) return undefined
+    const buf = await res.arrayBuffer()
+    const b64 = Buffer.from(buf).toString("base64")
+    logoBase64Cache = `data:${mime};base64,${b64}`
     return logoBase64Cache
   } catch {
     return undefined

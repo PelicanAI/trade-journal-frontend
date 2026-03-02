@@ -24,6 +24,7 @@ export function InsightPreviewModal({
   onRetry,
 }: InsightPreviewModalProps) {
   const [format, setFormat] = useState<ShareFormat>("og")
+  const [imageError, setImageError] = useState(false)
 
   const imageUrl = useMemo(() => {
     if (!insightData) return ""
@@ -112,12 +113,20 @@ export function InsightPreviewModal({
               {/* Image preview */}
               <div className="relative rounded-xl overflow-hidden border border-[var(--border-subtle)] bg-[var(--bg-surface)]">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src={imageUrl}
-                  alt="Insight card preview"
-                  className="w-full h-auto"
-                  style={{ aspectRatio: format === "square" ? "1/1" : "1200/630" }}
-                />
+                {imageError ? (
+                  <div className="flex items-center justify-center py-12">
+                    <span className="text-sm text-[var(--data-negative)]">Failed to load card preview</span>
+                  </div>
+                ) : (
+                  <img
+                    src={imageUrl}
+                    alt="Insight card preview"
+                    className="w-full h-auto"
+                    style={{ aspectRatio: format === "square" ? "1/1" : "1200/630" }}
+                    onError={() => setImageError(true)}
+                    onLoad={() => setImageError(false)}
+                  />
+                )}
               </div>
 
               {/* Share actions */}
