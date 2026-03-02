@@ -129,7 +129,7 @@ export function StatsTableCard({ period, rows }: StatsTableProps) {
               display: "flex",
               flexDirection: "column",
               flex: 1,
-              justifyContent: "space-evenly",
+              justifyContent: "space-between",
             }}
           >
             {rows.map((row, i) => (
