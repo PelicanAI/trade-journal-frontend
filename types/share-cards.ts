@@ -22,5 +22,19 @@ export interface InsightCardData {
   tickers: string[]
 }
 
+export interface StatsTableData {
+  period: string
+  stats: {
+    total_trades: number
+    win_rate: number
+    total_pnl: number
+    profit_factor: number
+    avg_r_multiple: number
+    largest_win: number
+    largest_loss: number
+    expectancy: number
+  }
+}
+
 export type ShareFormat = "og" | "square"
-export type ShareCardType = "trade-recap" | "pelican-insight"
+export type ShareCardType = "trade-recap" | "pelican-insight" | "stats-table"

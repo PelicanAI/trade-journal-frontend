@@ -3,7 +3,19 @@ import { NextRequest } from "next/server"
 import { getGeistSans, getGeistMono } from "@/lib/share-cards/fonts"
 import { TradeRecapCard } from "@/lib/share-cards/trade-recap"
 import { PelicanInsightCard } from "@/lib/share-cards/pelican-insight"
+import { StatsTableCard } from "@/lib/share-cards/stats-table"
 import { createClient } from "@/lib/supabase/server"
+
+function getFonts(geistSans: ArrayBuffer, geistMono: ArrayBuffer) {
+  return [
+    { name: "Geist Sans", data: geistSans, weight: 600 as const, style: "normal" as const },
+    { name: "Geist Mono", data: geistMono, weight: 400 as const, style: "normal" as const },
+  ]
+}
+
+function getDimensions(format: string) {
+  return format === "square" ? { width: 1080, height: 1080 } : { width: 1200, height: 630 }
+}
 
 export async function GET(req: NextRequest) {
   try {
@@ -11,9 +23,7 @@ export async function GET(req: NextRequest) {
     const type = searchParams.get("type")
     const format = searchParams.get("format") || "og"
 
-    const dimensions =
-      format === "square" ? { width: 1080, height: 1080 } : { width: 1200, height: 630 }
-
+    const dimensions = getDimensions(format)
     const [geistSans, geistMono] = await Promise.all([getGeistSans(), getGeistMono()])
 
     let cardContent: React.ReactElement
@@ -57,16 +67,37 @@ export async function GET(req: NextRequest) {
         break
       }
 
+      case "stats-table": {
+        const supabase = await createClient()
+        const {
+          data: { user },
+          error: authError,
+        } = await supabase.auth.getUser()
+        if (authError || !user) {
+          return new Response("Unauthorized", { status: 401 })
+        }
+
+        const period = searchParams.get("period") || "All Time"
+
+        const { data: stats, error: statsError } = await supabase.rpc("get_trade_stats", {
+          p_is_paper: null,
+        })
+
+        if (statsError || !stats) {
+          return new Response("Failed to load stats", { status: 500 })
+        }
+
+        cardContent = <StatsTableCard period={period} stats={stats} />
+        break
+      }
+
       default:
         return new Response("Invalid card type", { status: 400 })
     }
 
     return new ImageResponse(cardContent, {
       ...dimensions,
-      fonts: [
-        { name: "Geist Sans", data: geistSans, weight: 600 as const, style: "normal" as const },
-        { name: "Geist Mono", data: geistMono, weight: 400 as const, style: "normal" as const },
-      ],
+      fonts: getFonts(geistSans, geistMono),
     })
   } catch (error) {
     console.error("Share card generation error:", error)
@@ -77,29 +108,36 @@ export async function GET(req: NextRequest) {
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json()
-    const { type, headline, tickers, format } = body
+    const { type, format } = body
 
-    if (type !== "pelican-insight") {
-      return new Response("POST only supports pelican-insight", { status: 400 })
-    }
-
-    if (!headline) return new Response("Missing headline", { status: 400 })
-
-    const dimensions =
-      format === "square" ? { width: 1080, height: 1080 } : { width: 1200, height: 630 }
-
+    const dimensions = getDimensions(format || "og")
     const [geistSans, geistMono] = await Promise.all([getGeistSans(), getGeistMono()])
 
-    return new ImageResponse(
-      <PelicanInsightCard headline={headline} tickers={tickers || []} />,
-      {
-        ...dimensions,
-        fonts: [
-          { name: "Geist Sans", data: geistSans, weight: 600 as const, style: "normal" as const },
-          { name: "Geist Mono", data: geistMono, weight: 400 as const, style: "normal" as const },
-        ],
+    let cardContent: React.ReactElement
+
+    switch (type) {
+      case "pelican-insight": {
+        const { headline, tickers } = body
+        if (!headline) return new Response("Missing headline", { status: 400 })
+        cardContent = <PelicanInsightCard headline={headline} tickers={tickers || []} />
+        break
       }
-    )
+
+      case "stats-table": {
+        const { period, stats } = body
+        if (!stats) return new Response("Missing stats", { status: 400 })
+        cardContent = <StatsTableCard period={period || "All Time"} stats={stats} />
+        break
+      }
+
+      default:
+        return new Response("POST supports pelican-insight and stats-table", { status: 400 })
+    }
+
+    return new ImageResponse(cardContent, {
+      ...dimensions,
+      fonts: getFonts(geistSans, geistMono),
+    })
   } catch (error) {
     console.error("Share card POST error:", error)
     return new Response("Failed to generate card", { status: 500 })

@@ -1,14 +1,16 @@
 "use client"
 
 import { useState, useEffect, useCallback, useRef } from "react"
-import { ShareNetwork } from "@phosphor-icons/react"
-import { InsightPreviewModal } from "./insight-preview-modal"
+import { ShareNetwork, ChartBar, Lightning } from "@phosphor-icons/react"
+import { ShareCardPreviewModal } from "./share-card-preview-modal"
 import { extractTickers } from "@/lib/chat/detect-actions"
+import type { ShareCardType } from "@/types/share-cards"
 
 export function TextSelectionToolbar() {
   const [position, setPosition] = useState<{ x: number; y: number } | null>(null)
   const [selectedText, setSelectedText] = useState("")
   const [isModalOpen, setIsModalOpen] = useState(false)
+  const [modalCardType, setModalCardType] = useState<ShareCardType>("pelican-insight")
   const [modalData, setModalData] = useState<{ headline: string; tickers: string[] } | null>(null)
   const toolbarRef = useRef<HTMLDivElement>(null)
 
@@ -57,14 +59,18 @@ export function TextSelectionToolbar() {
     return () => window.removeEventListener("scroll", handleScroll, true)
   }, [position, hideToolbar])
 
-  const handleShareAsCard = useCallback(() => {
-    if (!selectedText) return
-    const tickers = extractTickers(selectedText).slice(0, 5)
-    setModalData({ headline: selectedText, tickers })
-    setIsModalOpen(true)
-    hideToolbar()
-    window.getSelection()?.removeAllRanges()
-  }, [selectedText, hideToolbar])
+  const openModal = useCallback(
+    (cardType: ShareCardType) => {
+      if (!selectedText) return
+      const tickers = extractTickers(selectedText).slice(0, 5)
+      setModalData({ headline: selectedText, tickers })
+      setModalCardType(cardType)
+      setIsModalOpen(true)
+      hideToolbar()
+      window.getSelection()?.removeAllRanges()
+    },
+    [selectedText, hideToolbar]
+  )
 
   return (
     <>
@@ -74,19 +80,32 @@ export function TextSelectionToolbar() {
           className="fixed z-50 animate-in fade-in-0 zoom-in-95 duration-150"
           style={{ left: position.x, top: position.y, transform: "translate(-50%, -100%)" }}
         >
-          <button
-            onClick={handleShareAsCard}
-            className="flex items-center gap-1.5 px-3 py-1.5 bg-[var(--bg-elevated)] border border-[var(--border-default)] rounded-lg shadow-lg text-xs font-medium text-[var(--text-secondary)] hover:text-[var(--accent-primary)] hover:border-[var(--accent-primary)]/30 transition-all active:scale-[0.97]"
-          >
-            <ShareNetwork size={14} weight="regular" />
-            Share as Card
-          </button>
+          <div className="flex items-center gap-0.5 bg-[var(--bg-elevated)] border border-[var(--border-default)] rounded-lg shadow-lg p-1">
+            <button
+              onClick={() => openModal("pelican-insight")}
+              className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-md text-xs font-medium text-[var(--text-secondary)] hover:text-[var(--accent-primary)] hover:bg-[var(--accent-muted)] transition-all active:scale-[0.97]"
+              title="Share as Insight Card"
+            >
+              <Lightning size={14} weight="regular" />
+              Insight
+            </button>
+            <div className="w-px h-4 bg-[var(--border-subtle)]" />
+            <button
+              onClick={() => openModal("stats-table")}
+              className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-md text-xs font-medium text-[var(--text-secondary)] hover:text-[var(--accent-primary)] hover:bg-[var(--accent-muted)] transition-all active:scale-[0.97]"
+              title="Share Trading Stats"
+            >
+              <ChartBar size={14} weight="regular" />
+              Stats
+            </button>
+          </div>
         </div>
       ) : null}
 
-      <InsightPreviewModal
+      <ShareCardPreviewModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
+        cardType={modalCardType}
         headline={modalData?.headline ?? ""}
         tickers={modalData?.tickers ?? []}
       />

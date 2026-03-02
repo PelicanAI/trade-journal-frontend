@@ -1,5 +1,6 @@
 import type { ReactNode } from "react"
 import { PELICAN_LOGO_B64 } from "./logo-base64"
+import { CARD_BG_B64 } from "./bg-card-base64"
 
 export const CARD_COLORS = {
   bg: "#0a0a0f",
@@ -32,7 +33,24 @@ export function CardLayout({ children }: CardLayoutProps) {
         overflow: "hidden",
       }}
     >
-      {/* Gradient background */}
+      {/* Background image */}
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
+        src={CARD_BG_B64}
+        alt=""
+        width={1200}
+        height={630}
+        style={{
+          position: "absolute",
+          top: 0,
+          left: 0,
+          width: "100%",
+          height: "100%",
+          objectFit: "cover",
+        }}
+      />
+
+      {/* Dark overlay for text readability */}
       <div
         style={{
           display: "flex",
@@ -41,37 +59,7 @@ export function CardLayout({ children }: CardLayoutProps) {
           left: 0,
           right: 0,
           bottom: 0,
-          background: "linear-gradient(135deg, #0a0a1a 0%, #0f0f1f 40%, #0a0a15 100%)",
-        }}
-      />
-
-      {/* Purple glow — top right */}
-      <div
-        style={{
-          display: "flex",
-          position: "absolute",
-          top: -100,
-          right: -100,
-          width: 400,
-          height: 400,
-          borderRadius: 9999,
-          background:
-            "radial-gradient(circle, rgba(139, 92, 246, 0.08) 0%, transparent 70%)",
-        }}
-      />
-
-      {/* Cyan glow — bottom left */}
-      <div
-        style={{
-          display: "flex",
-          position: "absolute",
-          bottom: -80,
-          left: -80,
-          width: 300,
-          height: 300,
-          borderRadius: 9999,
-          background:
-            "radial-gradient(circle, rgba(34, 211, 238, 0.05) 0%, transparent 70%)",
+          background: "rgba(0, 0, 0, 0.55)",
         }}
       />
 
