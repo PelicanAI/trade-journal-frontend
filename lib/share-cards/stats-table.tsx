@@ -25,10 +25,6 @@ function getColor(color: string): string {
 }
 
 export function StatsTableCard({ period, rows }: StatsTableProps) {
-  // No height:100%, no flex:1 anywhere — pure top-to-bottom stacking.
-  // Satori doesn't constrain flex children in nested containers,
-  // so we rely on the row cap (7 OG / 11 square) to ensure
-  // content fits within CardLayout's padded area.
   return (
     <CardLayout hideHeader hideFooter>
       <div
@@ -36,7 +32,9 @@ export function StatsTableCard({ period, rows }: StatsTableProps) {
           display: "flex",
           flexDirection: "column",
           width: "100%",
+          height: "100%",
           alignItems: "center",
+          justifyContent: "center",
         }}
       >
         {/* Centered header: logo + brand */}
@@ -48,28 +46,14 @@ export function StatsTableCard({ period, rows }: StatsTableProps) {
             marginBottom: 16,
           }}
         >
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              width: 48,
-              height: 48,
-              borderRadius: 12,
-              background: "rgba(10, 10, 15, 0.9)",
-              border: "1px solid rgba(139, 92, 246, 0.3)",
-              marginBottom: 8,
-            }}
-          >
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src={PELICAN_LOGO_B64}
-              alt=""
-              width={32}
-              height={32}
-              style={{ width: 32, height: 32, borderRadius: 6 }}
-            />
-          </div>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={PELICAN_LOGO_B64}
+            alt=""
+            width={44}
+            height={44}
+            style={{ width: 44, height: 44, marginBottom: 8 }}
+          />
           <span
             style={{
               display: "flex",
