@@ -1,8 +1,11 @@
 import { NextResponse } from 'next/server'
 import Stripe from 'stripe'
 import { createClient } from '@/lib/supabase/server'
+import { createUserRateLimiter, rateLimitResponse } from '@/lib/rate-limit'
 
 export const dynamic = 'force-dynamic'
+
+const billingPortalLimiter = createUserRateLimiter('billing-portal', 5, '1 m')
 
 const getStripeClient = () => {
   const secretKey = process.env.STRIPE_SECRET_KEY
@@ -34,6 +37,9 @@ export async function POST() {
         { status: 401 }
       )
     }
+
+    const { success: rateLimitOk } = await billingPortalLimiter.limit(user.id)
+    if (!rateLimitOk) return rateLimitResponse()
 
     const { data: userCredits, error: dbError } = await supabase
       .from('user_credits')
