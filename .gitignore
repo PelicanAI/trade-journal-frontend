@@ -40,7 +40,7 @@ how-to-use-package.zip
 nul
 
 # OS files
-.DS_Store
+**/.DS_Store
 build.log
 
 # AI agent configs — keep only .claude/ and .cursor/
