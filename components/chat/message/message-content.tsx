@@ -10,6 +10,7 @@ import type { TradeGrade } from "@/lib/grading/trade-grader"
 import { parseContentSegments } from "./format-utils"
 import { CodeBlock } from "./code-block"
 import { TextSegment } from "./text-segment"
+import { useToast } from "@/hooks/use-toast"
 
 /**
  * Detect raw JSON trade grade in message content.
@@ -61,6 +62,7 @@ export const MessageContent = memo(function MessageContent({
   economicTerms,
 }: MessageContentProps) {
   const [showRawText, setShowRawText] = useState(false)
+  const { toast } = useToast()
 
   // Defensive check - ensure content is always a string
   const safeContent = typeof content === 'string' ? content : String(content || '')
@@ -83,17 +85,25 @@ export const MessageContent = memo(function MessageContent({
     [safeContent, isStreaming, parsedData, gradeData]
   )
 
-  // Share handler: copy table data as formatted text
-  const handleShareTable = useCallback(() => {
+  // Share handler: copy table data as tab-separated text
+  const handleShareTable = useCallback(async () => {
     if (!labelValueData) return
     const { table } = labelValueData
-    const text = [
-      table.title,
-      "",
-      ...table.data.map((row) => `${row.label}: ${row.value}`),
-    ].join("\n")
-    navigator.clipboard.writeText(text)
-  }, [labelValueData])
+    const header = table.columns.map(c => c.label).join('\t')
+    const rows = table.data.map((row) =>
+      table.columns.map(c => String(row[c.key] ?? '')).join('\t')
+    )
+    const text = [table.title, '', header, ...rows].join('\n')
+    try {
+      await navigator.clipboard.writeText(text)
+      toast({
+        title: "Copied to clipboard",
+        description: "Table data copied to clipboard.",
+      })
+    } catch {
+      // Silent fail
+    }
+  }, [labelValueData, toast])
 
   // Performance: skip expensive parsing during streaming for large content
   const segments = useMemo(() => {
