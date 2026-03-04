@@ -214,13 +214,13 @@ export const MessageContent = memo(function MessageContent({
                     key={`post-code-${index}`}
                     content={segment.content}
                     language={segment.language}
-                    index={index + 1000}
+                    index={index}
                   />
                 ) : (
                   <TextSegment
                     key={`post-text-${index}`}
                     content={segment.content}
-                    index={index + 1000}
+                    index={index}
                     isStreaming={false}
                     isLargeContent={false}
                     tickers={tickers}
