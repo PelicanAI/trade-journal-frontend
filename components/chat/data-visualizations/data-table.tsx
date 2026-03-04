@@ -131,7 +131,7 @@ export function DataTable({ data, columns, title = "Market Data", query, summary
       {/* Pelican watermark — always present, subtler in compact mode */}
       <div className={cn(
         "absolute inset-0 flex items-center justify-center pointer-events-none overflow-hidden",
-        compact ? "opacity-[0.18]" : "opacity-30"
+        compact ? "opacity-[0.25]" : "opacity-30"
       )}>
         <Image
           src="/pelican-logo-transparent.webp"
@@ -140,7 +140,7 @@ export function DataTable({ data, columns, title = "Market Data", query, summary
           height={320}
           className={cn(
             "h-auto object-contain",
-            compact ? "w-[min(40vw,10rem)]" : "w-[min(60vw,20rem)]"
+            compact ? "w-[min(50vw,16rem)]" : "w-[min(60vw,20rem)]"
           )}
           aria-hidden="true"
         />
