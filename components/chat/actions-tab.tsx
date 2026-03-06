@@ -8,7 +8,7 @@ import {
   ShieldCheck,
   Scales,
   GraduationCap,
-  Lightning,
+
   ChartBar,
   CaretDown,
   CaretRight,
@@ -24,7 +24,7 @@ import type { Trade } from "@/hooks/use-trades"
 // Types
 // ============================================================================
 
-type ActionKey = "analyze" | "scan" | "pretrade" | "compare" | "learn" | "quick" | "review"
+type ActionKey = "analyze" | "scan" | "pretrade" | "compare" | "learn" | "review"
 
 interface ActionDef {
   key: ActionKey
@@ -82,12 +82,6 @@ const ACTIONS: ActionDef[] = [
     icon: ChartBar,
     label: "Review My Trading",
     description: "Analyze your patterns and performance",
-  },
-  {
-    key: "quick",
-    icon: Lightning,
-    label: "Quick Ask",
-    description: "Fast question, instant answer",
   },
 ]
 
@@ -153,10 +147,7 @@ function ActionCard({
 
   const handleClick = () => {
     if (disabled) return
-    if (action.key === "quick") {
-      onFocusInput?.()
-      return
-    }
+
     if (action.key === "review") {
       onSend('Analyze my recent trading behavior. Look at my win rate, risk management, streaks, and any patterns you notice. Give me specific, actionable feedback.')
       return
@@ -201,7 +192,7 @@ function ActionCard({
             {action.description}
           </p>
         </div>
-        {action.key !== "quick" && action.key !== "review" && (
+        {action.key !== "review" && (
           <div className="shrink-0 text-[var(--text-muted)]">
             {isExpanded ? (
               <CaretDown size={14} weight="regular" />
@@ -213,7 +204,7 @@ function ActionCard({
       </button>
 
       <AnimatePresence mode="wait">
-        {isExpanded && action.key !== "quick" && action.key !== "review" && (
+        {isExpanded && action.key !== "review" && (
           <motion.div
             initial={{ height: 0, opacity: 0 }}
             animate={{ height: "auto", opacity: 1 }}
