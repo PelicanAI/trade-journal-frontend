@@ -2,12 +2,7 @@
 
 import React, { useRef, useId } from 'react'
 import { cn } from '@/lib/utils'
-import {
-  motion,
-  useMotionValue,
-  useMotionTemplate,
-  useAnimationFrame,
-} from 'framer-motion'
+import { useMotionValue, useAnimationFrame } from 'framer-motion'
 
 interface InfiniteGridBgProps {
   children?: React.ReactNode
@@ -28,15 +23,18 @@ export function InfiniteGridBg({
   spotlightRadius = 350,
 }: InfiniteGridBgProps) {
   const containerRef = useRef<HTMLDivElement>(null)
+  const revealRef = useRef<HTMLDivElement>(null)
   const patternId = useId()
-
-  const mouseX = useMotionValue(0)
-  const mouseY = useMotionValue(0)
 
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
     const { left, top } = e.currentTarget.getBoundingClientRect()
-    mouseX.set(e.clientX - left)
-    mouseY.set(e.clientY - top)
+    const x = e.clientX - left
+    const y = e.clientY - top
+    if (revealRef.current) {
+      const mask = `radial-gradient(${spotlightRadius}px circle at ${x}px ${y}px, black, transparent)`
+      revealRef.current.style.maskImage = mask
+      revealRef.current.style.webkitMaskImage = mask
+    }
   }
 
   const gridOffsetX = useMotionValue(0)
@@ -46,8 +44,6 @@ export function InfiniteGridBg({
     gridOffsetX.set((gridOffsetX.get() + speed) % 40)
     gridOffsetY.set((gridOffsetY.get() + speed) % 40)
   })
-
-  const maskImage = useMotionTemplate`radial-gradient(${spotlightRadius}px circle at ${mouseX}px ${mouseY}px, black, transparent)`
 
   return (
     <div
@@ -66,9 +62,9 @@ export function InfiniteGridBg({
       </div>
 
       {/* Mouse-reveal grid — brighter, follows cursor */}
-      <motion.div
+      <div
+        ref={revealRef}
         className="absolute inset-0 z-0 opacity-25"
-        style={{ maskImage, WebkitMaskImage: maskImage }}
       >
         <GridPattern
           id={`${patternId}-reveal`}
@@ -76,7 +72,7 @@ export function InfiniteGridBg({
           offsetY={gridOffsetY}
           colorClass={gridColorClass}
         />
-      </motion.div>
+      </div>
 
       {/* Ambient glow blobs — Pelican brand palette, light-theme safe */}
       <div className="absolute inset-0 pointer-events-none z-0">
