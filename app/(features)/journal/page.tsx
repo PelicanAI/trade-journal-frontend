@@ -13,6 +13,7 @@ import { usePlanCompliance } from "@/hooks/use-plan-compliance"
 import { usePelicanPanelContext } from "@/providers/pelican-panel-provider"
 import { useLiveQuotes } from "@/hooks/use-live-quotes"
 import { LogTradeModal } from "@/components/journal/log-trade-modal"
+import { CSVImportModal } from "@/components/journal/csv-import-modal"
 import { JournalEmptyState } from "@/components/journal/journal-empty-state"
 import { CloseTradeModal } from "@/components/journal/close-trade-modal"
 import { TradesTable } from "@/components/journal/trades-table"
@@ -20,7 +21,7 @@ import { TradeDetailPanel } from "@/components/journal/trade-detail-panel"
 import { buildScanPrompt } from "@/lib/journal/build-scan-prompt"
 import { buildReplayNarrationPrompt } from "@/lib/journal/build-replay-prompt"
 import { PelicanButton, pageEnter, tabContent, backdrop } from "@/components/ui/pelican"
-import { Plus, ChartBar, Funnel, ClipboardText, Brain, UserCircle, X as XIcon } from "@phosphor-icons/react"
+import { Plus, ChartBar, Funnel, ClipboardText, Brain, UserCircle, X as XIcon, UploadSimple } from "@phosphor-icons/react"
 import { useOnboardingProgress } from "@/hooks/use-onboarding-progress"
 import { trackEvent } from "@/lib/tracking"
 import { toast } from "@/hooks/use-toast"
@@ -67,6 +68,7 @@ export default function JournalPage() {
   const [activeTab, setActiveTab] = useState<TabKey>('trades')
   const [activePanel, setActivePanel] = useState<ActivePanel>(null)
   const [showLogTradeModal, setShowLogTradeModal] = useState(false)
+  const [showImportModal, setShowImportModal] = useState(false)
   const [showCloseTradeModal, setShowCloseTradeModal] = useState(false)
   const [selectedTrade, setSelectedTrade] = useState<Trade | null>(null)
   const [tradeTypeFilter, setTradeTypeFilter] = useState<'all' | 'real' | 'paper'>('all')
@@ -376,6 +378,14 @@ export default function JournalPage() {
             </div>
 
             <PelicanButton
+              variant="ghost"
+              size="lg"
+              onClick={() => setShowImportModal(true)}
+            >
+              <UploadSimple size={16} weight="regular" />
+              Import CSV
+            </PelicanButton>
+            <PelicanButton
               variant="primary"
               size="lg"
               onClick={() => setShowLogTradeModal(true)}
@@ -545,6 +555,12 @@ export default function JournalPage() {
         onSubmit={handleLogTrade}
         editTrade={editTrade}
         onEditComplete={handleEditComplete}
+      />
+
+      <CSVImportModal
+        open={showImportModal}
+        onOpenChange={setShowImportModal}
+        onImportComplete={() => refetch()}
       />
 
       {selectedTrade && (
