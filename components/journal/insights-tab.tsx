@@ -16,6 +16,10 @@ import { HoldingPeriodChart } from "@/components/journal/insights/holding-period
 import { TickerScorecard } from "@/components/journal/insights/ticker-scorecard"
 import { CalendarCard } from "@/components/journal/insights/calendar-card"
 import { PlanComplianceCard } from "@/components/journal/insights/plan-compliance-card"
+import { CoreMetricsCard } from "@/components/journal/insights/core-metrics-card"
+import { DayOfWeekChart } from "@/components/journal/insights/day-of-week-chart"
+import { StreakCard } from "@/components/journal/insights/streak-card"
+import { SizingAnalysisCard } from "@/components/journal/insights/sizing-analysis-card"
 import { usePlanCompliance } from "@/hooks/use-plan-compliance"
 import { useTradingPlan } from "@/hooks/use-trading-plan"
 import { useTradeStats } from "@/hooks/use-trade-stats"
@@ -227,7 +231,7 @@ export function InsightsTab({ onAskPelican, onLogTrade }: InsightsTabProps) {
   const { completeMilestone } = useOnboardingProgress()
   const { stats: complianceStats, isLoading: complianceLoading } = usePlanCompliance()
   const { plan } = useTradingPlan()
-  const { stats: tradeStats } = useTradeStats()
+  const { stats: tradeStats, dayOfWeekStats } = useTradeStats()
 
   const handleComplianceAskPelican = useCallback((prompt: string) => {
     if (prompt === '__plan_review__' && plan) {
@@ -335,26 +339,52 @@ export function InsightsTab({ onAskPelican, onLogTrade }: InsightsTabProps) {
         />
       </motion.div>
 
-      {/* Row 1: Edge Summary + Detected Patterns */}
+      {/* Row 1: Core Trading Metrics */}
+      {tradeStats && (
+        <motion.div variants={staggerItem} className="mb-6">
+          <CoreMetricsCard stats={tradeStats} onAskPelican={onAskPelican} />
+        </motion.div>
+      )}
+
+      {/* Row 2: Edge Summary + Detected Patterns */}
       <motion.div variants={staggerItem} className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
         <EdgeSummary insights={insights} onAskPelican={onAskPelican} />
         <DetectedPatterns patterns={patterns} onDismiss={dismissPattern} onAskPelican={onAskPelican} />
       </motion.div>
 
-      {/* Row 2: Time of Day + Holding Period charts */}
+      {/* Row 3: Streaks + Sizing */}
       <motion.div variants={staggerItem} className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
-        <TimeOfDayChart data={insights.time_of_day} onAskPelican={onAskPelican} />
+        {insights.streaks && (
+          <StreakCard
+            streaks={insights.streaks}
+            winRate={tradeStats?.win_rate ?? 0}
+            onAskPelican={onAskPelican}
+          />
+        )}
+        {tradeStats && insights.position_sizing && (
+          <SizingAnalysisCard
+            stats={tradeStats}
+            sizing={insights.position_sizing}
+            onAskPelican={onAskPelican}
+          />
+        )}
+      </motion.div>
+
+      {/* Row 4: Day of Week + Holding Period */}
+      <motion.div variants={staggerItem} className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+        <DayOfWeekChart data={dayOfWeekStats} onAskPelican={onAskPelican} />
         <HoldingPeriodChart data={insights.holding_period} onAskPelican={onAskPelican} />
       </motion.div>
 
-      {/* Row 3: Ticker Scorecard (full width) */}
-      <motion.div variants={staggerItem} className="mb-6">
-        <TickerScorecard data={insights.ticker_performance} onAskPelican={onAskPelican} />
+      {/* Row 5: Time of Day + Calendar */}
+      <motion.div variants={staggerItem} className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+        <TimeOfDayChart data={insights.time_of_day} onAskPelican={onAskPelican} />
+        <CalendarCard data={insights.calendar_patterns} onAskPelican={onAskPelican} />
       </motion.div>
 
-      {/* Row 4: Calendar Patterns */}
+      {/* Row 6: Ticker Scorecard (full width) */}
       <motion.div variants={staggerItem}>
-        <CalendarCard data={insights.calendar_patterns} onAskPelican={onAskPelican} />
+        <TickerScorecard data={insights.ticker_performance} onAskPelican={onAskPelican} />
       </motion.div>
     </motion.div>
   )

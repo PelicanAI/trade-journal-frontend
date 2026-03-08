@@ -18,6 +18,12 @@ export interface TradeStats {
   avg_r_multiple: number
   profit_factor: number
   expectancy: number
+  sharpe_ratio: number
+  avg_winner_size: number
+  avg_loser_size: number
+  sizing_edge: number
+  gross_profit: number
+  gross_loss: number
 }
 
 export interface SetupStats {
@@ -63,6 +69,7 @@ interface RawTrade {
   entry_date: string
   setup_tags: string[] | null
   is_paper: boolean | null
+  position_size_usd: number | null
 }
 
 const DAY_NAMES = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
@@ -103,6 +110,20 @@ function computeStatsFromTrades(trades: RawTrade[]): TradeStats {
 
   const expectancy = closedTrades.length > 0 ? totalPnl / closedTrades.length : 0
 
+  // Sharpe-like ratio: mean(pnl) / stddev(pnl)
+  const meanPnl = closedTrades.length > 0 ? totalPnl / closedTrades.length : 0
+  const variance = closedTrades.length > 1
+    ? closedTrades.reduce((s, t) => s + Math.pow((t.pnl_amount ?? 0) - meanPnl, 2), 0) / (closedTrades.length - 1)
+    : 0
+  const sharpeRatio = variance > 0 ? meanPnl / Math.sqrt(variance) : 0
+
+  // Position sizing: avg size on winners vs losers
+  const winnerSizes = wins.map(t => t.position_size_usd ?? 0).filter(s => s > 0)
+  const loserSizes = losses.map(t => t.position_size_usd ?? 0).filter(s => s > 0)
+  const avgWinnerSize = winnerSizes.length > 0 ? winnerSizes.reduce((s, v) => s + v, 0) / winnerSizes.length : 0
+  const avgLoserSize = loserSizes.length > 0 ? loserSizes.reduce((s, v) => s + v, 0) / loserSizes.length : 0
+  const sizingEdge = avgWinnerSize > 0 ? avgLoserSize / avgWinnerSize : 0
+
   return {
     total_trades: trades.length,
     open_trades: openTrades.length,
@@ -117,6 +138,12 @@ function computeStatsFromTrades(trades: RawTrade[]): TradeStats {
     avg_r_multiple: avgR,
     profit_factor: profitFactor,
     expectancy,
+    sharpe_ratio: sharpeRatio,
+    avg_winner_size: avgWinnerSize,
+    avg_loser_size: avgLoserSize,
+    sizing_edge: sizingEdge,
+    gross_profit: grossProfit,
+    gross_loss: grossLoss,
   }
 }
 
@@ -239,8 +266,17 @@ export function useTradeStats({
 
       // If all RPCs succeeded, use their data
       if (statsOk && setupOk && dayOk && curveOk) {
+        const rpcStats = statsRes.value.data as Partial<TradeStats>
         return {
-          stats: statsRes.value.data as TradeStats,
+          stats: {
+            ...rpcStats,
+            sharpe_ratio: rpcStats.sharpe_ratio ?? 0,
+            avg_winner_size: rpcStats.avg_winner_size ?? 0,
+            avg_loser_size: rpcStats.avg_loser_size ?? 0,
+            sizing_edge: rpcStats.sizing_edge ?? 0,
+            gross_profit: rpcStats.gross_profit ?? 0,
+            gross_loss: rpcStats.gross_loss ?? 0,
+          } as TradeStats,
           setupStats: (setupRes.value.data as SetupStats[]) || [],
           dayOfWeekStats: (dayRes.value.data as DayOfWeekStats[]) || [],
           equityCurve: (curveRes.value.data as EquityCurvePoint[]) || [],
@@ -250,7 +286,7 @@ export function useTradeStats({
       // Fallback: fetch raw trades and compute client-side
       let query = supabase
         .from('trades')
-        .select('id, status, pnl_amount, pnl_percent, r_multiple, exit_date, entry_date, setup_tags, is_paper')
+        .select('id, status, pnl_amount, pnl_percent, r_multiple, exit_date, entry_date, setup_tags, is_paper, position_size_usd')
 
       if (isPaper != null) {
         query = query.eq('is_paper', isPaper)
