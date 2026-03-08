@@ -11,7 +11,7 @@ const faqs = [
   {
     question: 'How is this different from ChatGPT?',
     answer:
-      "ChatGPT doesn't have live market data, doesn't know your positions, can't track your setups, and forgets everything between conversations. Pelican pulls real-time data from Polygon, remembers your entire trading history, and gets more personalized every day you use it.",
+      "ChatGPT doesn't have live market data, doesn't know your positions, can't track your setups, and forgets everything between conversations. Pelican pulls real-time market data, remembers your entire trading history, and gets more personalized every day you use it.",
   },
   {
     question: 'What markets does Pelican support?',

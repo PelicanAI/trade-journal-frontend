@@ -31,7 +31,7 @@ const features = [
     description:
       'Live market data, your positions, and institutional-grade analysis. Like having a senior analyst on call 24/7.',
     highlights: [
-      'Powered by real-time Polygon data',
+      'Powered by real-time market data',
       'Knows your open positions and trade history',
       'Pre-trade checklists built into every analysis',
     ],

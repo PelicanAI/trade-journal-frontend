@@ -10,7 +10,6 @@ import {
   CalendarCheck,
   Strategy,
   GraduationCap,
-  ArrowsClockwise,
 } from '@phosphor-icons/react'
 import { ScrollReveal } from '@/components/landing/scroll-reveal'
 import { Section } from '@/components/landing/section'
@@ -60,11 +59,6 @@ const features = [
     icon: GraduationCap,
     title: 'Learning Mode',
     description: 'Toggle on to highlight trading terms. Click any term for an instant explanation.',
-  },
-  {
-    icon: ArrowsClockwise,
-    title: 'Trade Replay',
-    description: 'Replay any closed trade tick-by-tick. See what happened and what you could improve.',
   },
 ]
 
