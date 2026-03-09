@@ -508,7 +508,9 @@ ${watchlistSummary}
 TODAY'S TOP MOVERS:
 ${moversSummary || 'Loading...'}
 
-Generate my personalized daily brief covering ALL of the following sections. Be specific with numbers, levels, and tickers. No fluff — write like a Goldman Sachs morning note meets a trading desk briefing.
+Give me a comprehensive market overview using get_market_summary and other available tools. Include major indices, top movers, economic events, and critical price zones. Be specific with numbers and tickers. Write like a Goldman Sachs morning note meets a trading desk briefing.
+
+Cover ALL of the following sections:
 
 ${briefConfig.overnightRecap}
 
