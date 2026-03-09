@@ -1,16 +1,21 @@
 'use client'
 
 import { motion } from 'framer-motion'
-import { User, Lightning } from '@phosphor-icons/react'
+import { User } from '@phosphor-icons/react'
+import Image from 'next/image'
 
 export function ChatMock() {
   return (
     <div className="bg-white rounded-xl border border-slate-200 overflow-hidden h-[360px] flex flex-col">
       {/* Chat header */}
       <div className="flex items-center gap-2 px-4 py-3 border-b border-slate-200">
-        <div className="w-6 h-6 rounded-full bg-violet-500/10 flex items-center justify-center">
-          <Lightning weight="fill" className="w-3.5 h-3.5 text-violet-600" />
-        </div>
+        <Image
+          src="/pelican-logo-transparent.webp"
+          alt="Pelican AI"
+          width={24}
+          height={24}
+          className="w-6 h-6 object-contain"
+        />
         <span className="text-xs font-medium text-slate-500">Pelican AI</span>
         <div className="ml-auto flex items-center gap-1.5">
           <div className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
@@ -32,9 +37,13 @@ export function ChatMock() {
 
         {/* Assistant message */}
         <div className="flex gap-2.5">
-          <div className="w-6 h-6 rounded-full bg-violet-500/10 flex items-center justify-center flex-shrink-0 mt-0.5">
-            <Lightning weight="fill" className="w-3.5 h-3.5 text-violet-600" />
-          </div>
+          <Image
+            src="/pelican-logo-transparent.webp"
+            alt="Pelican AI"
+            width={24}
+            height={24}
+            className="w-6 h-6 object-contain flex-shrink-0 mt-0.5"
+          />
           <div className="max-w-[90%] space-y-2.5">
             <div className="bg-slate-50 border border-slate-200 rounded-xl rounded-tl-sm px-3 py-2.5 space-y-2">
               {/* Technical Setup */}
