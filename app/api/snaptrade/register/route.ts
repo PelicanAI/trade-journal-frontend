@@ -45,12 +45,38 @@ export async function POST() {
 
     // Register new SnapTrade user
     const snaptrade = getSnapTradeClient()
-    const response = await snaptrade.authentication.registerSnapTradeUser({
-      userId: user.id,
-    })
+    let snaptradeUserId: string | undefined
+    let userSecret: string | undefined
 
-    const snaptradeUserId = response.data.userId
-    const userSecret = response.data.userSecret
+    try {
+      const response = await snaptrade.authentication.registerSnapTradeUser({
+        userId: user.id,
+      })
+      snaptradeUserId = response.data.userId
+      userSecret = response.data.userSecret
+    } catch (registerError: unknown) {
+      console.error('SnapTrade registerUser error:', registerError)
+
+      // User likely already registered at SnapTrade but our DB lost the record.
+      // Confirm they exist, then reset their secret to get fresh credentials.
+      try {
+        const users = await snaptrade.authentication.listSnapTradeUsers()
+        const exists = users.data?.includes(user.id)
+
+        if (!exists) {
+          return NextResponse.json({ error: 'Broker registration failed' }, { status: 502 })
+        }
+
+        const resetResponse = await snaptrade.authentication.resetSnapTradeUserSecret({
+          userId: user.id,
+        })
+        snaptradeUserId = resetResponse.data.userId ?? user.id
+        userSecret = resetResponse.data.userSecret
+      } catch (recoveryError) {
+        console.error('SnapTrade recovery (list/reset) failed:', recoveryError)
+        return NextResponse.json({ error: 'Broker registration failed' }, { status: 502 })
+      }
+    }
 
     if (!snaptradeUserId || !userSecret) {
       console.error('SnapTrade registration returned incomplete data')

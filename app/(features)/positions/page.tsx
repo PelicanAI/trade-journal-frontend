@@ -33,7 +33,6 @@ import Link from "next/link"
 import { PelicanButton, pageEnter } from "@/components/ui/pelican"
 import { trackEvent } from "@/lib/tracking"
 import { computePortfolioGrade } from "@/lib/portfolio-grade"
-import { useBrokerConnections } from "@/hooks/use-broker-connections"
 import type { PortfolioPosition } from "@/types/portfolio"
 
 // ============================================================================
@@ -60,7 +59,6 @@ export default function PositionsPage() {
   const { openWithPrompt } = usePelicanPanelContext()
   const { closeTrade, refetch: refetchTrades, logTrade } = useTrades()
   const { survey } = useTraderProfile()
-  const { activeConnections } = useBrokerConnections()
   const { items: watchlistItems } = useWatchlist()
   const watchlistTickers = useMemo(
     () => new Set(watchlistItems.map(w => w.ticker.toUpperCase())),
@@ -285,7 +283,7 @@ export default function PositionsPage() {
         onSortChange={setSortBy}
         onSearchChange={setSearchQuery}
         onLogTrade={() => setShowLogTradeModal(true)}
-        showConnectBroker={activeConnections.length === 0}
+        showConnectBroker
       />
 
       {/* Position cards */}

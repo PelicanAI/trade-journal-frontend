@@ -24,7 +24,6 @@ import { PelicanButton, pageEnter, tabContent, backdrop } from "@/components/ui/
 import { Plus, ChartBar, Funnel, ClipboardText, Brain, UserCircle, X as XIcon, UploadSimple } from "@phosphor-icons/react"
 import { ConnectBrokerButton } from "@/components/broker/connect-broker-button"
 import { useOnboardingProgress } from "@/hooks/use-onboarding-progress"
-import { useBrokerConnections } from "@/hooks/use-broker-connections"
 import { trackEvent } from "@/lib/tracking"
 import { toast } from "@/hooks/use-toast"
 import { useRouter } from "next/navigation"
@@ -82,7 +81,6 @@ export default function JournalPage() {
   const router = useRouter()
 
   const { trades, isLoading: tradesLoading, logTrade, closeTrade, refetch, updateTrade } = useTrades()
-  const { activeConnections } = useBrokerConnections()
 
   // Handle ?tab= from settings modal links (with backward compat)
   const tabParam = searchParams.get('tab')
@@ -380,9 +378,7 @@ export default function JournalPage() {
               ))}
             </div>
 
-            {activeConnections.length === 0 && (
-              <ConnectBrokerButton variant="ghost" size="lg" />
-            )}
+            <ConnectBrokerButton variant="ghost" size="lg" />
             <PelicanButton
               variant="ghost"
               size="lg"
