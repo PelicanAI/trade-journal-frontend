@@ -11,14 +11,14 @@ export const metadata: Metadata = {
   metadataBase: new URL('https://pelicantrading.ai'),
   title: 'Pelican Trading | AI Market Intelligence for Traders',
   description:
-    'The AI trading platform that learns how you trade. Real-time market analysis, trade journaling, AI coaching, and institutional-grade intelligence for stocks, forex, crypto, and futures.',
+    'The AI trading platform that learns how you trade. Real-time market analysis, trade journaling, AI coaching, and institutional-grade intelligence for stocks, forex, and crypto.',
   icons: {
     icon: '/pelican-logo-transparent.webp',
   },
   openGraph: {
     title: 'Pelican Trading AI — Your AI-Powered Trading Edge',
     description:
-      'The AI trading platform that gets smarter every day you use it. Stocks, forex, crypto, and futures.',
+      'The AI trading platform that gets smarter every day you use it. Stocks, forex, and crypto.',
     images: [
       { url: '/og-image.png', width: 1200, height: 630, alt: 'Pelican Trading' },
     ],

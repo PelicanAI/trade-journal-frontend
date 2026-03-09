@@ -11,7 +11,7 @@ export const metadata: Metadata = {
     absolute: 'Pelican Trading AI — Your AI-Powered Trading Edge',
   },
   description:
-    'Institutional-grade market analysis, personalized trade coaching, and a platform that learns how you trade. Built for stocks, forex, crypto, and futures.',
+    'Institutional-grade market analysis, personalized trade coaching, and a platform that learns how you trade. Built for stocks, forex, and crypto.',
   alternates: {
     canonical: '/',
   },

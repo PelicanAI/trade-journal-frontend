@@ -4,7 +4,6 @@ import {
   TrendUp,
   CurrencyCircleDollar,
   CurrencyBtc,
-  ChartLine,
 } from '@phosphor-icons/react'
 import { ScrollReveal } from '@/components/landing/scroll-reveal'
 import { Section } from '@/components/landing/section'
@@ -28,12 +27,6 @@ const assets = [
     description: '24/7 monitoring, BTC dominance, 24 token heatmap',
     tickers: ['BTC', 'ETH', 'SOL', 'DOGE'],
   },
-  {
-    icon: ChartLine,
-    title: 'Futures',
-    description: 'Globex sessions, contract tracking, economic calendar',
-    tickers: ['ES', 'NQ', 'CL', 'GC', 'ZN'],
-  },
 ]
 
 export function MultiAssetSection() {
@@ -50,7 +43,7 @@ export function MultiAssetSection() {
         </div>
       </ScrollReveal>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         {assets.map((asset, i) => {
           const Icon = asset.icon
           return (

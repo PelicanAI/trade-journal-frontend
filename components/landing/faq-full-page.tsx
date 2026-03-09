@@ -124,7 +124,7 @@ const faqData: FAQCategory[] = [
     items: [
       {
         question: 'Who founded Pelican?',
-        answer: 'Pelican was founded by Nick Groves, who serves as CEO. Nick brings 8 years of trading experience across futures, equities, FX, and crypto, with a background in crypto arbitrage.',
+        answer: 'Pelican was founded by Nick Groves, who serves as CEO. Nick brings 8 years of trading experience across equities, FX, and crypto, with a background in crypto arbitrage.',
       },
       {
         question: 'Who else is on the team?',
