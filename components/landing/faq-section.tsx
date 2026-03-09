@@ -16,7 +16,7 @@ const faqs = [
   {
     question: 'What markets does Pelican support?',
     answer:
-      'Stocks, forex, crypto, and futures. When you sign up, you tell Pelican what you trade and the entire platform adapts — heatmap views, session indicators, morning briefings, and suggested analysis all match your market.',
+      'Stocks, forex, and crypto. When you sign up, you tell Pelican what you trade and the entire platform adapts — heatmap views, session indicators, morning briefings, and suggested analysis all match your market.',
   },
   {
     question: 'Is my trading data secure?',

@@ -21,7 +21,7 @@ const sections = [
     icon: ChatCircle,
     title: 'AI Chat — Ask Anything About Any Market',
     description:
-      'Type any market question in plain English. Pelican connects to live market data across 10,000+ tickers in stocks, forex, crypto, and futures.',
+      'Type any market question in plain English. Pelican connects to live market data across 10,000+ tickers in stocks, forex, and crypto.',
     content: [
       'Price checks, technicals, fundamentals, and macro analysis',
       'Backtesting: "How does SPY perform after a 3% drop?"',
