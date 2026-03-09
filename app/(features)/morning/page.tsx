@@ -25,7 +25,6 @@ import {
   Lightning,
   Briefcase,
   ChatCircleDots,
-  Plus,
 } from "@phosphor-icons/react"
 import { IconTooltip } from "@/components/ui/icon-tooltip"
 import { getMarketStatus } from "@/hooks/use-market-data"
@@ -57,10 +56,6 @@ import {
   CRYPTO_TOP_20,
   CRYPTO_TOP_100,
 } from "@/lib/trading/ticker-lists"
-import Link from "next/link"
-import { LogTradeModal } from "@/components/journal/log-trade-modal"
-import { useCorrelationMatrix } from "@/hooks/use-correlations"
-import { CorrelationListView } from "@/components/correlations/correlation-list-view"
 
 type MoversTab = "gainers" | "losers"
 type AssetClass = "stocks" | "crypto" | "forex"
@@ -94,7 +89,7 @@ const ASSET_FILTER_OPTIONS: Record<Exclude<AssetClass, 'stocks'>, string[]> = {
 }
 
 // Market-adaptive morning brief prompt configurations
-type MarketType = 'stocks' | 'forex' | 'crypto' | 'options'
+type MarketType = 'stocks' | 'forex' | 'crypto' | 'futures' | 'options'
 
 interface BriefConfig {
   overnightRecap: string
@@ -106,13 +101,13 @@ interface BriefConfig {
 const BRIEF_CONFIGS: Record<MarketType, BriefConfig> = {
   stocks: {
     overnightRecap: `**1. MARKET OVERNIGHT RECAP**
-Search the web for "overnight futures market open ${new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}".
-Summarize what happened — direction, magnitude, key drivers.
-Do not state specific price levels unless the search returns them.`,
+- How did futures trade overnight? Where are S&P, Nasdaq, Dow futures right now?
+- What happened in Asia and Europe sessions?
+- Any overnight gaps or significant moves?`,
     keyLevels: `**2. KEY LEVELS TODAY**
 - Major indices: support, resistance, and pivot levels
-- Volatility readings: current levels and what they signal
-- Dollar index: direction and impact on equities`,
+- Volatility readings: current level and what they signal
+- Dollar index: direction and impact`,
     sectorRotation: `**6. SECTOR ROTATION**
 - Which sectors are showing relative strength/weakness?
 - Any notable sector divergences from the broad market?
@@ -124,13 +119,12 @@ Do not state specific price levels unless the search returns them.`,
   },
   forex: {
     overnightRecap: `**1. SESSION RECAP**
-Search the web for "overnight forex session ${new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}".
-Summarize what happened — direction, magnitude, key drivers.
-Do not state specific price levels unless the search returns them.`,
+- How did the Asian session trade? Any significant moves in JPY, AUD, NZD crosses?
+- European session open outlook — what's the tone?
+- Any overnight gaps or central bank interventions?`,
     keyLevels: `**2. KEY LEVELS TODAY**
 - Major currency pairs: support, resistance, and pivot levels
-- Dollar index: current direction and momentum
-- Any pairs at key technical levels?`,
+- Dollar index: current direction and momentum`,
     sectorRotation: `**6. CURRENCY STRENGTH**
 - Which currencies are showing relative strength/weakness today?
 - Any notable divergences between correlated pairs?
@@ -142,12 +136,12 @@ Do not state specific price levels unless the search returns them.`,
   },
   crypto: {
     overnightRecap: `**1. MARKET RECAP (24H)**
-Search the web for "crypto market 24 hour ${new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}".
-Summarize what happened — direction, magnitude, key drivers.
-Do not state specific price levels unless the search returns them.`,
+- How did BTC and ETH trade over the last 24 hours? Any significant moves?
+- What happened during the Asia and US sessions?
+- Any notable liquidation events or large whale movements?`,
     keyLevels: `**2. KEY LEVELS TODAY**
 - Major cryptocurrencies: support, resistance, and pivot levels
-- Market dominance: current levels and trends
+- Market dominance: current level and trend
 - Total crypto market cap direction`,
     sectorRotation: `**6. CATEGORY ROTATION**
 - Which categories are leading? (Layer 1, DeFi, Meme, AI, Gaming)
@@ -159,11 +153,30 @@ Do not state specific price levels unless the search returns them.`,
 - Volume pattern analysis (when are the highest-volume windows?)
 - On-chain metrics to watch (exchange flows, stablecoin mints)`,
   },
+  futures: {
+    overnightRecap: `**1. OVERNIGHT SESSION RECAP**
+- How did ES, NQ, and YM trade overnight? Key levels hit?
+- Globex session volume and range — was it trending or range-bound?
+- Any overnight gaps or significant moves? Gap fill probability?`,
+    keyLevels: `**2. KEY LEVELS TODAY**
+- Major equity futures: support, resistance, VPOC, and value area
+- Volatility futures: current level and term structure
+- Any rollover/expiration considerations?`,
+    sectorRotation: `**6. SECTOR ROTATION**
+- Which sectors are showing relative strength/weakness?
+- COT (Commitment of Traders) positioning — any notable shifts?
+- Institutional vs retail positioning signals`,
+    gamePlan: `**10. GAME PLAN**
+- Summarize: what am I doing today?
+- Key price alerts to set on ES, NQ, CL, GC
+- Times to pay attention to (data releases, RTH open, power hour, settlement)
+- Overnight session levels to reference for RTH trading`,
+  },
   options: {
     overnightRecap: `**1. MARKET OVERNIGHT RECAP**
-Search the web for "overnight futures market open volatility ${new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}".
-Summarize what happened — direction, magnitude, key drivers.
-Do not state specific price levels unless the search returns them.`,
+- How did futures trade overnight? Where are S&P, Nasdaq, Dow futures right now?
+- What happened in Asia and Europe sessions?
+- Any overnight gaps or significant moves affecting implied volatility?`,
     keyLevels: `**2. KEY LEVELS TODAY**
 - Major indices: support, resistance, and gamma exposure flip levels
 - Volatility index: current level, term structure (contango/backwardation)
@@ -202,6 +215,12 @@ const PULSE_STRIP_PROMPTS: Record<MarketType, Record<string, string>> = {
     DJI: `How are traditional markets influencing crypto flows today?`,
     VIX: `VIX analysis: what does equity volatility signal for crypto? Historical correlation check.`,
   },
+  futures: {
+    SPX: `ES futures analysis: key levels, value area, VPOC, and overnight session recap.`,
+    COMP: `NQ futures analysis: key levels, relative strength vs ES, and tech sector leadership.`,
+    DJI: `YM futures analysis: Dow futures levels and sector rotation signals.`,
+    VIX: `VIX futures analysis: term structure, contango/backwardation, and hedging signals.`,
+  },
   options: {
     SPX: `SPX options analysis: implied volatility, gamma exposure, max pain, and notable flow.`,
     COMP: `Nasdaq options analysis: IV rank, put/call skew, and unusual activity.`,
@@ -237,7 +256,7 @@ export default function MorningPage() {
   const [assetLoading, setAssetLoading] = useState(false)
 
   const router = useRouter()
-  const { openTrades, closedTrades, isLoading: tradesLoading, logTrade, refetch: refetchTrades } = useTrades()
+  const { openTrades, closedTrades, isLoading: tradesLoading } = useTrades()
   const { movers, isLoading: moversLoading, refetch: refetchMovers } = useMorningBrief()
   const { openWithPrompt } = usePelicanPanelContext()
   const { items: watchlistItems } = useWatchlist()
@@ -255,8 +274,6 @@ export default function MorningPage() {
   const { warnings: todaysWarnings, warningCount } = useTodaysWarnings()
   const { data: behavioralInsights } = useBehavioralInsights()
   const { patterns: activePatterns } = useTradePatterns()
-  const [showLogTradeModal, setShowLogTradeModal] = useState(false)
-  const { data: correlationData } = useCorrelationMatrix('30d')
   const { primaryMarket } = useTraderProfile()
   const marketType = (primaryMarket as MarketType) || 'stocks'
   const briefConfig = BRIEF_CONFIGS[marketType] ?? BRIEF_CONFIGS.stocks
@@ -438,11 +455,6 @@ export default function MorningPage() {
     })
   }, [briefContent, toast])
 
-  const handleLogTrade = useCallback(async (data: Parameters<typeof logTrade>[0]) => {
-    await logTrade(data)
-    refetchTrades()
-  }, [logTrade, refetchTrades])
-
   const buildMorningBriefPrompt = useCallback(() => {
     const now = new Date()
     const dateStr = now.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })
@@ -477,14 +489,11 @@ export default function MorningPage() {
       stocks: 'equities/stock',
       forex: 'forex/currency',
       crypto: 'cryptocurrency',
+      futures: 'futures',
       options: 'options',
     }
 
-    let prompt = `Give me a comprehensive market overview for today.
-
-Use get_market_summary to show all major index performance, market breadth, and the economic calendar.
-Use get_market_movers with limit=10 to show today's top gainers and losers.
-Use get_news to find today's market-moving headlines and catalysts.
+    let prompt = `You are Pelican, an institutional-grade AI trading assistant delivering a comprehensive daily briefing. My primary market is ${marketLabel[marketType] ?? 'equities/stock'}.
 
 Date: ${dateStr}
 Time: ${timeStr}
@@ -498,7 +507,7 @@ ${watchlistSummary}
 TODAY'S TOP MOVERS:
 ${moversSummary || 'Loading...'}
 
-Cover these sections in your analysis. Be specific with numbers, levels, and tickers. Dense and actionable.
+Generate my personalized daily brief covering ALL of the following sections. Be specific with numbers, levels, and tickers. No fluff — write like a Goldman Sachs morning note meets a trading desk briefing.
 
 ${briefConfig.overnightRecap}
 
@@ -506,14 +515,12 @@ ${briefConfig.keyLevels}
 
 **3. MY POSITIONS UPDATE**
 - For each of my open positions: current price vs my entry, how far from stop/target, any overnight news affecting them
-- Use get_news to find catalysts and events affecting my positions
 - Risk assessment: which positions need attention today?
 - Any positions approaching stop loss or take profit?
 
 **4. WATCHLIST OPPORTUNITIES**
 - For each ticker on my watchlist: current setup, key levels to watch, any catalysts today
-- Use get_news to identify which watchlist items have the best risk/reward for entry today
-- Which setups match current market conditions?
+- Which watchlist items have the best risk/reward for entry today?
 
 **5. MACRO & CATALYSTS**
 - Economic data releases today (times, consensus, potential impact)
@@ -525,22 +532,21 @@ ${briefConfig.sectorRotation}
 
 **7. TOP MOVERS ANALYSIS**
 - Why are today's biggest movers moving? (earnings, news, technical breakouts)
-- Use get_news to understand the drivers behind major moves
 - Any of these relevant to my positions or watchlist?
 
 **8. TRADE IDEAS**
-- 2-3 high-conviction setups based on today's conditions
+- 1-2 high-conviction trade ideas based on today's setup
 - Entry, stop, target for each
-- Clear thesis and catalyst
+- Thesis and catalyst
 
 **9. RISK WARNINGS**
-- Key risk events today
+- What could go wrong today? Key risk events
 - Unusual options activity or volatility signals
-- Signs of market stress or regime change
+- Any signs of market stress?
 
 ${briefConfig.gamePlan}
 
-Use markdown headers for each section. Personalize to my positions and watchlist.`
+Keep it dense, actionable, and personalized to MY positions and watchlist. Use markdown headers for each section.`
 
     // Append watchlist custom alert context
     if (watchlistAlertContext) {
@@ -819,116 +825,6 @@ Use markdown headers for each section. Personalize to my positions and watchlist
         </div>
       )}
 
-      {/* Active Exposure — headline section */}
-      <motion.div
-        initial={{ opacity: 0, y: 8 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.3, ease: [0.25, 0.1, 0.25, 1] }}
-        className="mt-6"
-      >
-        <PelicanCard accentGlow className="p-5">
-              {/* Enhanced header with total P&L */}
-              <div className="mb-4 flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <div>
-                    <h2 className="text-sm font-semibold text-[var(--text-primary)]">Active Exposure</h2>
-                    <p className="text-xs text-[var(--text-muted)]">{openTrades.length} open position{openTrades.length !== 1 ? 's' : ''}</p>
-                  </div>
-                  <IconTooltip label="Log a new trade" side="right">
-                    <button
-                      onClick={() => setShowLogTradeModal(true)}
-                      className="p-1.5 rounded-lg text-[var(--text-muted)] hover:text-[var(--accent-primary)] hover:bg-[var(--accent-muted)] transition-colors"
-                      aria-label="Log trade"
-                    >
-                      <Plus className="h-4 w-4" weight="bold" />
-                    </button>
-                  </IconTooltip>
-                </div>
-                {totalPnl != null && (
-                  <div className="text-right">
-                    <p className={`text-lg font-mono tabular-nums font-semibold ${
-                      totalPnl >= 0 ? 'text-[var(--data-positive)]' : 'text-[var(--data-negative)]'
-                    }`}>
-                      {totalPnl >= 0 ? '+' : ''}{totalPnl.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-                    </p>
-                    <p className="text-xs text-[var(--text-muted)]">Total P&L</p>
-                  </div>
-                )}
-              </div>
-              {tradesLoading ? (
-                <div className="flex items-center justify-center py-8">
-                  <div className="h-6 w-6 animate-spin rounded-full border-2 border-[var(--accent-muted)] border-t-[var(--accent-primary)]" />
-                </div>
-              ) : openTrades.length === 0 ? (
-                <div className="flex flex-col items-center justify-center py-8 text-center">
-                  <Briefcase className="h-8 w-8 text-[var(--text-muted)] mb-2" weight="light" />
-                  <p className="text-sm text-[var(--text-muted)]">No open positions</p>
-                  <p className="text-xs text-[var(--text-muted)] mt-1">Log trades in the Journal to see them here</p>
-                </div>
-              ) : (
-                <div className="space-y-3">
-                  {openTrades.slice(0, 8).map((trade) => {
-                    // Calculate unrealized P&L from live prices
-                    const quote = quotes[trade.ticker]
-                    const currentPrice = quote?.price
-                    const direction = trade.direction === 'long' ? 1 : -1
-
-                    let unrealizedPnL: number | null = null
-                    if (currentPrice) {
-                      unrealizedPnL = (currentPrice - trade.entry_price) * trade.quantity * direction
-                    }
-
-                    const pnl = unrealizedPnL ?? trade.pnl_amount ?? null
-
-                    return (
-                      <button
-                        key={trade.id}
-                        onClick={() => handleAnalyzePosition(trade)}
-                        className={`w-full rounded-xl border bg-[var(--bg-surface)] p-3 text-left transition-all duration-150 hover:bg-[var(--bg-elevated)] hover:border-[var(--border-hover)] active:scale-[0.98] min-h-[44px] border-l-2 ${
-                          pnl != null && pnl >= 0
-                            ? 'border-[var(--border-subtle)] border-l-[var(--data-positive)]'
-                            : pnl != null && pnl < 0
-                              ? 'border-[var(--border-subtle)] border-l-[var(--data-negative)]'
-                              : 'border-[var(--border-subtle)]'
-                        }`}
-                      >
-                        <div className="mb-1 flex items-center justify-between">
-                          <div className="flex items-center gap-2">
-                            <LogoImg symbol={trade.ticker} size={20} />
-                            <span className="font-mono text-sm font-semibold text-[var(--text-primary)]">{trade.ticker}</span>
-                          </div>
-                          <span className={`text-xs font-medium uppercase ${trade.direction === "long" ? "text-[var(--data-positive)]" : "text-[var(--data-negative)]"}`}>
-                            {trade.direction}
-                          </span>
-                        </div>
-                        <div className="flex items-center justify-between text-xs">
-                          <span className="text-[var(--text-muted)]">
-                            Entry <span className="font-mono tabular-nums">${trade.entry_price.toFixed(2)}</span> · Qty <span className="font-mono tabular-nums">{trade.quantity}</span>
-                          </span>
-                          <div className="flex items-center gap-2">
-                            <Sparkline
-                              data={sparklines[trade.ticker] || []}
-                              positive={(pnl ?? 0) >= 0}
-                            />
-                            {pnl === null ? (
-                              <span className="font-mono tabular-nums text-[var(--text-disabled)]">&mdash;</span>
-                            ) : (
-                              <DataCell
-                                value={`${pnl >= 0 ? "+" : ""}$${pnl.toFixed(2)}`}
-                                sentiment={pnl >= 0 ? 'positive' : 'negative'}
-                                size="sm"
-                              />
-                            )}
-                          </div>
-                        </div>
-                      </button>
-                    )
-                  })}
-                </div>
-              )}
-        </PelicanCard>
-      </motion.div>
-
       {/* Pelican Brief — full width, above the grid */}
       <motion.div
         initial={{ opacity: 0, y: 8 }}
@@ -1032,6 +928,100 @@ Use markdown headers for each section. Personalize to my positions and watchlist
       >
         {/* Left column */}
         <div className="space-y-6">
+          {/* Active Exposure */}
+          <motion.div variants={staggerItem}>
+            <PelicanCard accentGlow className="p-5">
+              {/* Enhanced header with total P&L */}
+              <div className="mb-4 flex items-center justify-between">
+                <div>
+                  <h2 className="text-sm font-semibold text-[var(--text-primary)]">Active Exposure</h2>
+                  <p className="text-xs text-[var(--text-muted)]">{openTrades.length} open position{openTrades.length !== 1 ? 's' : ''}</p>
+                </div>
+                {totalPnl != null && (
+                  <div className="text-right">
+                    <p className={`text-lg font-mono tabular-nums font-semibold ${
+                      totalPnl >= 0 ? 'text-[var(--data-positive)]' : 'text-[var(--data-negative)]'
+                    }`}>
+                      {totalPnl >= 0 ? '+' : ''}{totalPnl.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                    </p>
+                    <p className="text-xs text-[var(--text-muted)]">Total P&L</p>
+                  </div>
+                )}
+              </div>
+              {tradesLoading ? (
+                <div className="flex items-center justify-center py-8">
+                  <div className="h-6 w-6 animate-spin rounded-full border-2 border-[var(--accent-muted)] border-t-[var(--accent-primary)]" />
+                </div>
+              ) : openTrades.length === 0 ? (
+                <div className="flex flex-col items-center justify-center py-8 text-center">
+                  <Briefcase className="h-8 w-8 text-[var(--text-muted)] mb-2" weight="light" />
+                  <p className="text-sm text-[var(--text-muted)]">No open positions</p>
+                  <p className="text-xs text-[var(--text-muted)] mt-1">Log trades in the Journal to see them here</p>
+                </div>
+              ) : (
+                <div className="space-y-3">
+                  {openTrades.slice(0, 8).map((trade) => {
+                    // Calculate unrealized P&L from live prices
+                    const quote = quotes[trade.ticker]
+                    const currentPrice = quote?.price
+                    const direction = trade.direction === 'long' ? 1 : -1
+
+                    let unrealizedPnL: number | null = null
+                    if (currentPrice) {
+                      unrealizedPnL = (currentPrice - trade.entry_price) * trade.quantity * direction
+                    }
+
+                    const pnl = unrealizedPnL ?? trade.pnl_amount ?? null
+
+                    return (
+                      <button
+                        key={trade.id}
+                        onClick={() => handleAnalyzePosition(trade)}
+                        className={`w-full rounded-xl border bg-[var(--bg-surface)] p-3 text-left transition-all duration-150 hover:bg-[var(--bg-elevated)] hover:border-[var(--border-hover)] active:scale-[0.98] min-h-[44px] border-l-2 ${
+                          pnl != null && pnl >= 0
+                            ? 'border-[var(--border-subtle)] border-l-[var(--data-positive)]'
+                            : pnl != null && pnl < 0
+                              ? 'border-[var(--border-subtle)] border-l-[var(--data-negative)]'
+                              : 'border-[var(--border-subtle)]'
+                        }`}
+                      >
+                        <div className="mb-1 flex items-center justify-between">
+                          <div className="flex items-center gap-2">
+                            <LogoImg symbol={trade.ticker} size={20} />
+                            <span className="font-mono text-sm font-semibold text-[var(--text-primary)]">{trade.ticker}</span>
+                          </div>
+                          <span className={`text-xs font-medium uppercase ${trade.direction === "long" ? "text-[var(--data-positive)]" : "text-[var(--data-negative)]"}`}>
+                            {trade.direction}
+                          </span>
+                        </div>
+                        <div className="flex items-center justify-between text-xs">
+                          <span className="text-[var(--text-muted)]">
+                            Entry <span className="font-mono tabular-nums">${trade.entry_price.toFixed(2)}</span> · Qty <span className="font-mono tabular-nums">{trade.quantity}</span>
+                          </span>
+                          <div className="flex items-center gap-2">
+                            <Sparkline
+                              data={sparklines[trade.ticker] || []}
+                              positive={(pnl ?? 0) >= 0}
+                            />
+                            {pnl === null ? (
+                              <span className="font-mono tabular-nums text-[var(--text-disabled)]">&mdash;</span>
+                            ) : (
+                              <DataCell
+                                value={`${pnl >= 0 ? "+" : ""}$${pnl.toFixed(2)}`}
+                                sentiment={pnl >= 0 ? 'positive' : 'negative'}
+                                size="sm"
+                              />
+                            )}
+                          </div>
+                        </div>
+                      </button>
+                    )
+                  })}
+                </div>
+              )}
+            </PelicanCard>
+          </motion.div>
+
           {/* Market Movers */}
           <motion.div variants={staggerItem}>
             <PelicanCard className="p-5">
@@ -1251,47 +1241,6 @@ Use markdown headers for each section. Personalize to my positions and watchlist
           }}
         />
       </motion.div>
-
-      {/* Portfolio Correlations — below heatmap */}
-      {correlationData && correlationData.correlations.length > 0 && (
-        <motion.div
-          initial={{ opacity: 0, y: 8 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.3, delay: 0.25 }}
-          className="mt-6"
-        >
-          <PelicanCard className="p-5">
-            <div className="flex items-center justify-between mb-4">
-              <div>
-                <h2 className="text-sm font-semibold text-[var(--text-primary)]">Portfolio Correlations</h2>
-                <p className="text-xs text-[var(--text-muted)]">30-day cross-asset relationships</p>
-              </div>
-              <Link
-                href="/correlations"
-                className="text-xs text-[var(--text-muted)] hover:text-[var(--accent-primary)] transition-colors"
-              >
-                Full matrix &rarr;
-              </Link>
-            </div>
-            <CorrelationListView
-              correlations={correlationData.correlations.slice(0, 8)}
-              assets={correlationData.assets}
-              period="30d"
-              beginnerMode={false}
-              onSelectPair={(a, b) => {
-                router.push(`/correlations?a=${a}&b=${b}`)
-              }}
-            />
-          </PelicanCard>
-        </motion.div>
-      )}
-
-      {/* Log Trade Modal */}
-      <LogTradeModal
-        open={showLogTradeModal}
-        onOpenChange={setShowLogTradeModal}
-        onSubmit={handleLogTrade}
-      />
 
       {/* Footer disclaimer */}
       <p className="text-center text-xs text-[var(--text-disabled)] mt-8 pb-4">
