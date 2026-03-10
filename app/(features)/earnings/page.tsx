@@ -7,8 +7,6 @@ import { motion } from "framer-motion"
 import Image from "next/image"
 import { CaretLeft, CaretRight, ArrowsClockwise } from "@phosphor-icons/react"
 import { useEnrichedEarnings, applyEarningsFilters } from "@/hooks/use-enriched-earnings"
-import { useEconomicCalendar } from "@/hooks/use-economic-calendar"
-import { useTraderProfile } from "@/hooks/use-trader-profile"
 import { usePelicanPanelContext } from "@/providers/pelican-panel-provider"
 import { useWatchlist } from "@/hooks/use-watchlist"
 import { cn } from "@/lib/utils"
@@ -19,7 +17,6 @@ import { EarningsFilters } from "@/components/earnings/earnings-filters"
 import { EarningsSection } from "@/components/earnings/earnings-section"
 import { EarningsGridSkeleton } from "@/components/earnings/earnings-grid-skeleton"
 import { EarningsEmptyState } from "@/components/earnings/earnings-empty-state"
-import { EconomicCalendar } from "@/components/calendar/economic-calendar"
 import type { EnrichedEarningsEvent, EarningsFilters as EarningsFiltersType } from "@/types/earnings"
 import { trackEvent } from "@/lib/tracking"
 
@@ -48,19 +45,6 @@ export default function EarningsPage() {
   const [weekOffset, setWeekOffset] = useState(0)
   const [filters, setFilters] = useState<EarningsFiltersType>(DEFAULT_FILTERS)
 
-  // Trader profile for market preferences
-  const { survey } = useTraderProfile()
-  const marketsTraded = survey?.markets_traded || ['stocks']
-  const primaryMarket = marketsTraded[0] || 'stocks'
-  const tradesForex = marketsTraded.includes('forex')
-  const tradesFutures = marketsTraded.includes('futures')
-  const showEconomicTab = tradesForex || tradesFutures
-
-  // Default tab based on primary market
-  const [calendarView, setCalendarView] = useState<'earnings' | 'economic'>(
-    primaryMarket === 'forex' || primaryMarket === 'futures' ? 'economic' : 'earnings'
-  )
-
   // Calculate the week's date range (Monday-Friday)
   const weekDays = useMemo(() => {
     const today = new Date()
@@ -84,7 +68,6 @@ export default function EarningsPage() {
   const todayStr = new Date().toISOString().split('T')[0] ?? ''
 
   const { events, stats, isLoading, refetch } = useEnrichedEarnings({ from: weekStart, to: weekEnd })
-  const { events: economicEvents, isLoading: economicLoading } = useEconomicCalendar({ from: weekStart, to: weekEnd })
   const { openWithPrompt } = usePelicanPanelContext()
   const { items: watchlistItems, addToWatchlist, removeFromWatchlist } = useWatchlist()
 
@@ -261,11 +244,8 @@ What are the key things to watch? Any whisper numbers or sentiment shifts? How h
     <div className="h-full overflow-y-auto p-4 sm:p-6">
       {/* Header */}
       <PageHeader
-        title={showEconomicTab ? "Calendar" : "Earnings Calendar"}
-        subtitle={calendarView === 'economic'
-          ? `${economicEvents.length} events \u00b7 ${economicEvents.filter(e => e.impact === 'high').length} high impact`
-          : subtitle
-        }
+        title="Earnings Calendar"
+        subtitle={subtitle}
         actions={
           <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3">
             {/* Week navigator */}
@@ -320,36 +300,7 @@ What are the key things to watch? Any whisper numbers or sentiment shifts? How h
         }
       />
 
-      {/* Tab switcher (only shown for forex/futures traders) */}
-      {showEconomicTab && (
-        <div className="flex items-center gap-1 mb-4 bg-[var(--bg-elevated)] border border-[var(--border-default)] rounded-lg p-0.5 w-fit">
-          <button
-            onClick={() => setCalendarView('earnings')}
-            className={cn(
-              "px-4 py-1.5 rounded-md text-sm font-medium transition-colors",
-              calendarView === 'earnings'
-                ? "bg-[var(--accent-muted)] text-[var(--accent-primary)] shadow-sm"
-                : "text-[var(--text-muted)] hover:text-[var(--text-primary)]"
-            )}
-          >
-            Earnings
-          </button>
-          <button
-            onClick={() => setCalendarView('economic')}
-            className={cn(
-              "px-4 py-1.5 rounded-md text-sm font-medium transition-colors",
-              calendarView === 'economic'
-                ? "bg-[var(--accent-muted)] text-[var(--accent-primary)] shadow-sm"
-                : "text-[var(--text-muted)] hover:text-[var(--text-primary)]"
-            )}
-          >
-            Economic Events
-          </button>
-        </div>
-      )}
-
-      {calendarView === 'earnings' ? (
-        <>
+      <>
           {/* Spotlight section — top 8 by impact score */}
           {!isLoading && events.length > 0 && (
             <EarningsSpotlight events={events} onClick={handleClick} />
@@ -426,14 +377,7 @@ What are the key things to watch? Any whisper numbers or sentiment shifts? How h
               Logos provided by Elbstream
             </a>
           </div>
-        </>
-      ) : (
-        economicLoading ? (
-          <EarningsGridSkeleton />
-        ) : (
-          <EconomicCalendar events={economicEvents} primaryMarket={primaryMarket} />
-        )
-      )}
+      </>
     </div>
   )
 }
