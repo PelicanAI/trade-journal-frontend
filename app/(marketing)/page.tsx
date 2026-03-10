@@ -8,10 +8,10 @@ const LandingPageClient = dynamic(
 
 export const metadata: Metadata = {
   title: {
-    absolute: 'Pelican Trading AI — Your AI-Powered Trading Edge',
+    absolute: 'Pelican AI — Ask the Market. Get the Receipts.',
   },
   description:
-    'Institutional-grade market analysis, personalized trade coaching, and a platform that learns how you trade. Built for stocks, forex, and crypto.',
+    'Research tool for traders and investors. Real-time market analysis, trade journaling, AI coaching, and institutional-grade intelligence.',
   alternates: {
     canonical: '/',
   },

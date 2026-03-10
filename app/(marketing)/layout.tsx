@@ -9,28 +9,28 @@ const HelpChat = dynamic(() => import('@/components/marketing/HelpChat'), {
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://pelicantrading.ai'),
-  title: 'Pelican Trading | AI Market Intelligence for Traders',
+  title: 'Pelican AI | Ask the Market. Get the Receipts.',
   description:
-    'The AI trading platform that learns how you trade. Real-time market analysis, trade journaling, AI coaching, and institutional-grade intelligence for stocks, forex, and crypto.',
+    'Research tool for traders and investors. Real-time market analysis, trade journaling, AI coaching, and institutional-grade intelligence. Available in 30+ languages.',
   icons: {
     icon: '/pelican-logo-transparent.webp',
   },
   openGraph: {
-    title: 'Pelican Trading AI — Your AI-Powered Trading Edge',
+    title: 'Pelican AI — Ask the Market. Get the Receipts.',
     description:
-      'The AI trading platform that gets smarter every day you use it. Stocks, forex, and crypto.',
+      'Research tool for traders and investors. Real-time analysis on 10,000+ tickers.',
     images: [
-      { url: '/og-image.png', width: 1200, height: 630, alt: 'Pelican Trading' },
+      { url: '/og-image.png', width: 1200, height: 630, alt: 'Pelican AI' },
     ],
     type: 'website',
-    siteName: 'Pelican Trading',
+    siteName: 'Pelican AI',
     url: 'https://pelicantrading.ai',
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Pelican Trading AI',
+    title: 'Pelican AI',
     description:
-      'The AI trading platform that gets smarter every day you use it.',
+      'Ask the market. Get the receipts. Research tool for traders and investors.',
     images: ['/og-image.png'],
   },
   alternates: {
