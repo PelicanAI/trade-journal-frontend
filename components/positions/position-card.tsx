@@ -272,7 +272,7 @@ export function PositionCard({
           {healthScore.label}
         </span>
         {smartAlerts.length > 0 && (
-          <span className="truncate max-w-[200px] text-[var(--text-muted)]">
+          <span className="text-[var(--text-muted)]">
             {smartAlerts[0]?.message}
           </span>
         )}
