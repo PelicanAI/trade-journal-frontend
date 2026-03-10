@@ -313,10 +313,10 @@ export function StrategyShowcase() {
             18 strategies across momentum, mean reversion, options, and event-driven categories
           </p>
           <Link
-            href="/strategies"
+            href="/auth/signup"
             className="inline-flex items-center gap-2 px-8 py-3.5 bg-violet-600 hover:bg-violet-700 text-white font-semibold rounded-xl shadow-lg shadow-violet-600/20 hover:shadow-violet-600/30 transition-all duration-150 active:scale-[0.98]"
           >
-            Browse All Strategies
+            Try It Free
             <ArrowRight weight="bold" className="w-4 h-4" />
           </Link>
           <p className="text-sm text-slate-400 mt-4">
