@@ -494,9 +494,7 @@ export default function MorningPage() {
       options: 'options',
     }
 
-    let prompt = `You are Pelican, an institutional-grade AI trading assistant delivering a comprehensive daily briefing. My primary market is ${marketLabel[marketType] ?? 'equities/stock'}.
-
-Date: ${dateStr}
+    let prompt = `Date: ${dateStr}
 Time: ${timeStr}
 
 MY OPEN POSITIONS:
@@ -508,7 +506,7 @@ ${watchlistSummary}
 TODAY'S TOP MOVERS:
 ${moversSummary || 'Loading...'}
 
-Give me a comprehensive market overview using get_market_summary and other available tools. Include major indices, top movers, economic events, and critical price zones. Be specific with numbers and tickers. Write like a Goldman Sachs morning note meets a trading desk briefing.
+Give me a comprehensive market overview using get_market_summary. Include major indices, top movers, economic events, and critical price zones. Be specific with numbers and tickers. Write like a Goldman Sachs morning note meets a trading desk briefing.
 
 Cover ALL of the following sections:
 
