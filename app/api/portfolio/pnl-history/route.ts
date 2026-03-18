@@ -8,6 +8,11 @@ const pnlHistoryLimiter = createUserRateLimiter('portfolio-pnl-history', 10, '1 
 
 const POLYGON_API_KEY = process.env.POLYGON_API_KEY
 
+const VALID_ASSET_TYPES = ['stock', 'etf', 'option', 'crypto', 'forex', 'future', 'other'] as const
+const VALID_DIRECTIONS = ['long', 'short'] as const
+const TICKER_REGEX = /^[A-Z0-9.:]{1,15}$/
+const DATE_REGEX = /^\d{4}-\d{2}-\d{2}$/
+
 interface PositionInput {
   ticker: string
   asset_type: string
@@ -24,6 +29,26 @@ interface PolygonBar {
   l: number
   c: number
   v: number
+}
+
+function validatePosition(pos: unknown, index: number): string | null {
+  if (!pos || typeof pos !== 'object') return `Position ${index}: must be an object`
+  const p = pos as Record<string, unknown>
+
+  if (typeof p.ticker !== 'string' || !TICKER_REGEX.test(p.ticker))
+    return `Position ${index}: ticker must match ${TICKER_REGEX}`
+  if (typeof p.quantity !== 'number' || p.quantity <= 0 || !isFinite(p.quantity))
+    return `Position ${index}: quantity must be a positive number`
+  if (typeof p.entry_price !== 'number' || p.entry_price <= 0 || !isFinite(p.entry_price))
+    return `Position ${index}: entry_price must be a positive number`
+  if (typeof p.entry_date !== 'string' || !DATE_REGEX.test(p.entry_date))
+    return `Position ${index}: entry_date must match YYYY-MM-DD`
+  if (typeof p.asset_type !== 'string' || !VALID_ASSET_TYPES.includes(p.asset_type as typeof VALID_ASSET_TYPES[number]))
+    return `Position ${index}: asset_type must be one of ${VALID_ASSET_TYPES.join(', ')}`
+  if (typeof p.direction !== 'string' || !VALID_DIRECTIONS.includes(p.direction as typeof VALID_DIRECTIONS[number]))
+    return `Position ${index}: direction must be 'long' or 'short'`
+
+  return null
 }
 
 function getPolygonTicker(ticker: string, assetType: string): string {
@@ -49,27 +74,37 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Market data unavailable' }, { status: 503 })
     }
 
-    const { positions }: { positions: PositionInput[] } = await request.json()
+    const { positions }: { positions: unknown[] } = await request.json()
 
     if (!positions || !Array.isArray(positions) || positions.length === 0) {
       return NextResponse.json({ error: 'No positions provided' }, { status: 400 })
     }
 
-    if (positions.length > 20) {
-      return NextResponse.json({ error: 'Maximum 20 positions' }, { status: 400 })
+    if (positions.length > 10) {
+      return NextResponse.json({ error: 'Maximum 10 positions' }, { status: 400 })
     }
+
+    // Validate each position
+    for (let i = 0; i < positions.length; i++) {
+      const validationError = validatePosition(positions[i], i)
+      if (validationError) {
+        return NextResponse.json({ error: validationError }, { status: 400 })
+      }
+    }
+
+    const validatedPositions = positions as PositionInput[]
 
     // Date range: earliest entry date to today
     const today = new Date().toISOString().slice(0, 10)
     const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString().slice(0, 10)
-    const earliestEntry = positions.reduce((min, p) => {
+    const earliestEntry = validatedPositions.reduce((min, p) => {
       const d = p.entry_date.slice(0, 10)
       return d < min ? d : min
     }, today)
     const fromDate = earliestEntry > thirtyDaysAgo ? thirtyDaysAgo : earliestEntry
 
     // Fetch daily candles for each ticker in parallel
-    const candlePromises = positions.map(async (pos) => {
+    const candlePromises = validatedPositions.map(async (pos) => {
       const polygonTicker = getPolygonTicker(pos.ticker, pos.asset_type)
       const url = `https://api.polygon.io/v2/aggs/ticker/${encodeURIComponent(polygonTicker)}/range/1/day/${fromDate}/${today}?adjusted=true&sort=asc&limit=50000&apiKey=${POLYGON_API_KEY}`
 
@@ -111,7 +146,7 @@ export async function POST(request: NextRequest) {
       let totalPnl = 0
       const positionPnls: Record<string, number> = {}
 
-      for (const pos of positions) {
+      for (const pos of validatedPositions) {
         const entryDate = pos.entry_date.slice(0, 10)
         if (date < entryDate) continue
 

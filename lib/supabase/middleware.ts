@@ -20,7 +20,7 @@ const PUBLIC_PATHS = [
 ];
 
 /** Marketing and landing pages that don't require login */
-const PUBLIC_PREFIXES = ["/pricing", "/privacy", "/terms", "/faq", "/how-to-use", "/guide", "/strategies", "/api/health", "/api/help-chat", "/api/stripe/webhook", "/api/strategies", "/api/share-card"];
+const PUBLIC_PREFIXES = ["/pricing", "/privacy", "/terms", "/faq", "/how-to-use", "/guide", "/strategies", "/api/health", "/api/help-chat", "/api/stripe/webhook", "/api/strategies", "/api/share-card", "/api/cron"];
 
 function isPublicPath(pathname: string): boolean {
   if (pathname === "/") return true;
