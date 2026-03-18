@@ -3,7 +3,7 @@ import dynamic from 'next/dynamic';
 
 const LandingPageClient = dynamic(
   () => import('@/components/landing/landing-page-client'),
-  { ssr: false }
+  { loading: () => <div className="min-h-screen bg-[var(--bg-base)]" /> }
 );
 
 export const metadata: Metadata = {

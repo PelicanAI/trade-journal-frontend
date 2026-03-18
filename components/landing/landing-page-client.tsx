@@ -1,20 +1,22 @@
 'use client'
 
+import dynamic from 'next/dynamic'
 import { InfiniteGridBg } from '@/components/ui/infinite-grid-bg'
 import { HeroSection } from './hero-section'
 import { SocialProofBar } from './social-proof-bar'
 import { ProblemSection } from './problem-section'
 import { PlatformShowcase } from './platform-showcase'
 import { DayWithPelican } from './day-with-pelican'
-import { FlywheelSection } from './flywheel-section'
-import { MultiAssetSection } from './multi-asset-section'
-import { FeatureGrid } from './feature-grid'
-import { StrategyShowcase } from './strategy-showcase'
-import { CreditTiersSection } from './credit-tiers-section'
-import { PricingSection } from './pricing-section'
-import { TeamSection } from './team-section'
-import { FAQSection } from './faq-section'
-import { FinalCTA } from './final-cta'
+
+const FlywheelSection = dynamic(() => import('./flywheel-section').then(m => ({ default: m.FlywheelSection })))
+const MultiAssetSection = dynamic(() => import('./multi-asset-section').then(m => ({ default: m.MultiAssetSection })))
+const FeatureGrid = dynamic(() => import('./feature-grid').then(m => ({ default: m.FeatureGrid })))
+const StrategyShowcase = dynamic(() => import('./strategy-showcase').then(m => ({ default: m.StrategyShowcase })))
+const CreditTiersSection = dynamic(() => import('./credit-tiers-section').then(m => ({ default: m.CreditTiersSection })))
+const PricingSection = dynamic(() => import('./pricing-section').then(m => ({ default: m.PricingSection })))
+const TeamSection = dynamic(() => import('./team-section').then(m => ({ default: m.TeamSection })))
+const FAQSection = dynamic(() => import('./faq-section').then(m => ({ default: m.FAQSection })))
+const FinalCTA = dynamic(() => import('./final-cta').then(m => ({ default: m.FinalCTA })))
 
 export default function LandingPageClient() {
   return (
