@@ -32,6 +32,7 @@ function ImageLightbox({ url, alt, onClose }: { url: string; alt: string; onClos
       <button
         className="absolute top-4 right-4 p-2 rounded-full text-white/60 hover:text-white hover:bg-white/10 transition-colors"
         onClick={onClose}
+        aria-label="Close"
       >
         <X size={24} weight="regular" />
       </button>

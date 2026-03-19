@@ -167,7 +167,7 @@ export function FAQFullPage() {
   }
 
   return (
-    <main className="pt-24 pb-16 overflow-x-hidden">
+    <main id="main-content" className="pt-24 pb-16 overflow-x-hidden">
       <Section>
         <ScrollReveal>
           <div className="text-center mb-12">

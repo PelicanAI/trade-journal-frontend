@@ -147,15 +147,15 @@ const ConversationItem = React.memo(function ConversationItem({
 
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <div
-              role="button"
-              tabIndex={0}
+            <button
+              type="button"
               onClick={(e) => e.stopPropagation()}
               onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') e.stopPropagation() }}
-              className="opacity-0 group-hover:opacity-100 h-6 w-6 rounded-md flex items-center justify-center hover:bg-accent/10 text-muted-foreground transition-opacity shrink-0"
+              className="opacity-0 group-hover:opacity-100 h-6 w-6 rounded-md flex items-center justify-center hover:bg-accent/10 text-muted-foreground transition-opacity shrink-0 appearance-none bg-transparent border-none p-0 m-0 cursor-pointer"
+              aria-label="More options"
             >
               <DotsThree size={16} weight="bold" />
-            </div>
+            </button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="start" side="bottom" className="w-40">
             <DropdownMenuItem
@@ -807,6 +807,7 @@ export function ConversationSidebar({
                           }}
                           className="opacity-0 group-hover:opacity-100 transition-opacity p-1 rounded hover:bg-red-500/20"
                           style={{ color: 'var(--text-muted)' }}
+                          aria-label="Delete insight"
                         >
                           <Trash size={12} />
                         </button>

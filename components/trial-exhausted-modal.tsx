@@ -35,6 +35,7 @@ export function TrialExhaustedModal({ isOpen, onClose, message }: TrialExhausted
         <button
           onClick={onClose}
           className="absolute top-4 right-4 text-muted-foreground hover:text-foreground transition-colors"
+          aria-label="Close"
         >
           <X size={20} weight="regular" />
         </button>

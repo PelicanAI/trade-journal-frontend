@@ -296,8 +296,6 @@ export function Treemap({
         return (
           <button
             key={`stock-${stock.ticker}`}
-            role="button"
-            tabIndex={0}
             aria-label={`${stock.ticker}: ${change >= 0 ? 'up' : 'down'} ${Math.abs(change).toFixed(2)}% at ${stock.price != null ? `$${stock.price.toFixed(2)}` : 'unknown price'}. Click to analyze.`}
             onClick={() => handleCellClick(stock)}
             onKeyDown={(e) => {

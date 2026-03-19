@@ -114,7 +114,7 @@ export function PlaybookDetail({ playbook, onBack, onArchive, onDelete, onUnadop
           {hasMenu && (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <button className="p-2 rounded-lg text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-elevated)] transition-colors">
+                <button className="p-2 rounded-lg text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-elevated)] transition-colors" aria-label="More options">
                   <DotsThreeVertical size={18} weight="bold" />
                 </button>
               </DropdownMenuTrigger>

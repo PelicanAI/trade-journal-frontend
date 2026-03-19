@@ -68,7 +68,7 @@ export function PublishModal({ playbook, open, onOpenChange, onPublished }: Publ
             <h2 className="text-lg font-semibold text-[var(--text-primary)]">
               {success ? "Published!" : "Publish to Community"}
             </h2>
-            <button onClick={() => onOpenChange(false)} className="text-[var(--text-muted)] hover:text-[var(--text-primary)] transition-colors">
+            <button onClick={() => onOpenChange(false)} className="text-[var(--text-muted)] hover:text-[var(--text-primary)] transition-colors" aria-label="Close">
               <X size={20} />
             </button>
           </div>

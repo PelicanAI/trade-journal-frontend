@@ -202,24 +202,18 @@ export function CSVImportModal({ open, onOpenChange, onImportComplete }: CSVImpo
         {/* Step 1: Upload */}
         {step === 1 && (
           <div className="space-y-4">
-            <div
+            <button
+              type="button"
               onDragOver={handleDragOver}
               onDragLeave={handleDragLeave}
               onDrop={handleDrop}
-              className={`flex flex-col items-center justify-center gap-3 py-12 px-6 rounded-xl border-dashed border-2 transition-colors duration-150 cursor-pointer ${
+              className={`flex flex-col items-center justify-center gap-3 py-12 px-6 rounded-xl border-dashed border-2 transition-colors duration-150 cursor-pointer w-full appearance-none bg-transparent m-0 ${
                 isDragOver
                   ? 'border-[var(--accent-primary)] bg-[var(--accent-muted)]'
                   : 'border-[var(--border-default)] hover:border-[var(--border-hover)]'
               }`}
               onClick={() => fileInputRef.current?.click()}
-              role="button"
-              tabIndex={0}
-              onKeyDown={(e) => {
-                if (e.key === 'Enter' || e.key === ' ') {
-                  e.preventDefault()
-                  fileInputRef.current?.click()
-                }
-              }}
+              aria-label="Upload CSV file"
             >
               <UploadSimple size={32} weight="regular" className="text-[var(--text-muted)]" />
               <p className="text-sm text-[var(--text-primary)] font-medium">
@@ -245,7 +239,7 @@ export function CSVImportModal({ open, onOpenChange, onImportComplete }: CSVImpo
                 className="hidden"
                 onChange={handleFileInputChange}
               />
-            </div>
+            </button>
 
             {parseError && (
               <div className="flex items-center gap-2 rounded-lg bg-[var(--data-negative)]/10 border border-[var(--data-negative)]/30 px-4 py-3 text-sm text-[var(--data-negative)]">

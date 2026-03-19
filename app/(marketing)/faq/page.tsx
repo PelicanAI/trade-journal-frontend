@@ -7,6 +7,13 @@ export const metadata: Metadata = {
   alternates: {
     canonical: '/faq',
   },
+  openGraph: {
+    title: 'FAQ | Pelican Trading',
+    description: 'Frequently asked questions about Pelican Trading — how it works, pricing, supported markets, data sources, and more.',
+    url: 'https://pelicantrading.ai/faq',
+    siteName: 'Pelican Trading',
+    type: 'website',
+  },
 };
 
 const faqJsonLd = {

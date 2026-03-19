@@ -758,7 +758,8 @@ function HeatmapPageInner() {
                           size="sm"
                           className="w-16 text-right font-semibold"
                         />
-                        <div
+                        <button
+                          type="button"
                           onClick={(e) => {
                             e.stopPropagation()
                             const isWatched = watchlistTickers.has(stock.ticker.toUpperCase())
@@ -768,17 +769,15 @@ function HeatmapPageInner() {
                               addToWatchlist(stock.ticker, { added_from: 'manual' })
                             }
                           }}
-                          role="button"
-                          tabIndex={0}
-                          className="p-1 rounded hover:bg-white/10 transition-colors"
-                          title={watchlistTickers.has(stock.ticker.toUpperCase()) ? 'Remove from Watchlist' : 'Add to Watchlist'}
+                          className="p-1 rounded hover:bg-white/10 transition-colors appearance-none bg-transparent border-none m-0 cursor-pointer"
+                          aria-label={watchlistTickers.has(stock.ticker.toUpperCase()) ? 'Remove from Watchlist' : 'Add to Watchlist'}
                         >
                           <BookmarkSimple
                             size={14}
                             weight={watchlistTickers.has(stock.ticker.toUpperCase()) ? 'fill' : 'regular'}
                             className={watchlistTickers.has(stock.ticker.toUpperCase()) ? 'text-[var(--accent-primary)]' : 'text-white/40 hover:text-white/60'}
                           />
-                        </div>
+                        </button>
                       </div>
                     </button>
                   ))

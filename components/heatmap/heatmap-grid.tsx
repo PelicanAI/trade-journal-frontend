@@ -77,8 +77,9 @@ export function HeatmapGrid({ stocks, onStockClick, market, watchlistTickers, ad
 
             {/* Watchlist bookmark */}
             {addToWatchlist && removeFromWatchlist && (
-              <div
-                className="absolute top-1 right-1"
+              <button
+                type="button"
+                className="absolute top-1 right-1 appearance-none bg-transparent border-none p-0 m-0 cursor-pointer"
                 onClick={(e) => {
                   e.stopPropagation()
                   if (isWatched) {
@@ -87,9 +88,7 @@ export function HeatmapGrid({ stocks, onStockClick, market, watchlistTickers, ad
                     addToWatchlist(stock.ticker, { added_from: 'manual' })
                   }
                 }}
-                role="button"
-                tabIndex={0}
-                title={isWatched ? 'Remove from Watchlist' : 'Add to Watchlist'}
+                aria-label={isWatched ? 'Remove from Watchlist' : 'Add to Watchlist'}
               >
                 <div className="p-1 rounded hover:bg-white/10 transition-colors">
                   <BookmarkSimple
@@ -98,7 +97,7 @@ export function HeatmapGrid({ stocks, onStockClick, market, watchlistTickers, ad
                     className={isWatched ? 'text-[var(--accent-primary)]' : 'text-white/40 hover:text-white/60'}
                   />
                 </div>
-              </div>
+              </button>
             )}
 
             {/* Sector indicator (subtle) — only show when no watchlist buttons */}

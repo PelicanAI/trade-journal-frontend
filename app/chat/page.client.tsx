@@ -495,7 +495,7 @@ export default function ChatPage() {
         <LearningModeProvider>
         <ChartPanelExpander onExpand={expandTradingPanel} />
         <LearningPanelExpander onExpand={expandTradingPanel} />
-        <div id="main-content" className="flex h-[calc(100vh-3.5rem)] min-h-0 overflow-hidden relative app-background-gradient chat-viewport-lock">
+        <main id="main-content" className="flex h-[calc(100vh-3.5rem)] min-h-0 overflow-hidden relative app-background-gradient chat-viewport-lock">
       {/* Offline indicator */}
       {showOfflineBanner && (
         <div className="fixed top-14 left-0 right-0 z-50 bg-amber-500 dark:bg-amber-600 text-white px-4 py-2 text-center text-sm font-medium shadow-lg">
@@ -791,7 +791,7 @@ export default function ChatPage() {
           }
         }}
       />
-        </div>
+        </main>
         </LearningModeProvider>
         </ChartProvider>
       </ChatErrorBoundary>

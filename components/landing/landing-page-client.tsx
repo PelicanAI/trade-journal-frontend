@@ -20,7 +20,7 @@ const FinalCTA = dynamic(() => import('./final-cta').then(m => ({ default: m.Fin
 
 export default function LandingPageClient() {
   return (
-    <main className="overflow-x-hidden">
+    <main id="main-content" className="overflow-x-hidden">
       <InfiniteGridBg>
         <HeroSection />
         <SocialProofBar />

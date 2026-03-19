@@ -8,6 +8,20 @@ export const metadata: Metadata = {
   title: "Best Practices Guide | Pelican AI",
   description:
     "Get the most from your AI trading co-pilot. Morning routines, smarter prompts, trade tracking, and market intelligence.",
+  openGraph: {
+    title: "Best Practices Guide | Pelican AI",
+    description:
+      "Get the most from your AI trading co-pilot. Morning routines, smarter prompts, trade tracking, and market intelligence.",
+    url: "https://pelicantrading.ai/guide",
+    siteName: "Pelican Trading",
+    type: "article",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Best Practices Guide | Pelican AI",
+    description:
+      "Get the most from your AI trading co-pilot. Morning routines, smarter prompts, trade tracking, and market intelligence.",
+  },
 }
 
 const PROMPT_TEMPLATES = [

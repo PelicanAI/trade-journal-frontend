@@ -134,22 +134,21 @@ export function EarningsCard({ event, onClick, highlighted, isWatched, onToggleW
 
         {/* Watchlist bookmark */}
         {onToggleWatchlist && (
-          <div
+          <button
+            type="button"
             onClick={(e) => {
               e.stopPropagation()
               onToggleWatchlist(event.symbol, !!isWatched)
             }}
-            role="button"
-            tabIndex={0}
-            className="p-1 rounded hover:bg-white/5 transition-colors flex-shrink-0"
-            title={isWatched ? 'Remove from Watchlist' : 'Add to Watchlist'}
+            className="p-1 rounded hover:bg-white/5 transition-colors flex-shrink-0 appearance-none bg-transparent border-none m-0 cursor-pointer"
+            aria-label={isWatched ? 'Remove from Watchlist' : 'Add to Watchlist'}
           >
             <BookmarkSimple
               size={16}
               weight={isWatched ? 'fill' : 'regular'}
               className={isWatched ? 'text-[var(--accent-primary)]' : 'text-[var(--text-muted)] hover:text-[var(--text-secondary)]'}
             />
-          </div>
+          </button>
         )}
       </div>
     </motion.button>

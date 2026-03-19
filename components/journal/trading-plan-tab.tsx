@@ -202,7 +202,7 @@ function SectionHeader({
   unconfigured?: boolean
 }) {
   return (
-    <div className="flex items-center justify-between w-full mb-1" role="button" tabIndex={0} onClick={onToggle} onKeyDown={e => e.key === 'Enter' && onToggle()}>
+    <button type="button" className="flex items-center justify-between w-full mb-1 appearance-none bg-transparent border-none p-0 m-0 cursor-pointer text-left" onClick={onToggle} aria-expanded={expanded} aria-label={`${title} section`}>
       <div className="flex items-center gap-2">
         <Icon size={18} weight="bold" className="text-[var(--accent-primary)]" />
         <h3 className="text-sm font-semibold text-[var(--text-primary)] uppercase tracking-wider">{title}</h3>
@@ -210,16 +210,14 @@ function SectionHeader({
       </div>
       <div className="flex items-center gap-1.5">
         {onToggleNote && (
-          <span
-            role="button"
-            tabIndex={0}
+          <button
+            type="button"
             onClick={e => { e.stopPropagation(); onToggleNote() }}
-            onKeyDown={e => { if (e.key === 'Enter') { e.stopPropagation(); onToggleNote() } }}
-            className="p-1 rounded text-[var(--text-muted)] hover:text-[var(--accent-primary)] transition-colors"
-            title={noteExists ? 'Edit note' : 'Add note'}
+            className="p-1 rounded text-[var(--text-muted)] hover:text-[var(--accent-primary)] transition-colors appearance-none bg-transparent border-none m-0 cursor-pointer"
+            aria-label={noteExists ? 'Edit note' : 'Add note'}
           >
             <NotePencil size={14} weight={noteExists ? 'fill' : 'regular'} />
-          </span>
+          </button>
         )}
         {!expanded && unconfigured && (
           <span className="text-[10px] text-[var(--text-muted)] italic mr-1">Click to configure</span>
@@ -228,7 +226,7 @@ function SectionHeader({
           ? <CaretDown size={14} className="text-[var(--text-muted)]" />
           : <CaretRight size={14} className="text-[var(--text-muted)]" />}
       </div>
-    </div>
+    </button>
   )
 }
 
@@ -573,7 +571,7 @@ export function TradingPlanTab({ trades, onAskPelican, complianceStats, tradeSta
                 {!isCreating && <GlobalSaveIndicator status={globalStatus} />}
                 {plan && (
                   <IconTooltip label="Delete plan" side="top">
-                    <button onClick={handleDelete} className="p-1.5 rounded-lg text-[var(--text-muted)] hover:text-[var(--data-negative)] hover:bg-[var(--bg-elevated)] transition-colors">
+                    <button onClick={handleDelete} className="p-1.5 rounded-lg text-[var(--text-muted)] hover:text-[var(--data-negative)] hover:bg-[var(--bg-elevated)] transition-colors" aria-label="Delete plan">
                       <Trash size={16} />
                     </button>
                   </IconTooltip>
@@ -689,7 +687,7 @@ export function TradingPlanTab({ trades, onAskPelican, complianceStats, tradeSta
                       <div key={i} className="flex items-center gap-2 text-sm text-[var(--text-secondary)]">
                         <Check size={14} weight="bold" className="text-[var(--data-positive)] shrink-0" />
                         <span className="flex-1">{item}</span>
-                        <button type="button" onClick={() => removeChecklistItem(i)} className="text-[var(--text-muted)] hover:text-[var(--data-negative)] transition-colors">
+                        <button type="button" onClick={() => removeChecklistItem(i)} className="text-[var(--text-muted)] hover:text-[var(--data-negative)] transition-colors" aria-label="Remove checklist item">
                           <Trash size={14} />
                         </button>
                       </div>
@@ -757,7 +755,7 @@ export function TradingPlanTab({ trades, onAskPelican, complianceStats, tradeSta
                     {(form.blocked_tickers ?? []).map((ticker, i) => (
                       <span key={i} className="inline-flex items-center gap-1 text-xs font-medium px-2.5 py-1 rounded-full border bg-[var(--data-negative)]/10 text-[var(--data-negative)] border-[var(--data-negative)]/20">
                         {ticker}
-                        <button type="button" onClick={() => removeBlockedTicker(i)} className="hover:text-white transition-colors">
+                        <button type="button" onClick={() => removeBlockedTicker(i)} className="hover:text-white transition-colors" aria-label="Remove ticker">
                           <Trash size={12} />
                         </button>
                       </span>

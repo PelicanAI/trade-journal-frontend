@@ -1,7 +1,33 @@
 import { MetadataRoute } from 'next'
+import { createClient } from '@/lib/supabase/server'
 
-export default function sitemap(): MetadataRoute.Sitemap {
+async function getStrategySlugs(): Promise<string[]> {
+  try {
+    const supabase = await createClient()
+    const { data, error } = await supabase
+      .from('playbooks')
+      .select('slug')
+      .or('is_published.eq.true,is_curated.eq.true')
+      .not('slug', 'is', null)
+
+    if (error) return []
+    return (data || []).map((row: { slug: string | null }) => row.slug).filter(Boolean) as string[]
+  } catch {
+    return []
+  }
+}
+
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = 'https://pelicantrading.ai'
+
+  const strategySlugs = await getStrategySlugs()
+
+  const strategyEntries: MetadataRoute.Sitemap = strategySlugs.map((slug) => ({
+    url: `${baseUrl}/strategies/${slug}`,
+    lastModified: new Date(),
+    changeFrequency: 'weekly',
+    priority: 0.6,
+  }))
 
   return [
     {
@@ -52,5 +78,6 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: 'yearly',
       priority: 0.3,
     },
+    ...strategyEntries,
   ]
 }
