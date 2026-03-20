@@ -202,8 +202,9 @@ export function StrategyShowcase() {
     scrollToIndex(currentIndex)
   }, [currentIndex, scrollToIndex])
 
-  // Auto-advance
+  // Auto-advance (disabled on mobile/touch devices)
   useEffect(() => {
+    if (typeof window !== 'undefined' && window.matchMedia('(pointer: coarse)').matches) return
     if (isPaused) {
       if (timerRef.current) clearInterval(timerRef.current)
       return

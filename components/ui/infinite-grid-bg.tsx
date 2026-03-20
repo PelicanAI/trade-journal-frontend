@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useRef, useId, useEffect, useCallback } from 'react'
+import React, { useRef, useId, useEffect, useCallback, useState } from 'react'
 import { cn } from '@/lib/utils'
 
 interface InfiniteGridBgProps {
@@ -26,6 +26,12 @@ export function InfiniteGridBg({
   const rafRef = useRef<number>(0)
   const patternId = useId()
 
+  const [isMobile, setIsMobile] = useState(false)
+  useEffect(() => {
+    const mq = window.matchMedia('(max-width: 767px), (pointer: coarse)')
+    setIsMobile(mq.matches)
+  }, [])
+
   const animate = useCallback(() => {
     offsetRef.current.x = (offsetRef.current.x + speed) % 40
     offsetRef.current.y = (offsetRef.current.y + speed) % 40
@@ -39,9 +45,10 @@ export function InfiniteGridBg({
   }, [speed])
 
   useEffect(() => {
+    if (isMobile) return
     rafRef.current = requestAnimationFrame(animate)
     return () => cancelAnimationFrame(rafRef.current)
-  }, [animate])
+  }, [animate, isMobile])
 
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
     if (!revealRef.current || !containerRef.current) return
@@ -80,11 +87,11 @@ export function InfiniteGridBg({
         />
       </div>
 
-      {/* Ambient glow blobs */}
+      {/* Ambient glow blobs — no blur on mobile for GPU performance */}
       <div className="absolute inset-0 pointer-events-none z-0">
-        <div className="absolute right-[-15%] top-[-15%] w-[35%] h-[35%] rounded-full bg-blue-500/[0.15] blur-[120px]" />
-        <div className="absolute right-[5%] top-[-5%] w-[20%] h-[20%] rounded-full bg-cyan-400/[0.12] blur-[100px]" />
-        <div className="absolute left-[-10%] bottom-[-15%] w-[35%] h-[35%] rounded-full bg-blue-600/[0.12] blur-[120px]" />
+        <div className={cn("absolute right-[-15%] top-[-15%] w-[35%] h-[35%] rounded-full bg-blue-500/[0.15]", isMobile ? "opacity-30" : "blur-[120px]")} />
+        <div className={cn("absolute right-[5%] top-[-5%] w-[20%] h-[20%] rounded-full bg-cyan-400/[0.12]", isMobile ? "opacity-30" : "blur-[100px]")} />
+        <div className={cn("absolute left-[-10%] bottom-[-15%] w-[35%] h-[35%] rounded-full bg-blue-600/[0.12]", isMobile ? "opacity-30" : "blur-[120px]")} />
       </div>
 
       {/* Content */}

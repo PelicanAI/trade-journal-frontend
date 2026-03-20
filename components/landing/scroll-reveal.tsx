@@ -1,7 +1,8 @@
 'use client'
 
-import { motion, useInView } from 'framer-motion'
-import { useRef } from 'react'
+import { motion } from 'framer-motion'
+import { useRef, useState, useEffect } from 'react'
+import { observe } from '@/lib/shared-observer'
 
 export function ScrollReveal({
   children,
@@ -12,8 +13,22 @@ export function ScrollReveal({
   className?: string
   delay?: number
 }) {
-  const ref = useRef(null)
-  const isInView = useInView(ref, { once: true, margin: '-80px' })
+  const ref = useRef<HTMLDivElement>(null)
+  const [isInView, setIsInView] = useState(false)
+
+  useEffect(() => {
+    const el = ref.current
+    if (!el) return
+    return observe(
+      el,
+      (entry) => {
+        if (entry.isIntersecting) {
+          setIsInView(true)
+        }
+      },
+      { rootMargin: '-80px' }
+    )
+  }, [])
 
   return (
     <motion.div

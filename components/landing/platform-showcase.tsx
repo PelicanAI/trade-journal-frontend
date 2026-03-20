@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import dynamic from 'next/dynamic'
 import { motion, AnimatePresence } from 'framer-motion'
 import { cn } from '@/lib/utils'
 import { Section } from '@/components/landing/section'
@@ -14,13 +15,39 @@ import {
   Crosshair,
   Brain,
 } from '@phosphor-icons/react'
-import { ChatMock } from '@/components/landing/mocks/chat-mock'
-import { BriefMock } from '@/components/landing/mocks/brief-mock'
-import { HeatmapMock } from '@/components/landing/mocks/heatmap-mock'
-import { JournalMock } from '@/components/landing/mocks/journal-mock'
-import { PlaybookMock } from '@/components/landing/mocks/playbook-mock'
-import { PositionsMock } from '@/components/landing/mocks/positions-mock'
-import { CoachingMock } from '@/components/landing/mocks/coaching-mock'
+
+const MockSkeleton = () => (
+  <div className="animate-pulse bg-white/5 rounded-xl h-[400px] w-full" />
+)
+
+const ChatMock = dynamic(() => import('@/components/landing/mocks/chat-mock').then(m => m.ChatMock), {
+  ssr: false,
+  loading: MockSkeleton,
+})
+const BriefMock = dynamic(() => import('@/components/landing/mocks/brief-mock').then(m => m.BriefMock), {
+  ssr: false,
+  loading: MockSkeleton,
+})
+const HeatmapMock = dynamic(() => import('@/components/landing/mocks/heatmap-mock').then(m => m.HeatmapMock), {
+  ssr: false,
+  loading: MockSkeleton,
+})
+const JournalMock = dynamic(() => import('@/components/landing/mocks/journal-mock').then(m => m.JournalMock), {
+  ssr: false,
+  loading: MockSkeleton,
+})
+const PlaybookMock = dynamic(() => import('@/components/landing/mocks/playbook-mock').then(m => m.PlaybookMock), {
+  ssr: false,
+  loading: MockSkeleton,
+})
+const PositionsMock = dynamic(() => import('@/components/landing/mocks/positions-mock').then(m => m.PositionsMock), {
+  ssr: false,
+  loading: MockSkeleton,
+})
+const CoachingMock = dynamic(() => import('@/components/landing/mocks/coaching-mock').then(m => m.CoachingMock), {
+  ssr: false,
+  loading: MockSkeleton,
+})
 
 const features = [
   {
@@ -121,7 +148,7 @@ const features = [
     ],
     mock: CoachingMock,
   },
-] as const
+]
 
 export function PlatformShowcase() {
   const [activeFeature, setActiveFeature] = useState(0)

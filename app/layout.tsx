@@ -1,5 +1,5 @@
 import type React from "react"
-import type { Metadata } from "next"
+import type { Metadata, Viewport } from "next"
 import { GeistSans } from "geist/font/sans"
 import { GeistMono } from "geist/font/mono"
 import { Analytics } from "@vercel/analytics/next"
@@ -9,6 +9,13 @@ import * as Sentry from '@sentry/nextjs'
 import SentryErrorBoundary from "@/components/sentry-error-boundary"
 import { ReferralCapture } from "@/components/ReferralCapture"
 import "./globals.css"
+
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 1,
+  viewportFit: 'cover',
+}
 
 export function generateMetadata(): Metadata {
   return {
@@ -52,6 +59,7 @@ export default function RootLayout({
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
         <meta name="theme-color" content="#2e2e2e" />
+        <meta name="color-scheme" content="dark light" />
         <script
           dangerouslySetInnerHTML={{
             __html: `(function(){try{var t=localStorage.getItem("pelican-theme-v2")||"dark";document.documentElement.classList.toggle("dark",t==="dark")}catch(e){}})()`,

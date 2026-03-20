@@ -8,7 +8,8 @@ import { cn } from '@/lib/utils'
 type Phase = 'idle' | 'user-typing' | 'thinking' | 'block-1' | 'block-2' | 'block-3' | 'hold' | 'fade-out'
 
 const USER_PROMPT = "How does NVDA look heading into earnings?"
-const TYPING_SPEED = 40 // ms per character
+const TYPING_SPEED = 80 // ms per character
+const MAX_CYCLES = 2
 const THINKING_DURATION = 1500
 const BLOCK_DELAY = 400
 const HOLD_DURATION = 4000
@@ -57,16 +58,18 @@ export function HeroChatDemo() {
   }, [])
 
   useEffect(() => {
+    let cancelled = false
     // Start after a short mount delay
-    const timer = setTimeout(() => {
-      const loop = async () => {
-        while (true) {
-          await runSequence()
-        }
+    const timer = setTimeout(async () => {
+      for (let cycle = 0; cycle < MAX_CYCLES; cycle++) {
+        if (cancelled) return
+        await runSequence()
       }
-      loop()
     }, 800)
-    return () => clearTimeout(timer)
+    return () => {
+      cancelled = true
+      clearTimeout(timer)
+    }
   }, [runSequence])
 
   const showUser = phase !== 'idle'

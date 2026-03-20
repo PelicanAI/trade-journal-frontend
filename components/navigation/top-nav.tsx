@@ -92,7 +92,7 @@ export function TopNav({ className }: TopNavProps) {
 
   return (
     <nav className={cn(
-      "sticky top-0 z-40 w-full border-b border-[var(--border-subtle)] bg-[var(--bg-surface)]/90 backdrop-blur-xl",
+      "sticky top-0 z-40 w-full border-b border-[var(--border-subtle)] bg-[var(--bg-surface)]/90 backdrop-blur-xl pt-[env(safe-area-inset-top)]",
       className
     )}>
       <div className="flex items-center justify-between h-14 px-4">

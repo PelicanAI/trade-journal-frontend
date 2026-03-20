@@ -116,7 +116,8 @@ function FeaturesLayoutInner({ children }: { children: React.ReactNode }) {
       {!mobilePanelOpen && (
         <button
           aria-label="Open Pelican AI chat"
-          className="lg:hidden fixed bottom-6 left-6 z-40 w-12 h-12 bg-[var(--accent-primary)] rounded-full shadow-lg shadow-[var(--accent-primary)]/25 flex items-center justify-center active:scale-95 transition-transform"
+          className="lg:hidden fixed left-6 z-40 w-12 h-12 bg-[var(--accent-primary)] rounded-full shadow-lg shadow-[var(--accent-primary)]/25 flex items-center justify-center active:scale-95 transition-transform"
+          style={{ bottom: 'calc(1.5rem + env(safe-area-inset-bottom, 0px))' }}
           onClick={() => setMobilePanelOpen(true)}
         >
           <ChatCircle size={20} weight="fill" className="text-white" />
@@ -125,7 +126,7 @@ function FeaturesLayoutInner({ children }: { children: React.ReactNode }) {
 
       {/* Mobile Pelican Bottom Sheet */}
       <Sheet open={mobilePanelOpen && isMobile} onOpenChange={setMobilePanelOpen}>
-        <SheetContent side="bottom" className="h-[75vh] p-0 rounded-t-2xl bg-[var(--background)] border-t border-[var(--border-subtle)]">
+        <SheetContent side="bottom" className="h-[min(75vh,calc(100dvh-env(safe-area-inset-top,0px)-3rem))] p-0 rounded-t-2xl bg-[var(--background)] border-t border-[var(--border-subtle)] pb-[env(safe-area-inset-bottom)]">
           <div className="w-12 h-1 bg-[var(--text-muted)] rounded-full mx-auto mt-3 mb-2" />
           <PelicanChatPanel
             onConversationSelect={() => {
