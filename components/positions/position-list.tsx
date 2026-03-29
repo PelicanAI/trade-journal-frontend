@@ -138,7 +138,7 @@ export function PositionList({
   }
 
   return (
-    <div className="space-y-2">
+    <div className="space-y-1.5">
       {/* Position cards */}
       {positionData.map((data) => (
         <PositionCard

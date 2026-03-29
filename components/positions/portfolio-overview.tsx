@@ -48,7 +48,7 @@ function getAssetColor(type: string): string {
 // ── Skeleton Loader ────────────────────────────────────────────────────
 function SkeletonBlock({ className = '' }: { className?: string }) {
   return (
-    <PelicanCard className={`border border-[var(--border-subtle)]/40 rounded-lg ${className}`}>
+    <PelicanCard className={`bg-[var(--bg-base)]/80 border border-[var(--border-subtle)]/40 rounded-lg ${className}`}>
       <div className="p-4 space-y-3">
         <div className="h-4 w-32 rounded bg-[var(--bg-elevated)] animate-pulse" />
         <div className="h-32 w-full rounded bg-[var(--bg-elevated)] animate-pulse" />
@@ -166,7 +166,7 @@ export function PortfolioOverview({
       >
         {/* Card A: Exposure Breakdown Donut */}
         <motion.div variants={staggerItem}>
-          <PelicanCard className="p-4 border border-[var(--border-subtle)]/40 rounded-lg">
+          <PelicanCard className="bg-[var(--bg-base)]/80 p-4 border border-[var(--border-subtle)]/40 rounded-lg">
             <div className="flex items-center gap-2 mb-3">
               <ChartPie size={18} weight="regular" className="text-[var(--text-muted)]" />
               <h3 className="text-[10px] font-medium uppercase tracking-[0.08em] text-[var(--text-muted)]">
@@ -256,7 +256,7 @@ export function PortfolioOverview({
 
         {/* Card B: Risk Budget */}
         <motion.div variants={staggerItem}>
-          <PelicanCard className="p-4 border border-[var(--border-subtle)]/40 rounded-lg">
+          <PelicanCard className="bg-[var(--bg-base)]/80 p-4 border border-[var(--border-subtle)]/40 rounded-lg">
             <div className="flex items-center gap-2 mb-3">
               <ShieldCheck size={18} weight="regular" className="text-[var(--text-muted)]" />
               <h3 className="text-[10px] font-medium uppercase tracking-[0.08em] text-[var(--text-muted)]">

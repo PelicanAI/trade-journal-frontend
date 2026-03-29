@@ -129,7 +129,7 @@ export function PortfolioIntelligence({
             <motion.div key={card.id} variants={staggerItem}>
               <PelicanCard
                 interactive
-                className="p-4 cursor-pointer border border-[var(--border-subtle)]/40 rounded-lg hover:border-[var(--border-subtle)]/60 transition-all duration-150"
+                className="bg-[var(--bg-base)]/80 p-4 cursor-pointer border border-[var(--border-subtle)]/40 rounded-lg hover:border-[var(--border-subtle)]/60 transition-all duration-150"
                 onClick={() =>
                   onSendMessage(card.buildPrompt(positions, portfolio, risk))
                 }

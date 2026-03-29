@@ -300,7 +300,7 @@ Help me plan: should I hold through earnings, trim my position, add a hedge, or 
 
   // ── Actions list ─────────────────────────────────────────────────────────
   return (
-    <div className="rounded-lg border border-[var(--border-subtle)]/40 bg-[var(--bg-surface)] overflow-hidden">
+    <div className="rounded-lg border border-[var(--border-subtle)]/30 bg-[var(--bg-base)]/80 overflow-hidden">
       <div className="px-4 pt-3 pb-1">
         <span className="text-[10px] uppercase tracking-[0.08em] font-medium text-[var(--text-muted)]">
           Today&apos;s Actions

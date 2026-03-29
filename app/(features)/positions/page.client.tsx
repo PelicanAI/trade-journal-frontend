@@ -33,11 +33,11 @@ import type { PortfolioPosition } from "@/types/portfolio"
 
 const PortfolioPnlChart = dynamicImport(
   () => import("@/components/positions/portfolio-pnl-chart").then(m => ({ default: m.PortfolioPnlChart })),
-  { ssr: false, loading: () => <div className="h-48 animate-pulse bg-[var(--bg-surface)] rounded-lg" /> }
+  { ssr: false, loading: () => <div className="h-48 animate-pulse bg-[var(--bg-base)]/60 rounded-lg" /> }
 )
 const PortfolioOverview = dynamicImport(
   () => import("@/components/positions/portfolio-overview").then(m => ({ default: m.PortfolioOverview })),
-  { ssr: false, loading: () => <div className="h-48 animate-pulse bg-[var(--bg-surface)] rounded-lg" /> }
+  { ssr: false, loading: () => <div className="h-48 animate-pulse bg-[var(--bg-base)]/60 rounded-lg" /> }
 )
 
 function formatNum(n: number | null | undefined): string {
@@ -51,10 +51,11 @@ function formatNum(n: number | null | undefined): string {
 function SectionDivider({ label, right }: { label: string; right?: React.ReactNode }) {
   return (
     <div className="flex items-center gap-3 pt-1 pb-2">
+      <span className="w-1 h-1 rounded-full bg-[var(--accent-primary)]/30" />
       <span className="text-[10px] font-medium uppercase tracking-[0.12em] text-[var(--text-muted)] font-[var(--font-geist-mono)] whitespace-nowrap">
         {label}
       </span>
-      <div className="flex-1 h-px bg-[var(--border-subtle)]/40" />
+      <div className="flex-1 h-px bg-[var(--border-subtle)]/30" />
       {right}
     </div>
   )
@@ -153,17 +154,17 @@ export default function PositionsPage() {
     return (
       <div className="w-full max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 py-5">
         <div className="animate-pulse space-y-3">
-          <div className="h-[88px] rounded-lg bg-[var(--bg-surface)] border border-[var(--border-subtle)]/20" />
-          <div className="h-9 rounded bg-[var(--bg-surface)]/50" />
+          <div className="h-[88px] rounded-lg bg-[var(--bg-base)]/60 border border-[var(--border-subtle)]/20" />
+          <div className="h-9 rounded bg-[var(--bg-base)]/60/50" />
           <div className="space-y-2">
             {[1, 2, 3].map(i => (
-              <div key={i} className="h-[60px] rounded-lg bg-[var(--bg-surface)] border border-[var(--border-subtle)]/20" />
+              <div key={i} className="h-[60px] rounded-lg bg-[var(--bg-base)]/60 border border-[var(--border-subtle)]/20" />
             ))}
           </div>
-          <div className="h-44 rounded-lg bg-[var(--bg-surface)] border border-[var(--border-subtle)]/20" />
+          <div className="h-44 rounded-lg bg-[var(--bg-base)]/60 border border-[var(--border-subtle)]/20" />
           <div className="grid grid-cols-1 xl:grid-cols-12 gap-3">
-            <div className="xl:col-span-8 h-40 rounded-lg bg-[var(--bg-surface)] border border-[var(--border-subtle)]/20" />
-            <div className="xl:col-span-4 h-40 rounded-lg bg-[var(--bg-surface)] border border-[var(--border-subtle)]/20" />
+            <div className="xl:col-span-8 h-40 rounded-lg bg-[var(--bg-base)]/60 border border-[var(--border-subtle)]/20" />
+            <div className="xl:col-span-4 h-40 rounded-lg bg-[var(--bg-base)]/60 border border-[var(--border-subtle)]/20" />
           </div>
         </div>
       </div>

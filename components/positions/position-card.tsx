@@ -174,9 +174,10 @@ export function PositionCard({
   return (
     <div
       className={`
-        bg-[var(--bg-surface)] border border-[var(--border-subtle)]/40 rounded-lg
+        bg-[var(--bg-base)]/80 border border-[var(--border-subtle)]/40 rounded-lg
         hover:bg-[var(--bg-elevated)] hover:border-[var(--border-subtle)]/60
         transition-all duration-150 cursor-pointer
+        ${hasQuote && pnlAmount > 0 ? 'border-l-2 border-l-emerald-500/40' : hasQuote && pnlAmount < 0 ? 'border-l-2 border-l-red-500/40' : 'border-l-2 border-l-[var(--border-subtle)]/40'}
       `}
     >
       {/* Collapsed — single dense row */}
@@ -189,6 +190,11 @@ export function PositionCard({
           className={`w-1.5 h-1.5 rounded-full shrink-0 ${healthDotColor[healthScore.color]}`}
           title={healthScore.tooltip}
         />
+        <div className="w-8 h-8 rounded-md bg-[var(--bg-elevated)] border border-[var(--border-subtle)]/30 flex items-center justify-center flex-shrink-0">
+          <span className="text-xs font-[var(--font-geist-mono)] font-bold text-[var(--accent-primary)]/60">
+            {position.ticker.slice(0, 2)}
+          </span>
+        </div>
         <span className="text-sm font-semibold text-[var(--text-primary)] tracking-tight">
           {position.ticker}
         </span>
@@ -246,7 +252,7 @@ export function PositionCard({
           </span>
           {hasQuote ? (
             <span className={`px-2 py-0.5 rounded ${pnlBgClass}`}>
-              <span className={`text-xs font-[var(--font-geist-mono)] font-medium ${pnlColorClass}`}>
+              <span className={`text-sm font-[var(--font-geist-mono)] font-semibold ${pnlColorClass}`}>
                 {pnlPositive ? '+' : '-'}{formatPnlCurrency(pnlAmount)}
                 <span className="ml-1 font-normal">
                   ({pnlPercent >= 0 ? '+' : ''}{pnlPercent.toFixed(2)}%)
@@ -288,13 +294,13 @@ export function PositionCard({
 
             {/* Metrics grid */}
             <div className="grid grid-cols-5 gap-4 py-3 border-b border-[var(--border-subtle)]/20">
-              <div>
+              <div className="bg-[var(--bg-elevated)]/30 rounded px-3 py-2">
                 <MicroLabel>Size</MicroLabel>
                 <div className="font-[var(--font-geist-mono)] text-xs tabular-nums text-[var(--text-primary)] mt-0.5">
                   {position.quantity} shares
                 </div>
               </div>
-              <div>
+              <div className="bg-[var(--bg-elevated)]/30 rounded px-3 py-2">
                 <MicroLabel>Conviction</MicroLabel>
                 <div className={`font-[var(--font-geist-mono)] text-xs tabular-nums mt-0.5 ${
                   position.conviction !== null
@@ -304,13 +310,13 @@ export function PositionCard({
                   {position.conviction !== null ? `${position.conviction}/10` : '--'}
                 </div>
               </div>
-              <div>
+              <div className="bg-[var(--bg-elevated)]/30 rounded px-3 py-2">
                 <MicroLabel>Days Held</MicroLabel>
                 <div className="font-[var(--font-geist-mono)] text-xs tabular-nums text-[var(--text-primary)] mt-0.5">
                   {position.days_held}
                 </div>
               </div>
-              <div>
+              <div className="bg-[var(--bg-elevated)]/30 rounded px-3 py-2">
                 <MicroLabel>Tags</MicroLabel>
                 {position.setup_tags.length > 0 ? (
                   <div className="flex flex-wrap gap-1 mt-0.5">
@@ -324,7 +330,7 @@ export function PositionCard({
                   <div className="text-xs text-[var(--text-muted)] mt-0.5">--</div>
                 )}
               </div>
-              <div>
+              <div className="bg-[var(--bg-elevated)]/30 rounded px-3 py-2">
                 <MicroLabel>Paper</MicroLabel>
                 <div className="text-xs text-[var(--text-muted)] mt-0.5">
                   {position.is_paper ? (
@@ -337,7 +343,7 @@ export function PositionCard({
             </div>
 
             {/* Ticker history — terminal style */}
-            <div className="mt-3 px-3 py-2.5 bg-[var(--bg-base)] rounded border border-[var(--border-subtle)]/20">
+            <div className="mt-3 px-3 py-2.5 bg-[var(--bg-base)] rounded border border-[var(--border-subtle)]/20 ring-1 ring-inset ring-white/[0.02]">
               {tickerHistory && tickerHistory.times_traded > 0 ? (
                 <>
                   <div className="flex items-center justify-between">
@@ -389,12 +395,12 @@ export function PositionCard({
                 {position.thesis}
               </blockquote>
             ) : (
-              <div className="mt-2 flex items-center gap-2 px-3 py-2 rounded bg-amber-500/[0.05] border border-amber-500/10">
-                <Warning size={12} weight="regular" className="text-amber-500/60 text-xs shrink-0" />
-                <span className="text-[11px] text-amber-500/60">No thesis recorded</span>
+              <div className="mt-2 flex items-center gap-2 py-1.5">
+                <span className="text-amber-500/50 text-[11px] shrink-0">!</span>
+                <span className="text-[11px] text-amber-500/50">No thesis recorded</span>
                 <button
                   onClick={(e) => { e.stopPropagation(); onEdit(position) }}
-                  className="text-[10px] font-medium text-amber-500/70 uppercase tracking-[0.06em] hover:text-amber-500 transition-colors"
+                  className="text-[10px] font-medium text-amber-500/60 uppercase tracking-[0.06em] cursor-pointer hover:text-amber-500/80 transition-colors ml-1"
                 >
                   + Add
                 </button>
@@ -423,21 +429,21 @@ export function PositionCard({
             <div className="flex gap-2 mt-3 pt-3 border-t border-[var(--border-subtle)]/20">
               <button
                 onClick={(e) => { e.stopPropagation(); onScanWithPelican(position) }}
-                className="flex items-center gap-1.5 text-[10px] font-medium uppercase tracking-[0.06em] px-3 py-1.5 rounded bg-[var(--accent-primary)]/10 text-[var(--accent-primary)]/80 border border-[var(--accent-primary)]/20 hover:bg-[var(--accent-primary)]/20 transition-colors"
+                className="text-[10px] font-semibold uppercase tracking-[0.06em] px-4 py-2 rounded-md bg-[var(--accent-primary)]/15 text-[var(--accent-primary)] border border-[var(--accent-primary)]/25 hover:bg-[var(--accent-primary)]/20 transition-colors flex items-center gap-1.5"
               >
                 <Lightning size={12} weight="bold" />
                 Monitor
               </button>
               <button
                 onClick={(e) => { e.stopPropagation(); onEdit(position) }}
-                className="flex items-center gap-1.5 text-[10px] font-medium uppercase tracking-[0.06em] px-3 py-1.5 rounded bg-[var(--bg-elevated)] text-[var(--text-secondary)] border border-[var(--border-subtle)]/40 hover:border-[var(--border-subtle)]/60 transition-colors"
+                className="text-[10px] font-medium uppercase tracking-[0.06em] px-4 py-2 rounded-md bg-[var(--bg-elevated)]/60 text-[var(--text-secondary)] border border-[var(--border-subtle)]/40 hover:border-[var(--border-subtle)]/60 hover:text-[var(--text-primary)] transition-colors flex items-center gap-1.5"
               >
                 <PencilSimple size={12} weight="regular" />
                 Edit
               </button>
               <button
                 onClick={(e) => { e.stopPropagation(); onClose(position) }}
-                className="flex items-center gap-1.5 text-[10px] font-medium uppercase tracking-[0.06em] px-3 py-1.5 rounded bg-red-400/[0.08] text-red-400/70 border border-red-400/10 hover:bg-red-400/[0.12] transition-colors"
+                className="text-[10px] font-medium uppercase tracking-[0.06em] px-4 py-2 rounded-md bg-red-500/8 text-red-400/70 border border-red-500/15 hover:bg-red-500/12 hover:text-red-400/90 transition-colors flex items-center gap-1.5"
               >
                 <XCircle size={12} weight="regular" />
                 Close

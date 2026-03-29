@@ -116,7 +116,7 @@ export function PortfolioHeroStrip({
       : null
 
   return (
-    <div className="bg-[var(--bg-surface)] border border-[var(--border-subtle)]/40 rounded-lg px-5 py-4">
+    <div className="bg-[var(--bg-elevated)]/40 border border-[var(--border-subtle)]/40 rounded-lg px-5 py-4">
       <div className="flex flex-wrap items-start gap-6">
         {/* Left: P&L Hero */}
         <div className="flex flex-col gap-1.5">
@@ -125,13 +125,13 @@ export function PortfolioHeroStrip({
           </p>
           <div className="flex items-baseline gap-2">
             <span
-              className={`text-3xl font-bold font-[var(--font-geist-mono)] tracking-tight tabular-nums leading-none ${pnlColorClass}`}
+              className={`text-3xl lg:text-4xl font-bold font-[var(--font-geist-mono)] tracking-tighter tabular-nums leading-none ${pnlColorClass}`}
             >
               {hasQuotes ? formatCompactDollar(unrealizedPnl) : "—"}
             </span>
             {unrealizedPct !== null && (
               <span
-                className={`text-sm font-[var(--font-geist-mono)] tabular-nums opacity-60 ${pnlPctColorClass}`}
+                className={`text-base font-[var(--font-geist-mono)] tabular-nums opacity-60 ${pnlPctColorClass}`}
               >
                 {unrealizedPnl >= 0 ? "+" : ""}
                 {unrealizedPct.toFixed(2)}%
@@ -149,41 +149,41 @@ export function PortfolioHeroStrip({
         {/* Right: Stat Cells */}
         <div className="flex flex-wrap items-start gap-6 ml-auto">
           {/* Exposure */}
-          <div className="flex flex-col gap-1">
-            <p className="text-[10px] font-medium uppercase tracking-[0.08em] text-[var(--text-muted)]">
+          <div className="bg-[var(--bg-elevated)]/40 rounded-md px-3 py-2 border border-[var(--border-subtle)]/20">
+            <span className="text-[10px] font-medium uppercase tracking-[0.08em] text-[var(--text-muted)] block">
               Exposure
-            </p>
-            <p className="text-sm font-[var(--font-geist-mono)] tabular-nums text-[var(--text-primary)]">
+            </span>
+            <span className="text-sm font-[var(--font-geist-mono)] tabular-nums text-[var(--text-primary)] mt-0.5 block">
               {formatExposure(portfolio.total_exposure)}
-            </p>
+            </span>
           </div>
 
           {/* Direction */}
-          <div className="flex flex-col gap-1">
-            <p className="text-[10px] font-medium uppercase tracking-[0.08em] text-[var(--text-muted)]">
+          <div className="bg-[var(--bg-elevated)]/40 rounded-md px-3 py-2 border border-[var(--border-subtle)]/20">
+            <span className="text-[10px] font-medium uppercase tracking-[0.08em] text-[var(--text-muted)] block">
               Direction
-            </p>
-            <p className="text-sm text-[var(--text-primary)]">
+            </span>
+            <span className="text-sm font-[var(--font-geist-mono)] text-[var(--text-primary)] mt-0.5 block">
               {netDirection}
-            </p>
+            </span>
           </div>
 
           {/* Open count */}
-          <div className="flex flex-col gap-1">
-            <p className="text-[10px] font-medium uppercase tracking-[0.08em] text-[var(--text-muted)]">
+          <div className="bg-[var(--bg-elevated)]/40 rounded-md px-3 py-2 border border-[var(--border-subtle)]/20">
+            <span className="text-[10px] font-medium uppercase tracking-[0.08em] text-[var(--text-muted)] block">
               Open
-            </p>
-            <p className="text-sm font-[var(--font-geist-mono)] tabular-nums text-[var(--text-primary)]">
+            </span>
+            <span className="text-sm font-[var(--font-geist-mono)] tabular-nums text-[var(--text-primary)] mt-0.5 block">
               {portfolio.total_positions}
-            </p>
+            </span>
           </div>
 
           {/* Grade */}
           {grade && (
-            <div className="flex flex-col gap-1">
-              <p className="text-[10px] font-medium uppercase tracking-[0.08em] text-[var(--text-muted)]">
+            <div className="bg-[var(--bg-elevated)]/40 rounded-md px-3 py-2 border border-[var(--border-subtle)]/20">
+              <span className="text-[10px] font-medium uppercase tracking-[0.08em] text-[var(--text-muted)] block">
                 Grade
-              </p>
+              </span>
               <button
                 onClick={() =>
                   onGradeClick(
@@ -192,10 +192,10 @@ export function PortfolioHeroStrip({
                       `${grade.summary}. What should I prioritize to improve my grade?`,
                   )
                 }
-                className="flex items-baseline gap-1.5 hover:opacity-80 transition-opacity cursor-pointer"
+                className="flex items-baseline gap-1.5 hover:opacity-80 transition-opacity cursor-pointer mt-0.5"
               >
                 <span
-                  className={`text-xl font-bold font-[var(--font-geist-mono)] leading-none ${gradeColor(grade.letter)}`}
+                  className={`text-2xl font-bold font-[var(--font-geist-mono)] leading-none ${gradeColor(grade.letter)}`}
                 >
                   {grade.letter}
                 </span>
@@ -211,10 +211,10 @@ export function PortfolioHeroStrip({
             <button
               onClick={onRefresh}
               disabled={isRefreshing}
-              className={`flex items-center justify-center rounded border border-[var(--border-subtle)]/40 p-1.5 transition-colors duration-150 hover:border-[var(--border-subtle)]/60 ${
+              className={`w-8 h-8 rounded-md bg-[var(--bg-elevated)]/40 border border-[var(--border-subtle)]/20 flex items-center justify-center transition-colors ${
                 isRefreshing
                   ? "text-[var(--text-muted)] opacity-50 cursor-not-allowed"
-                  : "text-[var(--text-muted)] hover:text-[var(--text-secondary)] cursor-pointer"
+                  : "text-[var(--text-muted)] hover:text-[var(--text-primary)] cursor-pointer"
               }`}
               aria-label="Refresh portfolio"
             >

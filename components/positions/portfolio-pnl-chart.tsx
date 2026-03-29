@@ -16,10 +16,10 @@ export function PortfolioPnlChart({ data, isLoading }: PortfolioPnlChartProps) {
 
   if (isLoading) {
     return (
-      <PelicanCard className="p-5" noPadding>
+      <PelicanCard className="bg-[var(--bg-base)]/80 border border-[var(--border-subtle)]/30 p-5" noPadding>
         <div className="flex items-center gap-2 mb-4">
           <ChartLineUp size={18} weight="regular" className="text-[var(--text-muted)]" />
-          <h3 className="text-sm font-medium text-[var(--text-primary)]">Portfolio P&L History</h3>
+          <h3 className="text-[10px] font-medium uppercase tracking-[0.08em] text-[var(--text-muted)]">Portfolio P&L History</h3>
         </div>
         <div className="h-[200px] flex items-center justify-center">
           <div className="w-6 h-6 border-2 border-[var(--accent-primary)]/30 border-t-[var(--accent-primary)] rounded-full animate-spin" />
@@ -30,10 +30,10 @@ export function PortfolioPnlChart({ data, isLoading }: PortfolioPnlChartProps) {
 
   if (data.length === 0) {
     return (
-      <PelicanCard className="p-5" noPadding>
+      <PelicanCard className="bg-[var(--bg-base)]/80 border border-[var(--border-subtle)]/30 p-5" noPadding>
         <div className="flex items-center gap-2 mb-4">
           <ChartLineUp size={18} weight="regular" className="text-[var(--text-muted)]" />
-          <h3 className="text-sm font-medium text-[var(--text-primary)]">Portfolio P&L History</h3>
+          <h3 className="text-[10px] font-medium uppercase tracking-[0.08em] text-[var(--text-muted)]">Portfolio P&L History</h3>
         </div>
         <div className="h-[200px] flex flex-col items-center justify-center">
           <ChartLineUp size={24} className="text-[var(--text-muted)] mb-2" />
@@ -44,16 +44,16 @@ export function PortfolioPnlChart({ data, isLoading }: PortfolioPnlChartProps) {
   }
 
   return (
-    <PelicanCard className="p-5" noPadding>
+    <PelicanCard className="bg-[var(--bg-base)]/80 border border-[var(--border-subtle)]/30 p-5" noPadding>
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-2">
           <ChartLineUp size={18} weight="regular" className="text-[var(--text-muted)]" />
-          <h3 className="text-sm font-medium text-[var(--text-primary)]">Portfolio P&L History</h3>
+          <h3 className="text-[10px] font-medium uppercase tracking-[0.08em] text-[var(--text-muted)]">Portfolio P&L History</h3>
         </div>
         {latestPnl !== null && (
           <span className={cn(
-            "text-sm font-mono tabular-nums font-semibold",
-            latestPnl >= 0 ? "text-[var(--data-positive)]" : "text-[var(--data-negative)]"
+            "text-sm font-[var(--font-geist-mono)] tabular-nums font-semibold",
+            latestPnl >= 0 ? "text-emerald-400/80" : "text-red-400/80"
           )}>
             {latestPnl >= 0 ? '+' : ''}${latestPnl.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
           </span>
