@@ -7,6 +7,7 @@ import Image from 'next/image'
 import { cn } from '@/lib/utils'
 import { useCreditsContext } from '@/providers/credits-provider'
 import { useTraderProfile } from '@/hooks/use-trader-profile'
+import { Gear } from '@phosphor-icons/react'
 import { IconTooltip } from '@/components/ui/icon-tooltip'
 
 // =============================================================================
@@ -167,6 +168,15 @@ export function TopNav({ className }: TopNavProps) {
         {/* Right: Credits */}
         <div className="flex items-center gap-2 sm:gap-3 ml-auto flex-shrink-0">
           {/* Credits */}
+          <IconTooltip label="Settings" side="bottom">
+            <Link
+              href="/settings"
+              className="lg:hidden flex items-center justify-center w-8 h-8 rounded-lg text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-elevated)] active:scale-95 transition-all"
+              aria-label="Settings"
+            >
+              <Gear size={18} weight="regular" />
+            </Link>
+          </IconTooltip>
           <IconTooltip label="Credit balance" side="bottom">
             <Link
               href="/pricing"

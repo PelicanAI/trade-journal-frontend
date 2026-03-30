@@ -15,7 +15,7 @@ import { useConversationRouter } from "@/hooks/use-conversation-router"
 import { useAuth } from "@/lib/providers/auth-provider"
 import { createClient } from "@/lib/supabase/client"
 import { Button } from "@/components/ui/button"
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
+import { Sheet, SheetContent } from "@/components/ui/sheet"
 import { List, CaretRight, Plus as PlusIcon } from "@phosphor-icons/react"
 import { IconTooltip } from "@/components/ui/icon-tooltip"
 import { ThemeToggle } from "@/components/theme-toggle"
@@ -576,20 +576,17 @@ export default function ChatPage() {
 
       <div className="flex-1 flex flex-col h-full min-w-0">
         <div className="xl:hidden border-b border-[var(--border-subtle)] p-4 flex items-center justify-between bg-background touch-manipulation">
-          <Sheet open={mobileSheetOpen} onOpenChange={setMobileSheetOpen}>
-            <SheetTrigger asChild>
-              <IconTooltip label="Open sidebar" side="bottom">
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="h-11 w-11 min-h-[44px] min-w-[44px] glow-button glow-ghost"
-                  aria-label="Open sidebar"
-                >
-                  <List size={20} weight="regular" className="text-foreground" />
-                </Button>
-              </IconTooltip>
-            </SheetTrigger>
-          </Sheet>
+          <IconTooltip label="Open sidebar" side="bottom">
+            <Button
+              variant="ghost"
+              size="sm"
+              className="h-11 w-11 min-h-[44px] min-w-[44px] glow-button glow-ghost"
+              aria-label="Open sidebar"
+              onClick={() => setMobileSheetOpen(true)}
+            >
+              <List size={20} weight="regular" className="text-foreground" />
+            </Button>
+          </IconTooltip>
           <div className="flex items-center gap-2">
             <Image src="/pelican-logo-transparent.webp" alt="PelicanAI" width={24} height={24} className="w-6 h-6 object-contain" />
             <span className="font-semibold text-foreground">Pelican AI</span>
