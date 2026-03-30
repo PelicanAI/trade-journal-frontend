@@ -116,40 +116,42 @@ export function PortfolioIntelligence({
   onSendMessage,
 }: PortfolioIntelligenceProps) {
   return (
-    <div>
-      <m.div
-        className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2"
-        variants={staggerContainer}
-        initial="hidden"
-        animate="visible"
-      >
-        {intelligenceCards.map((card) => {
-          const Icon = card.icon
-          return (
-            <m.div key={card.id} variants={staggerItem}>
-              <PelicanCard
-                interactive
-                className="bg-[var(--bg-base)]/80 p-4 cursor-pointer border border-[var(--border-subtle)]/40 rounded-lg hover:border-[var(--border-subtle)]/60 transition-all duration-150"
-                onClick={() =>
-                  onSendMessage(card.buildPrompt(positions, portfolio, risk))
-                }
-              >
-                <Icon
-                  size={20}
-                  weight="regular"
-                  className="text-[var(--accent-primary)]/70 mb-2"
-                />
-                <h3 className="text-xs font-semibold text-[var(--text-primary)] mb-1">
-                  {card.title}
-                </h3>
-                <p className="text-xs text-[var(--text-muted)] leading-normal">
-                  {card.description}
-                </p>
-              </PelicanCard>
-            </m.div>
-          )
-        })}
-      </m.div>
-    </div>
+    <m.div
+      className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3"
+      variants={staggerContainer}
+      initial="hidden"
+      animate="visible"
+    >
+      {intelligenceCards.map((card, i) => {
+        const Icon = card.icon
+        return (
+          <m.div
+            key={card.id}
+            variants={staggerItem}
+            className={i === 0 ? 'sm:col-span-2 lg:col-span-1' : ''}
+          >
+            <PelicanCard
+              interactive
+              className="bg-[var(--bg-base)]/80 p-4 cursor-pointer border border-[var(--border-subtle)]/40 rounded-lg hover:border-[var(--border-subtle)]/60 transition-all duration-150 h-full"
+              onClick={() =>
+                onSendMessage(card.buildPrompt(positions, portfolio, risk))
+              }
+            >
+              <Icon
+                size={20}
+                weight="regular"
+                className="text-[var(--accent-primary)]/70 mb-2"
+              />
+              <h3 className="text-xs font-semibold text-[var(--text-primary)] mb-1">
+                {card.title}
+              </h3>
+              <p className="text-xs text-[var(--text-muted)] leading-normal">
+                {card.description}
+              </p>
+            </PelicanCard>
+          </m.div>
+        )
+      })}
+    </m.div>
   )
 }

@@ -9,7 +9,6 @@ import {
   Warning,
   ShieldWarning,
   Info,
-  Plus,
 } from '@phosphor-icons/react'
 import type { PortfolioPosition } from '@/types/portfolio'
 import type { PositionHealth, PositionAlert } from '@/lib/position-health'
@@ -74,14 +73,14 @@ function computeUnrealizedPnl(
 }
 
 const healthDotColor: Record<PositionHealth['color'], string> = {
-  emerald: 'bg-emerald-400',
-  amber: 'bg-amber-500',
-  red: 'bg-red-400',
+  emerald: 'bg-[var(--data-positive)]',
+  amber: 'bg-[var(--data-warning)]',
+  red: 'bg-[var(--data-negative)]',
 }
 
 const alertStyles: Record<PositionAlert['severity'], string> = {
-  critical: 'bg-red-400/8 text-red-400/80 border-red-400/15',
-  warning: 'bg-amber-500/8 text-amber-500/60 border-amber-500/10',
+  critical: 'bg-[var(--data-negative)]/8 text-[var(--data-negative)]/80 border-[var(--data-negative)]/15',
+  warning: 'bg-[var(--data-warning)]/8 text-[var(--data-warning)]/60 border-[var(--data-warning)]/10',
   info: 'bg-[var(--bg-elevated)] text-[var(--text-secondary)] border-[var(--border-subtle)]/30',
 }
 
@@ -114,23 +113,23 @@ function RiskRewardBar({ position }: { position: PortfolioPosition }) {
   return (
     <div className="relative h-7 bg-[var(--bg-base)] rounded overflow-hidden mt-3 mb-7">
       <div
-        className="absolute top-0 h-full bg-red-400/10"
+        className="absolute top-0 h-full bg-[var(--data-negative)]/10"
         style={{ left: `${Math.min(stopPct, entryPct)}%`, width: `${Math.abs(entryPct - stopPct)}%` }}
       />
       <div
-        className="absolute top-0 h-full bg-emerald-400/8"
+        className="absolute top-0 h-full bg-[var(--data-positive)]/8"
         style={{ left: `${Math.min(entryPct, targetPct)}%`, width: `${Math.abs(targetPct - entryPct)}%` }}
       />
-      <div className="absolute top-0 h-full w-px bg-red-400/60" style={{ left: `${stopPct}%` }} />
+      <div className="absolute top-0 h-full w-px bg-[var(--data-negative)]/60" style={{ left: `${stopPct}%` }} />
       <div className="absolute top-0 h-full w-px bg-[var(--text-secondary)]" style={{ left: `${entryPct}%` }} />
-      <div className="absolute top-0 h-full w-px bg-emerald-400/60" style={{ left: `${targetPct}%` }} />
-      <div className="absolute -bottom-5 text-[10px] font-[var(--font-geist-mono)] tabular-nums text-red-400/60" style={{ left: `${stopPct}%`, transform: 'translateX(-50%)' }}>
+      <div className="absolute top-0 h-full w-px bg-[var(--data-positive)]/60" style={{ left: `${targetPct}%` }} />
+      <div className="absolute -bottom-5 text-[10px] font-[var(--font-geist-mono)] tabular-nums text-[var(--data-negative)]/60" style={{ left: `${stopPct}%`, transform: 'translateX(-50%)' }}>
         ${formatCompactPrice(stop)}
       </div>
       <div className="absolute -bottom-5 text-[10px] font-[var(--font-geist-mono)] tabular-nums text-[var(--text-secondary)]" style={{ left: `${entryPct}%`, transform: 'translateX(-50%)' }}>
         ${formatCompactPrice(entry)}
       </div>
-      <div className="absolute -bottom-5 text-[10px] font-[var(--font-geist-mono)] tabular-nums text-emerald-400/60" style={{ left: `${targetPct}%`, transform: 'translateX(-50%)' }}>
+      <div className="absolute -bottom-5 text-[10px] font-[var(--font-geist-mono)] tabular-nums text-[var(--data-positive)]/60" style={{ left: `${targetPct}%`, transform: 'translateX(-50%)' }}>
         ${formatCompactPrice(target)}
       </div>
     </div>
@@ -168,8 +167,8 @@ export function PositionCard({
 }: PositionCardProps) {
   const { pnlAmount, pnlPercent, hasQuote } = computeUnrealizedPnl(position, quote)
   const pnlPositive = pnlAmount >= 0
-  const pnlColorClass = pnlPositive ? 'text-emerald-400/80' : 'text-red-400/80'
-  const pnlBgClass = pnlPositive ? 'bg-emerald-400/[0.08]' : 'bg-red-400/[0.08]'
+  const pnlColorClass = pnlPositive ? 'text-[var(--data-positive)]/80' : 'text-[var(--data-negative)]/80'
+  const pnlBgClass = pnlPositive ? 'bg-[var(--data-positive)]/[0.08]' : 'bg-[var(--data-negative)]/[0.08]'
 
   return (
     <div
@@ -177,7 +176,7 @@ export function PositionCard({
         bg-[var(--bg-base)]/80 border border-[var(--border-subtle)]/40 rounded-lg
         hover:bg-[var(--bg-elevated)] hover:border-[var(--border-subtle)]/60
         transition-all duration-150 cursor-pointer
-        ${hasQuote && pnlAmount > 0 ? 'border-l-2 border-l-emerald-500/40' : hasQuote && pnlAmount < 0 ? 'border-l-2 border-l-red-500/40' : 'border-l-2 border-l-[var(--border-subtle)]/40'}
+        ${hasQuote && pnlAmount > 0 ? 'border-l-2 border-l-[var(--data-positive)]/40' : hasQuote && pnlAmount < 0 ? 'border-l-2 border-l-[var(--data-negative)]/40' : 'border-l-2 border-l-[var(--border-subtle)]/40'}
       `}
     >
       {/* Collapsed — single dense row */}
@@ -195,13 +194,13 @@ export function PositionCard({
             {position.ticker.slice(0, 2)}
           </span>
         </div>
-        <span className="text-sm font-semibold text-[var(--text-primary)] tracking-tight">
+        <span className="text-sm font-semibold text-[var(--text-primary)] tracking-tight truncate max-w-[120px]">
           {position.ticker}
         </span>
         <span className={`text-[9px] font-bold uppercase tracking-[0.08em] px-1.5 py-0.5 rounded ${
           position.direction === 'long'
             ? 'bg-[var(--accent-primary)]/10 text-[var(--accent-primary)]/80'
-            : 'bg-red-400/10 text-red-400/80'
+            : 'bg-[var(--data-negative)]/10 text-[var(--data-negative)]/80'
         }`}>
           {position.direction}
         </span>
@@ -224,17 +223,17 @@ export function PositionCard({
             </span>
           )}
           {position.has_stop_loss ? (
-            <span className="text-red-400/60">
+            <span className="text-[var(--data-negative)]/60">
               Stop{' '}
               <span className="font-[var(--font-geist-mono)]">
                 ${formatCompactPrice(position.stop_loss!)}
               </span>
             </span>
           ) : (
-            <span className="text-amber-500/60">No stop</span>
+            <span className="text-[var(--data-warning)]/60">No stop</span>
           )}
           {position.has_take_profit ? (
-            <span className="text-emerald-400/60">
+            <span className="text-[var(--data-positive)]/60">
               Target{' '}
               <span className="font-[var(--font-geist-mono)]">
                 ${formatCompactPrice(position.take_profit!)}
@@ -293,7 +292,7 @@ export function PositionCard({
             <RiskRewardBar position={position} />
 
             {/* Metrics grid */}
-            <div className="grid grid-cols-5 gap-4 py-3 border-b border-[var(--border-subtle)]/20">
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 py-3 border-b border-[var(--border-subtle)]/20">
               <div className="bg-[var(--bg-elevated)]/30 rounded px-3 py-2">
                 <MicroLabel>Size</MicroLabel>
                 <div className="font-[var(--font-geist-mono)] text-xs tabular-nums text-[var(--text-primary)] mt-0.5">
@@ -304,7 +303,7 @@ export function PositionCard({
                 <MicroLabel>Conviction</MicroLabel>
                 <div className={`font-[var(--font-geist-mono)] text-xs tabular-nums mt-0.5 ${
                   position.conviction !== null
-                    ? position.conviction >= 7 ? 'text-emerald-400/80' : position.conviction >= 4 ? 'text-amber-500/60' : 'text-red-400/80'
+                    ? position.conviction >= 7 ? 'text-[var(--data-positive)]/80' : position.conviction >= 4 ? 'text-[var(--data-warning)]/60' : 'text-[var(--data-negative)]/80'
                     : 'text-[var(--text-muted)]'
                 }`}>
                   {position.conviction !== null ? `${position.conviction}/10` : '--'}
@@ -321,7 +320,7 @@ export function PositionCard({
                 {position.setup_tags.length > 0 ? (
                   <div className="flex flex-wrap gap-1 mt-0.5">
                     {position.setup_tags.map((tag) => (
-                      <span key={tag} className="px-1.5 py-0.5 rounded bg-[var(--bg-elevated)] text-[var(--text-secondary)] text-[10px]">
+                      <span key={tag} className="px-1.5 py-0.5 rounded bg-[var(--bg-elevated)] text-[var(--text-secondary)] text-[10px] break-all">
                         {tag}
                       </span>
                     ))}
@@ -364,7 +363,7 @@ export function PositionCard({
                       {tickerHistory.win_rate.toFixed(0)}% WR
                     </span>
                     <span className={`font-[var(--font-geist-mono)] text-[11px] tabular-nums ${
-                      tickerHistory.total_pnl >= 0 ? 'text-emerald-400/80' : 'text-red-400/80'
+                      tickerHistory.total_pnl >= 0 ? 'text-[var(--data-positive)]/80' : 'text-[var(--data-negative)]/80'
                     }`}>
                       {tickerHistory.total_pnl >= 0 ? '+' : ''}{formatExposure(tickerHistory.total_pnl)}
                     </span>
@@ -391,16 +390,16 @@ export function PositionCard({
 
             {/* Thesis / warning */}
             {position.has_thesis ? (
-              <blockquote className="mt-3 border-l-2 border-[var(--accent-primary)]/20 pl-3 text-[11px] text-[var(--text-secondary)] italic">
+              <blockquote className="mt-3 border-l-2 border-[var(--accent-primary)]/20 pl-3 text-[11px] text-[var(--text-secondary)] italic break-words">
                 {position.thesis}
               </blockquote>
             ) : (
               <div className="mt-2 flex items-center gap-2 py-1.5">
-                <span className="text-amber-500/50 text-[11px] shrink-0">!</span>
-                <span className="text-[11px] text-amber-500/50">No thesis recorded</span>
+                <span className="text-[var(--data-warning)]/50 text-[11px] shrink-0">!</span>
+                <span className="text-[11px] text-[var(--data-warning)]/50">No thesis recorded</span>
                 <button
                   onClick={(e) => { e.stopPropagation(); onEdit(position) }}
-                  className="text-[10px] font-medium text-amber-500/60 uppercase tracking-[0.06em] cursor-pointer hover:text-amber-500/80 transition-colors ml-1"
+                  className="text-[10px] font-medium text-[var(--data-warning)]/60 uppercase tracking-[0.06em] cursor-pointer hover:text-[var(--data-warning)]/80 transition-colors ml-1"
                 >
                   + Add
                 </button>
@@ -443,7 +442,7 @@ export function PositionCard({
               </button>
               <button
                 onClick={(e) => { e.stopPropagation(); onClose(position) }}
-                className="text-[10px] font-medium uppercase tracking-[0.06em] px-4 py-2 rounded-md bg-red-500/8 text-red-400/70 border border-red-500/15 hover:bg-red-500/12 hover:text-red-400/90 transition-colors flex items-center gap-1.5"
+                className="text-[10px] font-medium uppercase tracking-[0.06em] px-4 py-2 rounded-md bg-[var(--data-negative)]/8 text-[var(--data-negative)]/70 border border-[var(--data-negative)]/15 hover:bg-[var(--data-negative)]/12 hover:text-[var(--data-negative)]/90 transition-colors flex items-center gap-1.5"
               >
                 <XCircle size={12} weight="regular" />
                 Close

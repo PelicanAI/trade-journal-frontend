@@ -153,16 +153,18 @@ export default function PositionsPage() {
   if (portfolioLoading) {
     return (
       <div className="w-full max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 py-5">
-        <div className="animate-pulse space-y-3">
-          <div className="h-[88px] rounded-lg bg-[var(--bg-base)]/60 border border-[var(--border-subtle)]/20" />
-          <div className="h-9 rounded bg-[var(--bg-base)]/60/50" />
-          <div className="space-y-2">
+        <div className="animate-pulse">
+          <div className="space-y-3">
+            <div className="h-[88px] rounded-lg bg-[var(--bg-base)]/60 border border-[var(--border-subtle)]/20" />
+            <div className="h-9 rounded bg-[var(--bg-base)]/60/50" />
+          </div>
+          <div className="mt-2 space-y-1.5">
             {[1, 2, 3].map(i => (
               <div key={i} className="h-[60px] rounded-lg bg-[var(--bg-base)]/60 border border-[var(--border-subtle)]/20" />
             ))}
           </div>
-          <div className="h-44 rounded-lg bg-[var(--bg-base)]/60 border border-[var(--border-subtle)]/20" />
-          <div className="grid grid-cols-1 xl:grid-cols-12 gap-3">
+          <div className="mt-8 h-44 rounded-lg bg-[var(--bg-base)]/60 border border-[var(--border-subtle)]/20" />
+          <div className="mt-6 grid grid-cols-1 xl:grid-cols-12 gap-4">
             <div className="xl:col-span-8 h-40 rounded-lg bg-[var(--bg-base)]/60 border border-[var(--border-subtle)]/20" />
             <div className="xl:col-span-4 h-40 rounded-lg bg-[var(--bg-base)]/60 border border-[var(--border-subtle)]/20" />
           </div>
@@ -188,81 +190,88 @@ export default function PositionsPage() {
       variants={pageEnter}
       initial="hidden"
       animate="visible"
-      className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 py-5 space-y-4"
+      className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 py-5"
     >
-      <PortfolioHeroStrip
-        portfolio={portfolio.portfolio}
-        risk={portfolio.risk}
-        positions={portfolio.positions}
-        quotes={quotes}
-        grade={portfolioGrade}
-        primaryMarket={primaryMarket}
-        marketsTraded={marketsTraded}
-        isRefreshing={isRefreshing}
-        onRefresh={async () => {
-          if (isRefreshing) return
-          setIsRefreshing(true)
-          try { await refreshPortfolio() } catch (e) { console.error('Refresh failed:', e) }
-          finally { setTimeout(() => setIsRefreshing(false), 800) }
-        }}
-        onGradeClick={handleSendMessage}
-      />
-
-      {warnings.length > 0 && (
-        <WarningBanner
-          warnings={warnings}
-          onAction={(w) => {
-            trackEvent({ eventType: 'alert_acted', feature: 'positions', data: { alertType: w.title } })
-            handleSendMessage(`I have a trading warning: ${w.title}. ${w.message} What should I do?`)
+      {/* ── Command Center: Hero + Warnings + Filters ─────────────── */}
+      <div className="space-y-3">
+        <PortfolioHeroStrip
+          portfolio={portfolio.portfolio}
+          risk={portfolio.risk}
+          positions={portfolio.positions}
+          quotes={quotes}
+          grade={portfolioGrade}
+          primaryMarket={primaryMarket}
+          marketsTraded={marketsTraded}
+          isRefreshing={isRefreshing}
+          onRefresh={async () => {
+            if (isRefreshing) return
+            setIsRefreshing(true)
+            try { await refreshPortfolio() } catch (e) { console.error('Refresh failed:', e) }
+            finally { setTimeout(() => setIsRefreshing(false), 800) }
           }}
+          onGradeClick={handleSendMessage}
         />
-      )}
 
-      <PositionFilters
-        positions={portfolio.positions}
-        activeFilter={activeFilter}
-        sortBy={sortBy}
-        searchQuery={searchQuery}
-        onFilterChange={setActiveFilter}
-        onSortChange={setSortBy}
-        onSearchChange={setSearchQuery}
-        onLogTrade={() => setShowLogTradeModal(true)}
-        showConnectBroker
-      />
+        {warnings.length > 0 && (
+          <WarningBanner
+            warnings={warnings}
+            onAction={(w) => {
+              trackEvent({ eventType: 'alert_acted', feature: 'positions', data: { alertType: w.title } })
+              handleSendMessage(`I have a trading warning: ${w.title}. ${w.message} What should I do?`)
+            }}
+          />
+        )}
 
-      <SectionDivider
-        label={`Positions · ${portfolio.positions.length}`}
-        right={
-          <Link href="/journal?tab=trades"
-            className="text-[10px] font-[var(--font-geist-mono)] uppercase tracking-[0.08em] text-[var(--text-muted)] hover:text-[var(--accent-primary)] transition-colors">
-            Closed →
-          </Link>
-        }
-      />
-      <PositionList
-        positions={portfolio.positions}
-        portfolioStats={portfolio.portfolio}
-        insights={insights}
-        tickerHistory={tickerHistory}
-        quotes={quotes}
-        watchlistTickers={watchlistTickers}
-        activeFilter={activeFilter}
-        sortBy={sortBy}
-        searchQuery={searchQuery}
-        onScanWithPelican={handleScanPosition}
-        onEdit={handleEditPosition}
-        onClose={handleClosePosition}
-        onLogTrade={() => setShowLogTradeModal(true)}
-      />
+        <PositionFilters
+          positions={portfolio.positions}
+          activeFilter={activeFilter}
+          sortBy={sortBy}
+          searchQuery={searchQuery}
+          onFilterChange={setActiveFilter}
+          onSortChange={setSortBy}
+          onSearchChange={setSearchQuery}
+          onLogTrade={() => setShowLogTradeModal(true)}
+          showConnectBroker
+        />
+      </div>
 
+      {/* ── Positions: core content ───────────────────────────────── */}
+      <div className="mt-2 space-y-1">
+        <SectionDivider
+          label={`Positions · ${portfolio.positions.length}`}
+          right={
+            <Link href="/journal?tab=trades"
+              className="text-[10px] font-[var(--font-geist-mono)] uppercase tracking-[0.08em] text-[var(--text-muted)] hover:text-[var(--accent-primary)] transition-colors">
+              Closed →
+            </Link>
+          }
+        />
+        <PositionList
+          positions={portfolio.positions}
+          portfolioStats={portfolio.portfolio}
+          insights={insights}
+          tickerHistory={tickerHistory}
+          quotes={quotes}
+          watchlistTickers={watchlistTickers}
+          activeFilter={activeFilter}
+          sortBy={sortBy}
+          searchQuery={searchQuery}
+          onScanWithPelican={handleScanPosition}
+          onEdit={handleEditPosition}
+          onClose={handleClosePosition}
+          onLogTrade={() => setShowLogTradeModal(true)}
+        />
+      </div>
+
+      {/* ── Analysis: Charts + Actions + Risk ─────────────────────── */}
       {portfolio.positions.length > 0 && (
-        <>
+        <div className="mt-8 space-y-4">
           <SectionDivider label="P&L History" />
           <PortfolioPnlChart data={pnlHistory} isLoading={pnlHistoryLoading} />
-        </>
+        </div>
       )}
 
-      <div className="grid grid-cols-1 xl:grid-cols-12 gap-4">
+      <div className="mt-6 grid grid-cols-1 xl:grid-cols-12 gap-4">
         <div className="xl:col-span-8">
           <SectionDivider label="Actions" />
           <TodaysActions
@@ -282,11 +291,16 @@ export default function PositionsPage() {
         </div>
       </div>
 
-      <SectionDivider label="Intelligence" />
-      <PortfolioIntelligence
-        positions={portfolio.positions} portfolio={portfolio.portfolio}
-        risk={portfolio.risk} onSendMessage={handleSendMessage}
-      />
+      {/* ── Intelligence: separated from dense data above ─────────── */}
+      <div className="mt-8">
+        <SectionDivider label="Intelligence" />
+        <div className="mt-1">
+          <PortfolioIntelligence
+            positions={portfolio.positions} portfolio={portfolio.portfolio}
+            risk={portfolio.risk} onSendMessage={handleSendMessage}
+          />
+        </div>
+      </div>
 
       {closingTrade && (
         <CloseTradeModal

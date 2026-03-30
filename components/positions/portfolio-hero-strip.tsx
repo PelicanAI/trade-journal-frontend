@@ -146,10 +146,9 @@ export function PortfolioHeroStrip({
           </div>
         </div>
 
-        {/* Right: Stat Cells */}
-        <div className="flex flex-wrap items-start gap-6 ml-auto">
-          {/* Exposure */}
-          <div className="bg-[var(--bg-elevated)]/40 rounded-md px-3 py-2 border border-[var(--border-subtle)]/20">
+        {/* Right: Stat Cells — plain labels, no card borders */}
+        <div className="flex flex-wrap items-start gap-x-8 gap-y-3 ml-auto">
+          <div>
             <span className="text-[10px] font-medium uppercase tracking-[0.08em] text-[var(--text-muted)] block">
               Exposure
             </span>
@@ -158,8 +157,7 @@ export function PortfolioHeroStrip({
             </span>
           </div>
 
-          {/* Direction */}
-          <div className="bg-[var(--bg-elevated)]/40 rounded-md px-3 py-2 border border-[var(--border-subtle)]/20">
+          <div>
             <span className="text-[10px] font-medium uppercase tracking-[0.08em] text-[var(--text-muted)] block">
               Direction
             </span>
@@ -168,8 +166,7 @@ export function PortfolioHeroStrip({
             </span>
           </div>
 
-          {/* Open count */}
-          <div className="bg-[var(--bg-elevated)]/40 rounded-md px-3 py-2 border border-[var(--border-subtle)]/20">
+          <div>
             <span className="text-[10px] font-medium uppercase tracking-[0.08em] text-[var(--text-muted)] block">
               Open
             </span>
@@ -178,9 +175,8 @@ export function PortfolioHeroStrip({
             </span>
           </div>
 
-          {/* Grade */}
           {grade && (
-            <div className="bg-[var(--bg-elevated)]/40 rounded-md px-3 py-2 border border-[var(--border-subtle)]/20">
+            <div>
               <span className="text-[10px] font-medium uppercase tracking-[0.08em] text-[var(--text-muted)] block">
                 Grade
               </span>
@@ -206,15 +202,14 @@ export function PortfolioHeroStrip({
             </div>
           )}
 
-          {/* Refresh */}
-          <div className="flex flex-col justify-end self-center">
+          <div className="self-center">
             <button
               onClick={onRefresh}
               disabled={isRefreshing}
-              className={`w-8 h-8 rounded-md bg-[var(--bg-elevated)]/40 border border-[var(--border-subtle)]/20 flex items-center justify-center transition-colors ${
+              className={`w-8 h-8 rounded-md flex items-center justify-center transition-colors ${
                 isRefreshing
                   ? "text-[var(--text-muted)] opacity-50 cursor-not-allowed"
-                  : "text-[var(--text-muted)] hover:text-[var(--text-primary)] cursor-pointer"
+                  : "text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:bg-white/[0.04] cursor-pointer"
               }`}
               aria-label="Refresh portfolio"
             >
