@@ -492,60 +492,7 @@ export default function MorningPage() {
       options: 'options',
     }
 
-    let prompt = `Date: ${dateStr}
-Time: ${timeStr}
-
-MY OPEN POSITIONS:
-${positionsSummary}
-
-MY WATCHLIST:
-${watchlistSummary}
-
-TODAY'S TOP MOVERS:
-${moversSummary || 'Loading...'}
-
-Morning brief — key events this week, what's moving, and where are the major indices.
-
-Cover ALL of the following sections:
-
-${briefConfig.overnightRecap}
-
-${briefConfig.keyLevels}
-
-**3. MY POSITIONS UPDATE**
-- For each of my open positions: current price vs my entry, how far from stop/target, any overnight news affecting them
-- Risk assessment: which positions need attention today?
-- Any positions approaching stop loss or take profit?
-
-**4. WATCHLIST OPPORTUNITIES**
-- For each ticker on my watchlist: current setup, key levels to watch, any catalysts today
-- Which watchlist items have the best risk/reward for entry today?
-
-**5. MACRO & CATALYSTS**
-- Economic data releases today (times, consensus, potential impact)
-- Fed speakers or central bank events
-- Earnings reports today (pre-market and after-hours)
-- Any geopolitical developments affecting markets
-
-${briefConfig.sectorRotation}
-
-**7. TOP MOVERS ANALYSIS**
-- Why are today's biggest movers moving? (earnings, news, technical breakouts)
-- Any of these relevant to my positions or watchlist?
-
-**8. TRADE IDEAS**
-- 1-2 high-conviction trade ideas based on today's setup
-- Entry, stop, target for each
-- Thesis and catalyst
-
-**9. RISK WARNINGS**
-- What could go wrong today? Key risk events
-- Unusual options activity or volatility signals
-- Any signs of market stress?
-
-${briefConfig.gamePlan}
-
-Keep it dense, actionable, and personalized to MY positions and watchlist. Use markdown headers for each section.`
+    let prompt = `Morning brief — key events this week, what's moving, and where are the major indices.`
 
     // Append watchlist custom alert context
     if (watchlistAlertContext) {
