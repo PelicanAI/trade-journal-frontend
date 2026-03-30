@@ -12,6 +12,9 @@ const nextConfig = {
   images: {
     formats: ['image/avif', 'image/webp'],
     unoptimized: false,
+    remotePatterns: [
+      { protocol: 'https', hostname: 'api.elbstream.com', pathname: '/logos/**' },
+    ],
   },
   // Security headers to protect against common attacks
   async headers() {

@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect, useRef } from "react"
-import { motion, AnimatePresence } from "framer-motion"
+import { m, AnimatePresence } from "framer-motion"
 import { cn } from "@/lib/utils"
 import { messageVariants } from "@/lib/animation-config"
 
@@ -149,7 +149,7 @@ export function EnhancedTypingDots({
   const text = showContextAware ? displayText : fallbackMessages[variant]
 
   return (
-    <motion.div
+    <m.div
       initial={messageVariants.thinkingIndicator.initial}
       animate={messageVariants.thinkingIndicator.animate}
       exit={messageVariants.thinkingIndicator.exit}
@@ -160,7 +160,7 @@ export function EnhancedTypingDots({
     >
       <div className="flex items-center gap-1">
         {[0, 1, 2].map((index) => (
-          <motion.div
+          <m.div
             key={index}
             className={cn("bg-current rounded-full", sizeClasses[size])}
             animate={{
@@ -178,7 +178,7 @@ export function EnhancedTypingDots({
       </div>
 
       <AnimatePresence mode="wait">
-        <motion.span
+        <m.span
           key={text}
           className="text-sm font-medium thinking-shimmer-text"
           initial={{ opacity: 0 }}
@@ -187,8 +187,8 @@ export function EnhancedTypingDots({
           transition={{ duration: 0.2 }}
         >
           {text}...
-        </motion.span>
+        </m.span>
       </AnimatePresence>
-    </motion.div>
+    </m.div>
   )
 }

@@ -1,6 +1,6 @@
 'use client'
 
-import { motion } from 'framer-motion'
+import { m } from 'framer-motion'
 import { ChartBar } from '@phosphor-icons/react'
 import { PelicanCard, PelicanButton } from '@/components/ui/pelican'
 import { cn } from '@/lib/utils'
@@ -24,7 +24,7 @@ export function NotEnoughData({ totalTrades, minNeeded, onLogTrade }: NotEnoughD
   const progress = Math.min(1, totalTrades / minNeeded)
 
   return (
-    <motion.div
+    <m.div
       initial={{ opacity: 0, y: 8 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3, ease: [0.25, 0.1, 0.25, 1] }}
@@ -62,7 +62,7 @@ export function NotEnoughData({ totalTrades, minNeeded, onLogTrade }: NotEnoughD
             </span>
           </div>
           <div className="h-1.5 rounded-full bg-[var(--bg-elevated)] overflow-hidden">
-            <motion.div
+            <m.div
               className="h-full rounded-full"
               style={{ backgroundColor: 'var(--accent-primary)' }}
               initial={{ width: 0 }}
@@ -79,6 +79,6 @@ export function NotEnoughData({ totalTrades, minNeeded, onLogTrade }: NotEnoughD
           </PelicanButton>
         )}
       </PelicanCard>
-    </motion.div>
+    </m.div>
   )
 }

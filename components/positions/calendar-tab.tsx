@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useMemo } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
+import { m, AnimatePresence } from 'framer-motion'
 import { CaretLeft, CaretRight, CalendarBlank, X } from '@phosphor-icons/react'
 import { Trade } from '@/hooks/use-trades'
 import { PelicanCard, PelicanButton, staggerContainer, staggerItem } from '@/components/ui/pelican'
@@ -121,14 +121,14 @@ export function CalendarTab({ trades, isLoading, onOpenLogTrade }: CalendarTabPr
   })
 
   return (
-    <motion.div
+    <m.div
       variants={staggerContainer}
       initial="hidden"
       animate="visible"
       className="space-y-4"
     >
       {/* Calendar Card */}
-      <motion.div variants={staggerItem}>
+      <m.div variants={staggerItem}>
         <PelicanCard>
           {/* Header: navigation */}
           <div className="flex items-center justify-between mb-4">
@@ -211,12 +211,12 @@ export function CalendarTab({ trades, isLoading, onOpenLogTrade }: CalendarTabPr
             ))}
           </div>
         </PelicanCard>
-      </motion.div>
+      </m.div>
 
       {/* Day Detail Panel */}
       <AnimatePresence>
         {selectedDate && selectedDayTrades.length > 0 && (
-          <motion.div
+          <m.div
             key="day-detail"
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: 'auto' }}
@@ -229,20 +229,20 @@ export function CalendarTab({ trades, isLoading, onOpenLogTrade }: CalendarTabPr
               totalPnl={selectedDayPnl}
               onClose={() => setSelectedDate(null)}
             />
-          </motion.div>
+          </m.div>
         )}
       </AnimatePresence>
 
       {/* Monthly Summary */}
       {closedTradesInMonth.length > 0 && (
-        <motion.div variants={staggerItem}>
+        <m.div variants={staggerItem}>
           <MonthSummary stats={monthStats} monthName={monthName} />
-        </motion.div>
+        </m.div>
       )}
 
       {/* Empty month */}
       {closedTradesInMonth.length === 0 && (
-        <motion.div variants={staggerItem}>
+        <m.div variants={staggerItem}>
           <PelicanCard>
             <div className="flex flex-col items-center justify-center py-10">
               <CalendarBlank size={28} className="text-[var(--text-muted)]" />
@@ -254,9 +254,9 @@ export function CalendarTab({ trades, isLoading, onOpenLogTrade }: CalendarTabPr
               </p>
             </div>
           </PelicanCard>
-        </motion.div>
+        </m.div>
       )}
-    </motion.div>
+    </m.div>
   )
 }
 

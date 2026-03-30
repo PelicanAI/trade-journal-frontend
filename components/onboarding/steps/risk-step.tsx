@@ -4,7 +4,7 @@ import { useState } from 'react'
 import { cn } from '@/lib/utils'
 import { SurveyOptionCard } from '@/components/onboarding/survey-option-card'
 import { CaretDown, Warning } from '@phosphor-icons/react'
-import { motion, AnimatePresence } from 'framer-motion'
+import { m, AnimatePresence } from 'framer-motion'
 
 const ACCOUNT_SIZES = [
   { value: 'under_1k', label: 'Under $1,000' },
@@ -48,7 +48,7 @@ export function RiskStep({
     primaryStyle && PDT_STYLES.includes(primaryStyle)
 
   return (
-    <motion.div
+    <m.div
       initial={{ opacity: 0, y: 8 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3, ease: [0.25, 0.1, 0.25, 1] }}
@@ -110,7 +110,7 @@ export function RiskStep({
         </button>
         <AnimatePresence>
           {explainerOpen && (
-            <motion.div
+            <m.div
               initial={{ height: 0, opacity: 0 }}
               animate={{ height: 'auto', opacity: 1 }}
               exit={{ height: 0, opacity: 0 }}
@@ -131,7 +131,7 @@ export function RiskStep({
                   a widely recommended starting point.
                 </p>
               </div>
-            </motion.div>
+            </m.div>
           )}
         </AnimatePresence>
       </div>
@@ -139,7 +139,7 @@ export function RiskStep({
       {/* PDT Warning */}
       <AnimatePresence>
         {showPdtWarning && (
-          <motion.div
+          <m.div
             initial={{ opacity: 0, y: 4 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 4 }}
@@ -153,9 +153,9 @@ export function RiskStep({
                 under the Pattern Day Trader rule. Pelican will help you track this.
               </p>
             </div>
-          </motion.div>
+          </m.div>
         )}
       </AnimatePresence>
-    </motion.div>
+    </m.div>
   )
 }

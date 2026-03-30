@@ -2,7 +2,7 @@
 
 import type React from "react"
 import Image from "next/image"
-import { motion, AnimatePresence } from "framer-motion"
+import { m, AnimatePresence } from "framer-motion"
 import { useEffect, useState, useCallback, useRef } from "react"
 import { StreamingMessage } from "./streaming-message"
 import { WelcomeScreen } from "./welcome-screen"
@@ -293,14 +293,14 @@ export function ChatContainer({
       >
         <WelcomeScreen onQuickStart={onQuickStart || (() => {})} onSettingsClick={onSettingsClick} disabled={outOfCredits} />
         {isDragOver && (
-          <motion.div
+          <m.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.2 }}
           >
             <DragDropOverlay />
-          </motion.div>
+          </m.div>
         )}
       </div>
     )
@@ -375,14 +375,14 @@ export function ChatContainer({
                   }
 
               return message.role === "system" ? (
-                <motion.div
+                <m.div
                   key={message.id}
                   {...animationProps}
                 >
                   <SystemMessage message={message} />
-                </motion.div>
+                </m.div>
               ) : (
-                <motion.div
+                <m.div
                   key={message.id}
                   {...animationProps}
                 >
@@ -416,7 +416,7 @@ export function ChatContainer({
                     onSubmitPrompt={onSubmitPrompt}
                     onSaveInsight={onSaveInsight}
                   />
-                </motion.div>
+                </m.div>
               )
             })}
           </AnimatePresence>
@@ -474,27 +474,27 @@ export function ChatContainer({
 
       <AnimatePresence>
         {showJump && (
-          <motion.div
+          <m.div
             initial={{ opacity: 0, scale: 0.8, y: 20 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.8, y: 20 }}
             transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
           >
             <JumpToLatestButton onJumpToLatest={() => scrollToBottom("smooth")} lastNewMessageAt={lastNewMessageAt} />
-          </motion.div>
+          </m.div>
         )}
       </AnimatePresence>
 
       <AnimatePresence>
         {isDragOver && (
-          <motion.div
+          <m.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.2 }}
           >
             <DragDropOverlay />
-          </motion.div>
+          </m.div>
         )}
       </AnimatePresence>
     </div>

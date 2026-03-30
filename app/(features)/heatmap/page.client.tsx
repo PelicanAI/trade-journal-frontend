@@ -2,7 +2,7 @@
 
 import { useState, useRef, useEffect, useMemo, useCallback, Suspense } from "react"
 import { useSearchParams } from "next/navigation"
-import { motion } from "framer-motion"
+import { m } from "framer-motion"
 import { useHeatmap, type HeatmapTimeframe, type HeatmapMarket } from "@/hooks/use-heatmap"
 import { usePelicanPanelContext } from "@/providers/pelican-panel-provider"
 import { useTrades } from "@/hooks/use-trades"
@@ -450,7 +450,7 @@ function HeatmapPageInner() {
   }
 
   return (
-    <motion.div
+    <m.div
       variants={pageEnter}
       initial="hidden"
       animate="visible"
@@ -787,6 +787,6 @@ function HeatmapPageInner() {
           )}
         </div>
       </div>
-    </motion.div>
+    </m.div>
   )
 }

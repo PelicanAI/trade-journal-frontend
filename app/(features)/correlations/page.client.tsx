@@ -2,7 +2,7 @@
 
 import { useState, useRef, useEffect, useCallback } from 'react'
 import Link from 'next/link'
-import { motion, AnimatePresence } from 'framer-motion'
+import { m, AnimatePresence } from 'framer-motion'
 import { ArrowsClockwise, Warning, TrendUp, TrendDown, Minus, Shuffle, ChartLineUp, Briefcase, Graph, ChatCircleDots, Plus } from '@phosphor-icons/react'
 import { useCorrelationMatrix } from '@/hooks/use-correlations'
 import { CorrelationMatrix } from '@/components/correlations/correlation-matrix'
@@ -133,7 +133,7 @@ export default function CorrelationsPageClient() {
 
   return (
     <div className="h-full overflow-y-auto p-4 lg:p-6">
-      <motion.div
+      <m.div
         className="max-w-[1600px] mx-auto"
         initial={{ opacity: 0, y: 8 }}
         animate={{ opacity: 1, y: 0 }}
@@ -271,7 +271,7 @@ export default function CorrelationsPageClient() {
         {data && data.correlations.length > 0 && (
           <AnimatePresence mode="wait">
             {activeTab === 'market' ? (
-              <motion.div
+              <m.div
                 key="market"
                 initial={{ opacity: 0, x: -12 }}
                 animate={{ opacity: 1, x: 0 }}
@@ -326,9 +326,9 @@ export default function CorrelationsPageClient() {
                     />
                   </div>
                 )}
-              </motion.div>
+              </m.div>
             ) : (
-              <motion.div
+              <m.div
                 key="portfolio"
                 initial={{ opacity: 0, x: 12 }}
                 animate={{ opacity: 1, x: 0 }}
@@ -354,11 +354,11 @@ export default function CorrelationsPageClient() {
                     />
                   </div>
                 )}
-              </motion.div>
+              </m.div>
             )}
           </AnimatePresence>
         )}
-      </motion.div>
+      </m.div>
     </div>
   )
 }

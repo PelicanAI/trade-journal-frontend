@@ -3,7 +3,7 @@
 import { useState, useRef, useEffect, FormEvent } from 'react'
 import { GraduationCap, PaperPlaneRight, Trash } from '@phosphor-icons/react'
 import { cn } from '@/lib/utils'
-import { motion, AnimatePresence } from 'framer-motion'
+import { m, AnimatePresence } from 'framer-motion'
 import { formatLine } from '@/components/chat/message/format-utils'
 
 interface EducationChatProps {
@@ -163,7 +163,7 @@ export function EducationChat({ selectedTerm, onClear }: EducationChatProps) {
       <div className="flex-1 overflow-y-auto p-3 space-y-3">
         <AnimatePresence initial={false}>
           {messages.map((msg, index) => (
-            <motion.div
+            <m.div
               key={index}
               initial={{ opacity: 0, y: 8 }}
               animate={{ opacity: 1, y: 0 }}
@@ -193,13 +193,13 @@ export function EducationChat({ selectedTerm, onClear }: EducationChatProps) {
                   {msg.content}
                 </div>
               )}
-            </motion.div>
+            </m.div>
           ))}
         </AnimatePresence>
 
         {/* Loading indicator */}
         {isLoading && (
-          <motion.div
+          <m.div
             initial={{ opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
             className="flex justify-start"
@@ -215,7 +215,7 @@ export function EducationChat({ selectedTerm, onClear }: EducationChatProps) {
                 ))}
               </div>
             </div>
-          </motion.div>
+          </m.div>
         )}
 
         <div ref={messagesEndRef} />

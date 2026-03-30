@@ -7,7 +7,7 @@ import {
   TrendUp, Lightbulb, Warning, GameController, Article,
   BookOpenText,
 } from '@phosphor-icons/react'
-import { motion, AnimatePresence } from 'framer-motion'
+import { m, AnimatePresence } from 'framer-motion'
 import { cn } from '@/lib/utils'
 import { formatLine, applyTickerLinks } from '@/components/chat/message/format-utils'
 import { SP500_TICKERS, NASDAQ_100 } from '@/lib/trading/ticker-lists'
@@ -233,7 +233,7 @@ export function InteractiveBrief({ content, isStreaming, onTickerClick, onShare 
       {/* Collapsible brief body */}
       <AnimatePresence initial={false}>
         {!briefCollapsed && (
-          <motion.div
+          <m.div
             key="brief-body"
             initial={{ height: 0, opacity: 0 }}
             animate={{ height: 'auto', opacity: 1 }}
@@ -362,7 +362,7 @@ export function InteractiveBrief({ content, isStreaming, onTickerClick, onShare 
                 })}
               </div>
             </div>
-          </motion.div>
+          </m.div>
         )}
       </AnimatePresence>
     </div>

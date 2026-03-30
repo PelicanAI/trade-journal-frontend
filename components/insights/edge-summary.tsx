@@ -1,7 +1,7 @@
 'use client'
 
 import { useMemo } from 'react'
-import { motion } from 'framer-motion'
+import { m } from 'framer-motion'
 import { Trophy, ChatTeardropText } from '@phosphor-icons/react'
 import { PelicanCard, PelicanButton, staggerContainer, staggerItem } from '@/components/ui/pelican'
 import { cn } from '@/lib/utils'
@@ -171,7 +171,7 @@ export function EdgeSummary({ insights, onAskPelican, compact = false }: EdgeSum
   }
 
   return (
-    <motion.div
+    <m.div
       initial={{ opacity: 0, y: 6 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.25, ease: [0.25, 0.1, 0.25, 1] }}
@@ -201,14 +201,14 @@ export function EdgeSummary({ insights, onAskPelican, compact = false }: EdgeSum
         </p>
 
         {/* Edge pills */}
-        <motion.div
+        <m.div
           variants={staggerContainer}
           initial="hidden"
           animate="visible"
           className="flex flex-wrap gap-2 mb-4"
         >
           {edges.map((edge) => (
-            <motion.div key={edge.label} variants={staggerItem}>
+            <m.div key={edge.label} variants={staggerItem}>
               <div
                 className={cn(
                   'flex items-center gap-2 rounded-lg px-3 py-2',
@@ -227,9 +227,9 @@ export function EdgeSummary({ insights, onAskPelican, compact = false }: EdgeSum
                   {edge.detail}
                 </p>
               </div>
-            </motion.div>
+            </m.div>
           ))}
-        </motion.div>
+        </m.div>
 
         {/* CTA */}
         {onAskPelican && (
@@ -243,6 +243,6 @@ export function EdgeSummary({ insights, onAskPelican, compact = false }: EdgeSum
           </PelicanButton>
         )}
       </PelicanCard>
-    </motion.div>
+    </m.div>
   )
 }

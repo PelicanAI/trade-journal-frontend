@@ -2,6 +2,7 @@
 
 import type React from "react"
 
+import { LazyMotion, domAnimation } from "framer-motion"
 import { AuthProvider } from "./auth-provider"
 import { SWRProvider } from "./swr-provider"
 import { ToastProvider } from "./toast-provider"
@@ -24,7 +25,9 @@ export function Providers({ children }: { children: React.ReactNode }) {
           <AuthProvider>
             <CreditsProvider>
               <TooltipProvider delayDuration={300} skipDelayDuration={100}>
-                <ToastProvider>{children}</ToastProvider>
+                <LazyMotion features={domAnimation} strict>
+                  <ToastProvider>{children}</ToastProvider>
+                </LazyMotion>
               </TooltipProvider>
             </CreditsProvider>
           </AuthProvider>

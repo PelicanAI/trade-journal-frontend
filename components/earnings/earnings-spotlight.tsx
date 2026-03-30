@@ -1,6 +1,6 @@
 "use client"
 
-import { motion } from 'framer-motion'
+import { m } from 'framer-motion'
 import { staggerContainer } from '@/components/ui/pelican/motion-variants'
 import { SpotlightCard } from '@/components/earnings/spotlight-card'
 import type { EnrichedEarningsEvent } from '@/types/earnings'
@@ -28,7 +28,7 @@ export function EarningsSpotlight({ events, onClick }: EarningsSpotlightProps) {
         </p>
       </div>
 
-      <motion.div
+      <m.div
         variants={staggerContainer}
         initial="hidden"
         animate="visible"
@@ -41,7 +41,7 @@ export function EarningsSpotlight({ events, onClick }: EarningsSpotlightProps) {
             onClick={onClick}
           />
         ))}
-      </motion.div>
+      </m.div>
     </div>
   )
 }

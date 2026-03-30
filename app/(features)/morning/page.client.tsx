@@ -2,7 +2,7 @@
 
 import { useMemo, useState, useEffect, useCallback, useRef } from "react"
 import { useRouter } from "next/navigation"
-import { motion } from "framer-motion"
+import { m } from "framer-motion"
 import { useTrades } from "@/hooks/use-trades"
 import { usePlaybooks } from "@/hooks/use-playbooks"
 import { useMorningBrief } from "@/hooks/use-morning-brief"
@@ -835,7 +835,7 @@ Keep it dense, actionable, and personalized to MY positions and watchlist. Use m
       )}
 
       {/* Pelican Brief — full width, above the grid */}
-      <motion.div
+      <m.div
         initial={{ opacity: 0, y: 8 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.3, ease: [0.25, 0.1, 0.25, 1] }}
@@ -927,10 +927,10 @@ Keep it dense, actionable, and personalized to MY positions and watchlist. Use m
             </div>
           )}
         </PelicanCard>
-      </motion.div>
+      </m.div>
 
       {/* Two-column grid */}
-      <motion.div
+      <m.div
         variants={staggerContainer}
         initial="hidden"
         animate="visible"
@@ -939,7 +939,7 @@ Keep it dense, actionable, and personalized to MY positions and watchlist. Use m
         {/* Left column */}
         <div className="space-y-6">
           {/* Active Exposure */}
-          <motion.div variants={staggerItem}>
+          <m.div variants={staggerItem}>
             <PelicanCard accentGlow className="p-5">
               {/* Enhanced header with total P&L */}
               <div className="mb-4 flex items-center justify-between">
@@ -1030,10 +1030,10 @@ Keep it dense, actionable, and personalized to MY positions and watchlist. Use m
                 </div>
               )}
             </PelicanCard>
-          </motion.div>
+          </m.div>
 
           {/* Market Movers */}
-          <motion.div variants={staggerItem}>
+          <m.div variants={staggerItem}>
             <PelicanCard className="p-5">
               <div className="mb-4">
                 <div className="flex items-center justify-between mb-3">
@@ -1170,61 +1170,61 @@ Keep it dense, actionable, and personalized to MY positions and watchlist. Use m
                 </div>
               )}
             </PelicanCard>
-          </motion.div>
+          </m.div>
         </div>
 
         {/* Right column */}
         <div className="space-y-6">
           {/* Today's Playbook */}
-          <motion.div variants={staggerItem}>
+          <m.div variants={staggerItem}>
             <TodaysPlaybook
               economicEvents={economicEvents}
               economicLoading={economicLoading}
               onAnalyze={(ticker, prompt) => openWithPrompt(ticker, prompt, 'morning', 'brief_action')}
             />
-          </motion.div>
+          </m.div>
 
           {/* Watchlist Radar */}
-          <motion.div variants={staggerItem}>
+          <m.div variants={staggerItem}>
             <WatchlistRadar
               watchlistItems={watchlistItems}
               quotes={quotes}
               onAnalyze={(ticker, prompt) => openWithPrompt(ticker, prompt, 'morning', 'brief_action')}
             />
-          </motion.div>
+          </m.div>
 
           {/* Your Edge */}
           {behavioralInsights?.has_enough_data && (
-            <motion.div variants={staggerItem}>
+            <m.div variants={staggerItem}>
               <EdgeSummary
                 insights={behavioralInsights}
                 onAskPelican={(prompt) => openWithPrompt(null, prompt, 'morning', 'brief_action')}
                 compact
               />
-            </motion.div>
+            </m.div>
           )}
 
           {/* Risk Dashboard */}
-          <motion.div variants={staggerItem}>
+          <m.div variants={staggerItem}>
             <RiskDashboard
               openTrades={openTrades}
               closedTrades={closedTrades ?? []}
               quotes={quotes}
               onAnalyze={(ticker, prompt) => openWithPrompt(ticker, prompt, 'morning', 'brief_action')}
             />
-          </motion.div>
+          </m.div>
 
           {/* News Headlines (placeholder) */}
-          <motion.div variants={staggerItem}>
+          <m.div variants={staggerItem}>
             <NewsHeadlines
               onAnalyze={(prompt) => openWithPrompt(null, prompt, 'morning', 'brief_action')}
             />
-          </motion.div>
+          </m.div>
         </div>
-      </motion.div>
+      </m.div>
 
       {/* Sector Mini Heatmap — full width below the grid */}
-      <motion.div
+      <m.div
         initial={{ opacity: 0, y: 8 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.3, delay: 0.2 }}
@@ -1250,7 +1250,7 @@ Keep it dense, actionable, and personalized to MY positions and watchlist. Use m
             router.push(`/heatmap?sector=${encodeURIComponent(mapped)}`)
           }}
         />
-      </motion.div>
+      </m.div>
 
       {/* Footer disclaimer */}
       <p className="text-center text-xs text-[var(--text-disabled)] mt-8 pb-4">

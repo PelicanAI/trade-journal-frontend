@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect, useRef, useCallback } from "react"
-import { motion, AnimatePresence } from "framer-motion"
+import { m, AnimatePresence } from "framer-motion"
 import {
   MagnifyingGlass,
   ChartLineUp,
@@ -122,7 +122,7 @@ export function SlashCommandMenu({
   return (
     <AnimatePresence>
       {visible && (
-        <motion.div
+        <m.div
           ref={menuRef}
           initial={{ opacity: 0, y: 6 }}
           animate={{ opacity: 1, y: 0 }}
@@ -179,7 +179,7 @@ export function SlashCommandMenu({
               </div>
             )
           })}
-        </motion.div>
+        </m.div>
       )}
     </AnimatePresence>
   )

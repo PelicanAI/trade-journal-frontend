@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useMemo, memo, useCallback } from "react"
-import { motion } from "framer-motion"
+import { m } from "framer-motion"
 import { EnhancedTypingDots } from "../enhanced-typing-dots"
 import { detectDataTable, detectLabelValueList, type LabelValueTableResult } from "@/lib/data-parsers"
 import { DataTable } from "@/components/chat/data-visualizations/data-table"
@@ -297,7 +297,7 @@ export const MessageContent = memo(function MessageContent({
   const isLargeContent = safeContent.length > 2000
 
   return (
-    <motion.div
+    <m.div
       className="leading-normal tracking-normal font-normal break-words overflow-wrap-anywhere max-w-full text-rendering-optimizeLegibility"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
@@ -329,7 +329,7 @@ export const MessageContent = memo(function MessageContent({
           )
         })}
       </div>
-    </motion.div>
+    </m.div>
   )
 }, (prevProps, nextProps) => {
   return (

@@ -1,6 +1,6 @@
 "use client"
 
-import { motion } from "framer-motion"
+import { m } from "framer-motion"
 import { X } from "@phosphor-icons/react"
 import { IconTooltip } from "@/components/ui/icon-tooltip"
 
@@ -12,7 +12,7 @@ interface DraftIndicatorProps {
 
 export function DraftIndicator({ pendingDraft, onCancel, onEdit }: DraftIndicatorProps) {
   return (
-    <motion.div
+    <m.div
       initial={{ opacity: 0, y: 8 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: 8 }}
@@ -39,6 +39,6 @@ export function DraftIndicator({ pendingDraft, onCancel, onEdit }: DraftIndicato
           </IconTooltip>
         )}
       </div>
-    </motion.div>
+    </m.div>
   )
 }

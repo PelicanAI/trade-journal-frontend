@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
+import { m, AnimatePresence } from 'framer-motion'
 import { Warning, ShieldWarning, CaretDown, CaretUp, X } from '@phosphor-icons/react'
 import { PelicanButton } from '@/components/ui/pelican'
 import { cn } from '@/lib/utils'
@@ -114,7 +114,7 @@ export function WarningBanner({ warnings, onAction }: WarningBannerProps) {
   const firstIndex = warnings.indexOf(first)
 
   return (
-    <motion.div
+    <m.div
       initial={{ opacity: 0, y: -8 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -8 }}
@@ -146,7 +146,7 @@ export function WarningBanner({ warnings, onAction }: WarningBannerProps) {
 
           <AnimatePresence>
             {expanded && (
-              <motion.div
+              <m.div
                 initial={{ opacity: 0, height: 0 }}
                 animate={{ opacity: 1, height: 'auto' }}
                 exit={{ opacity: 0, height: 0 }}
@@ -166,11 +166,11 @@ export function WarningBanner({ warnings, onAction }: WarningBannerProps) {
                     />
                   )
                 })}
-              </motion.div>
+              </m.div>
             )}
           </AnimatePresence>
         </>
       )}
-    </motion.div>
+    </m.div>
   )
 }

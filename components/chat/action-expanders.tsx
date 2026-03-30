@@ -2,7 +2,7 @@
 "use client"
 
 import { useState, useRef, useEffect, useCallback } from "react"
-import { motion, AnimatePresence } from "framer-motion"
+import { m, AnimatePresence } from "framer-motion"
 import { PelicanButton } from "@/components/ui/pelican"
 import { ArrowRight, Warning } from "@phosphor-icons/react"
 import { useAntiTradeCheck, type AntiTradeWarning } from "@/hooks/use-anti-trade-check"
@@ -58,7 +58,7 @@ function ExpanderShell({
   }, [onClose])
 
   return (
-    <motion.div
+    <m.div
       ref={ref}
       initial={{ height: 0, opacity: 0 }}
       animate={{ height: "auto", opacity: 1 }}
@@ -69,7 +69,7 @@ function ExpanderShell({
       <div className="rounded-xl border border-[var(--border-subtle)] bg-[var(--bg-elevated)] p-3 mb-2">
         {children}
       </div>
-    </motion.div>
+    </m.div>
   )
 }
 

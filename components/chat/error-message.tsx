@@ -1,6 +1,6 @@
 "use client"
 
-import { motion } from "framer-motion"
+import { m } from "framer-motion"
 import { Warning, ArrowsClockwise } from "@phosphor-icons/react"
 import { Button } from "@/components/ui/button"
 
@@ -13,7 +13,7 @@ interface ErrorMessageProps {
 export function ErrorMessage({ message, onRetry, variant = "message" }: ErrorMessageProps) {
   if (variant === "banner") {
     return (
-      <motion.div
+      <m.div
         initial={{ opacity: 0, y: -50 }}
         animate={{ opacity: 1, y: 0 }}
         exit={{ opacity: 0, y: -50 }}
@@ -37,12 +37,12 @@ export function ErrorMessage({ message, onRetry, variant = "message" }: ErrorMes
             </Button>
           )}
         </div>
-      </motion.div>
+      </m.div>
     )
   }
 
   return (
-    <motion.div
+    <m.div
       initial={{ opacity: 0, x: -10 }}
       animate={{
         opacity: 1,
@@ -62,7 +62,7 @@ export function ErrorMessage({ message, onRetry, variant = "message" }: ErrorMes
       </div>
 
       <div className="flex-1 min-w-0">
-        <motion.div
+        <m.div
           className="bg-red-50 border border-red-200 rounded-2xl rounded-bl-md px-4 py-3 relative group"
           whileHover={{ scale: 1.01 }}
           transition={{ duration: 0.2 }}
@@ -70,7 +70,7 @@ export function ErrorMessage({ message, onRetry, variant = "message" }: ErrorMes
           <div className="text-red-800 text-sm">{message}</div>
 
           {onRetry && (
-            <motion.div
+            <m.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               className="mt-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200"
@@ -84,10 +84,10 @@ export function ErrorMessage({ message, onRetry, variant = "message" }: ErrorMes
                 <ArrowsClockwise size={12} weight="regular" className="mr-1" />
                 Retry
               </Button>
-            </motion.div>
+            </m.div>
           )}
-        </motion.div>
+        </m.div>
       </div>
-    </motion.div>
+    </m.div>
   )
 }

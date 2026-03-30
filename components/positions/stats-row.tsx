@@ -1,6 +1,6 @@
 'use client'
 
-import { motion } from 'framer-motion'
+import { m } from 'framer-motion'
 import { Wallet, ChartLineUp, Target, TrendUp, TrendDown } from '@phosphor-icons/react'
 import { PelicanCard, staggerContainer, staggerItem } from '@/components/ui/pelican'
 import {
@@ -56,7 +56,7 @@ export function StatsRow({ stats }: StatsRowProps) {
   ]
 
   return (
-    <motion.div
+    <m.div
       variants={staggerContainer}
       initial="hidden"
       animate="visible"
@@ -65,7 +65,7 @@ export function StatsRow({ stats }: StatsRowProps) {
       {cards.map((card) => {
         const Icon = card.icon
         return (
-          <motion.div key={card.label} variants={staggerItem}>
+          <m.div key={card.label} variants={staggerItem}>
             <PelicanCard>
               <div className="flex items-center justify-between mb-2">
                 <span className="text-[var(--text-muted)] uppercase text-xs tracking-wider font-medium">
@@ -112,9 +112,9 @@ export function StatsRow({ stats }: StatsRowProps) {
                 </>
               )}
             </PelicanCard>
-          </motion.div>
+          </m.div>
         )
       })}
-    </motion.div>
+    </m.div>
   )
 }

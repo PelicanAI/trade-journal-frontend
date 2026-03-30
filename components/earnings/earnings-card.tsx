@@ -1,6 +1,6 @@
 "use client"
 
-import { motion } from "framer-motion"
+import { m } from "framer-motion"
 import { Briefcase, BookmarkSimple } from "@phosphor-icons/react"
 import { LogoImg } from "@/components/ui/logo-img"
 import { staggerItem } from "@/components/ui/pelican"
@@ -40,7 +40,7 @@ export function EarningsCard({ event, onClick, highlighted, isWatched, onToggleW
       : null
 
   return (
-    <motion.button
+    <m.button
       variants={staggerItem}
       onClick={() => onClick(event)}
       className={cn(
@@ -151,6 +151,6 @@ export function EarningsCard({ event, onClick, highlighted, isWatched, onToggleW
           </button>
         )}
       </div>
-    </motion.button>
+    </m.button>
   )
 }

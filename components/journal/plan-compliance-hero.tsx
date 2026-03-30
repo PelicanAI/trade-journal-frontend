@@ -1,7 +1,7 @@
 'use client'
 
 import { useMemo, useRef } from 'react'
-import { motion } from 'framer-motion'
+import { m } from 'framer-motion'
 import { Sparkle } from '@phosphor-icons/react'
 import type { Trade } from '@/hooks/use-trades'
 import type { PlanCompliance, RuleScore } from '@/lib/plan-compliance'
@@ -32,7 +32,7 @@ function ScoreRing({ score, size = 88 }: { score: number; size?: number }) {
           stroke="var(--bg-elevated)"
           strokeWidth={strokeWidth}
         />
-        <motion.circle
+        <m.circle
           cx={size / 2}
           cy={size / 2}
           r={radius}
@@ -82,7 +82,7 @@ function RuleBar({ rule }: { rule: RuleScore }) {
           {rule.score}%
         </span>
         <div className="flex-1 h-1.5 rounded-full bg-[var(--bg-elevated)] overflow-hidden">
-          <motion.div
+          <m.div
             className="h-full rounded-full"
             style={{ backgroundColor: color }}
             initial={{ width: 0 }}
@@ -225,7 +225,7 @@ export function PlanComplianceHero({
   ]
 
   return (
-    <motion.div
+    <m.div
       initial={{ opacity: 0, y: 8 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3 }}
@@ -282,6 +282,6 @@ export function PlanComplianceHero({
           </p>
         </div>
       </div>
-    </motion.div>
+    </m.div>
   )
 }

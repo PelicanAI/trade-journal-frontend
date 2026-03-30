@@ -1,7 +1,7 @@
 "use client"
 
 import { useRef, useEffect, useCallback } from "react"
-import { motion } from "framer-motion"
+import { m } from "framer-motion"
 import { formatLine, applyTickerLinks } from "./format-utils"
 import { useChart } from "@/providers/chart-provider"
 import { useLearningMode } from "@/providers/learning-mode-provider"
@@ -67,14 +67,14 @@ export function TextSegment({ content, index, isStreaming, isLargeContent, ticke
   // Performance: skip expensive formatting during streaming for large content
   if (isStreaming && isLargeContent) {
     return (
-      <motion.div
+      <m.div
         key={`text-${index}`}
         className="space-y-1 whitespace-pre-wrap"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
       >
         {content}
-      </motion.div>
+      </m.div>
     )
   }
 
@@ -124,7 +124,7 @@ export function TextSegment({ content, index, isStreaming, isLargeContent, ticke
   }
 
   return (
-    <motion.div
+    <m.div
       ref={containerRef}
       key={`text-${index}`}
       className="space-y-1"

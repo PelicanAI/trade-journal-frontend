@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useCallback, useEffect, useRef } from "react"
-import { motion } from "framer-motion"
+import { m } from "framer-motion"
 import { ArrowsClockwise, Lightning, ChatCircleDots, X, Info } from "@phosphor-icons/react"
 import { useBehavioralInsights } from "@/hooks/use-behavioral-insights"
 import { useTradePatterns, type TradePattern } from "@/hooks/use-trade-patterns"
@@ -297,9 +297,9 @@ export function InsightsTab({ onAskPelican, onLogTrade }: InsightsTabProps) {
   const refreshing = isDetecting || isRefreshing
 
   return (
-    <motion.div variants={staggerContainer} initial="hidden" animate="visible">
+    <m.div variants={staggerContainer} initial="hidden" animate="visible">
       {/* Header */}
-      <motion.div variants={staggerItem} className="flex items-center justify-between mb-6">
+      <m.div variants={staggerItem} className="flex items-center justify-between mb-6">
         <div>
           <h2 className="text-lg font-semibold text-[var(--text-primary)]">Your Trading DNA</h2>
           <p className="text-xs text-[var(--text-muted)] mt-0.5">
@@ -328,32 +328,32 @@ export function InsightsTab({ onAskPelican, onLogTrade }: InsightsTabProps) {
           />
           {refreshing ? "Analyzing..." : "Refresh Patterns"}
         </PelicanButton>
-      </motion.div>
+      </m.div>
 
       {/* Row 0: Plan Compliance (full width) */}
-      <motion.div variants={staggerItem} className="mb-6">
+      <m.div variants={staggerItem} className="mb-6">
         <PlanComplianceCard
           stats={complianceStats}
           onAskPelican={handleComplianceAskPelican}
           isLoading={complianceLoading}
         />
-      </motion.div>
+      </m.div>
 
       {/* Row 1: Core Trading Metrics */}
       {tradeStats && (
-        <motion.div variants={staggerItem} className="mb-6">
+        <m.div variants={staggerItem} className="mb-6">
           <CoreMetricsCard stats={tradeStats} onAskPelican={onAskPelican} />
-        </motion.div>
+        </m.div>
       )}
 
       {/* Row 2: Edge Summary + Detected Patterns */}
-      <motion.div variants={staggerItem} className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+      <m.div variants={staggerItem} className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
         <EdgeSummary insights={insights} onAskPelican={onAskPelican} />
         <DetectedPatterns patterns={patterns} onDismiss={dismissPattern} onAskPelican={onAskPelican} />
-      </motion.div>
+      </m.div>
 
       {/* Row 3: Streaks + Sizing */}
-      <motion.div variants={staggerItem} className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+      <m.div variants={staggerItem} className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
         {insights.streaks && (
           <StreakCard
             streaks={insights.streaks}
@@ -368,24 +368,24 @@ export function InsightsTab({ onAskPelican, onLogTrade }: InsightsTabProps) {
             onAskPelican={onAskPelican}
           />
         )}
-      </motion.div>
+      </m.div>
 
       {/* Row 4: Day of Week + Holding Period */}
-      <motion.div variants={staggerItem} className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+      <m.div variants={staggerItem} className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
         <DayOfWeekChart data={dayOfWeekStats} onAskPelican={onAskPelican} />
         <HoldingPeriodChart data={insights.holding_period} onAskPelican={onAskPelican} />
-      </motion.div>
+      </m.div>
 
       {/* Row 5: Time of Day + Calendar */}
-      <motion.div variants={staggerItem} className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+      <m.div variants={staggerItem} className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
         <TimeOfDayChart data={insights.time_of_day} onAskPelican={onAskPelican} />
         <CalendarCard data={insights.calendar_patterns} onAskPelican={onAskPelican} />
-      </motion.div>
+      </m.div>
 
       {/* Row 6: Ticker Scorecard (full width) */}
-      <motion.div variants={staggerItem}>
+      <m.div variants={staggerItem}>
         <TickerScorecard data={insights.ticker_performance} onAskPelican={onAskPelican} />
-      </motion.div>
-    </motion.div>
+      </m.div>
+    </m.div>
   )
 }

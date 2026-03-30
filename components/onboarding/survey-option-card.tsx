@@ -2,7 +2,7 @@
 
 import { cn } from '@/lib/utils'
 import { Check } from '@phosphor-icons/react'
-import { motion } from 'framer-motion'
+import { m } from 'framer-motion'
 
 interface SurveyOptionCardProps {
   emoji: string
@@ -22,7 +22,7 @@ export function SurveyOptionCard({
   size = 'normal',
 }: SurveyOptionCardProps) {
   return (
-    <motion.button
+    <m.button
       type="button"
       whileTap={{ scale: 0.98 }}
       onClick={onClick}
@@ -54,14 +54,14 @@ export function SurveyOptionCard({
       </div>
 
       {selected && (
-        <motion.span
+        <m.span
           initial={{ scale: 0 }}
           animate={{ scale: 1 }}
           className="absolute top-2 right-2 flex items-center justify-center w-5 h-5 rounded-full bg-primary"
         >
           <Check weight="bold" className="w-3 h-3 text-primary-foreground" />
-        </motion.span>
+        </m.span>
       )}
-    </motion.button>
+    </m.button>
   )
 }

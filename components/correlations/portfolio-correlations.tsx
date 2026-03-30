@@ -1,7 +1,7 @@
 "use client"
 
 import React, { useMemo } from 'react'
-import { motion } from 'framer-motion'
+import { m } from 'framer-motion'
 import { Warning, ShieldCheck, Link as LinkIcon, Eye, ArrowRight, Briefcase, Lightning } from '@phosphor-icons/react'
 import { useTrades } from '@/hooks/use-trades'
 import { getCorrelationProxy, getProxyLabel, groupByProxy } from '@/lib/correlations/portfolio-proxy'
@@ -179,7 +179,7 @@ export function PortfolioCorrelations({
   // --- Empty state ---
   if (positions.length === 0) {
     return (
-      <motion.div initial={entranceInitial} animate={entranceAnimate} transition={entranceTransition} className="pelican-card p-8 text-center">
+      <m.div initial={entranceInitial} animate={entranceAnimate} transition={entranceTransition} className="pelican-card p-8 text-center">
         <Briefcase weight="light" className="w-12 h-12 mx-auto mb-4" style={{ color: 'var(--text-muted)' }} />
         <h3 className="text-lg font-semibold mb-2" style={{ color: 'var(--text-primary)' }}>
           No Open Positions
@@ -192,7 +192,7 @@ export function PortfolioCorrelations({
           style={{ background: 'var(--accent-indigo)', color: 'white' }}>
           Go to Journal <ArrowRight weight="bold" className="w-4 h-4" />
         </a>
-      </motion.div>
+      </m.div>
     )
   }
 
@@ -201,7 +201,7 @@ export function PortfolioCorrelations({
     const pos = positions[0]!
     const benchmarks = ['SPX', 'NDX', 'VIX', 'GOLD', 'BTC'].filter(b => b !== pos.proxy)
     return (
-      <motion.div initial={entranceInitial} animate={entranceAnimate} transition={entranceTransition} className="space-y-4">
+      <m.div initial={entranceInitial} animate={entranceAnimate} transition={entranceTransition} className="space-y-4">
         <div className="pelican-card p-5">
           <p className="text-sm mb-3" style={{ color: 'var(--text-secondary)' }}>
             Correlations require at least 2 open positions. Here is how{' '}
@@ -235,13 +235,13 @@ export function PortfolioCorrelations({
             })}
           </div>
         </div>
-      </motion.div>
+      </m.div>
     )
   }
 
   // --- Normal state (2+ positions) ---
   return (
-    <motion.div initial={entranceInitial} animate={entranceAnimate} transition={entranceTransition} className="space-y-4">
+    <m.div initial={entranceInitial} animate={entranceAnimate} transition={entranceTransition} className="space-y-4">
       {/* Risk Summary Cards */}
       {riskMetrics && (
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
@@ -395,7 +395,7 @@ export function PortfolioCorrelations({
           ))}
         </div>
       </div>
-    </motion.div>
+    </m.div>
   )
 }
 

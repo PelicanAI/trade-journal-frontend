@@ -1,6 +1,6 @@
 "use client"
 
-import { motion } from "framer-motion"
+import { m } from "framer-motion"
 
 interface ConversationHistorySkeletonProps {
   messageCount?: number
@@ -12,7 +12,7 @@ export function ConversationHistorySkeleton({ messageCount = 4 }: ConversationHi
   return (
     <div className="w-full max-w-4xl mx-auto px-4 sm:px-6 py-6 space-y-6">
       {Array.from({ length: messageCount }).map((_, index) => (
-        <motion.div
+        <m.div
           key={index}
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -25,7 +25,7 @@ export function ConversationHistorySkeleton({ messageCount = 4 }: ConversationHi
           <div className="flex gap-3 w-full mb-6">
             {/* Avatar skeleton */}
             <div className="flex-shrink-0">
-              <motion.div
+              <m.div
                 className="h-9 w-9 bg-primary/20 rounded-full"
                 animate={{ opacity: [0.4, 0.8, 0.4] }}
                 transition={{
@@ -40,7 +40,7 @@ export function ConversationHistorySkeleton({ messageCount = 4 }: ConversationHi
             <div className="flex-1 min-w-0">
               <div className="bg-card border border-border rounded-2xl rounded-bl-md px-4 py-3 relative overflow-hidden">
                 <div className="space-y-2">
-                  <motion.div
+                  <m.div
                     className={`h-4 bg-muted rounded ${messageLengths[index % messageLengths.length]}`}
                     animate={{ opacity: [0.3, 0.7, 0.3] }}
                     transition={{
@@ -49,7 +49,7 @@ export function ConversationHistorySkeleton({ messageCount = 4 }: ConversationHi
                       delay: index * 0.2,
                     }}
                   />
-                  <motion.div
+                  <m.div
                     className="h-4 bg-muted/60 rounded w-32"
                     animate={{ opacity: [0.2, 0.6, 0.2] }}
                     transition={{
@@ -60,7 +60,7 @@ export function ConversationHistorySkeleton({ messageCount = 4 }: ConversationHi
                   />
                 </div>
 
-                <motion.div
+                <m.div
                   className="absolute inset-0 bg-gradient-to-r from-transparent via-muted/30 to-transparent"
                   animate={{ x: ["-100%", "100%"] }}
                   transition={{
@@ -73,7 +73,7 @@ export function ConversationHistorySkeleton({ messageCount = 4 }: ConversationHi
               </div>
             </div>
           </div>
-        </motion.div>
+        </m.div>
       ))}
     </div>
   )

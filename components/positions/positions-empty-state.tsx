@@ -1,6 +1,6 @@
 'use client'
 
-import { motion } from 'framer-motion'
+import { m } from 'framer-motion'
 import {
   ChartLineUp,
   ShieldCheck,
@@ -31,35 +31,35 @@ export function PositionsEmptyState({
   onAskPelican,
 }: PositionsEmptyStateProps) {
   return (
-    <motion.div
+    <m.div
       className="flex flex-col items-center justify-center py-16 px-6 text-center"
       variants={staggerContainer}
       initial="hidden"
       animate="visible"
     >
-      <motion.div variants={staggerItem}>
+      <m.div variants={staggerItem}>
         <ChartLineUp
           size={48}
           weight="thin"
           className="text-[var(--text-muted)] mb-5"
         />
-      </motion.div>
+      </m.div>
 
-      <motion.h2
+      <m.h2
         variants={staggerItem}
         className="text-lg font-semibold text-[var(--text-primary)] mb-2"
       >
         Your Portfolio Command Center
-      </motion.h2>
+      </m.h2>
 
-      <motion.p
+      <m.p
         variants={staggerItem}
         className="text-sm text-[var(--text-muted)] mb-8 max-w-sm"
       >
         Log your first position to unlock portfolio intelligence
-      </motion.p>
+      </m.p>
 
-      <motion.ul
+      <m.ul
         variants={staggerContainer}
         initial="hidden"
         animate="visible"
@@ -68,7 +68,7 @@ export function PositionsEmptyState({
         {features.map((feature) => {
           const Icon = feature.icon
           return (
-            <motion.li
+            <m.li
               key={feature.text}
               variants={staggerItem}
               className="flex items-start gap-3"
@@ -83,12 +83,12 @@ export function PositionsEmptyState({
               <span className="text-xs text-[var(--text-secondary)] leading-relaxed">
                 {feature.text}
               </span>
-            </motion.li>
+            </m.li>
           )
         })}
-      </motion.ul>
+      </m.ul>
 
-      <motion.div
+      <m.div
         variants={staggerItem}
         className="flex flex-col sm:flex-row items-center gap-3"
       >
@@ -100,7 +100,7 @@ export function PositionsEmptyState({
           <ChatCircleDots size={16} weight="regular" />
           Get a Trade Idea
         </PelicanButton>
-      </motion.div>
-    </motion.div>
+      </m.div>
+    </m.div>
   )
 }

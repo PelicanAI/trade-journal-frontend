@@ -22,7 +22,7 @@ import { usePathname } from 'next/navigation'
 import dynamicImport from 'next/dynamic'
 import { TopNav } from '@/components/navigation/top-nav'
 import { PelicanPanelProvider, usePelicanPanelContext } from '@/providers/pelican-panel-provider'
-import { motion, AnimatePresence } from 'framer-motion'
+import { m, AnimatePresence } from 'framer-motion'
 import { TickerSearch } from '@/components/command-k/ticker-search'
 import { useCommandK } from '@/hooks/use-command-k'
 import { PelicanContainer } from '@/components/ui/pelican-container'
@@ -80,7 +80,7 @@ function FeaturesLayoutInner({ children }: { children: React.ReactNode }) {
       </div>
 
       <div className="relative z-10 flex h-[calc(100vh-3.5rem)] overflow-hidden">
-        <motion.main
+        <m.main
           id="main-content"
           layout
           initial={false}
@@ -89,12 +89,12 @@ function FeaturesLayoutInner({ children }: { children: React.ReactNode }) {
           className="min-w-0 flex-1 overflow-y-auto"
         >
           {children}
-        </motion.main>
+        </m.main>
 
         {/* Desktop sidebar panel */}
         <AnimatePresence mode="wait">
           {panel.isOpen && !isMobile && (
-            <motion.aside
+            <m.aside
               initial={{ x: 420, opacity: 0 }}
               animate={{ x: 0, opacity: 1 }}
               exit={{ x: 420, opacity: 0 }}
@@ -107,7 +107,7 @@ function FeaturesLayoutInner({ children }: { children: React.ReactNode }) {
                   window.dispatchEvent(new CustomEvent("pelican:conversation-created"))
                 }}
               />
-            </motion.aside>
+            </m.aside>
           )}
         </AnimatePresence>
       </div>

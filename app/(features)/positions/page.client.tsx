@@ -3,7 +3,7 @@
 import { useState, useCallback, useMemo } from "react"
 import { useWatchlist } from "@/hooks/use-watchlist"
 import { useRouter } from "next/navigation"
-import { motion } from "framer-motion"
+import { m } from "framer-motion"
 import { Brain } from "@phosphor-icons/react"
 import { usePortfolioSummary } from "@/hooks/use-portfolio-summary"
 import { useBehavioralInsights } from "@/hooks/use-behavioral-insights"
@@ -184,7 +184,7 @@ export default function PositionsPage() {
   }
 
   return (
-    <motion.div
+    <m.div
       variants={pageEnter}
       initial="hidden"
       animate="visible"
@@ -313,7 +313,7 @@ export default function PositionsPage() {
 
       {showPostCloseReview && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm">
-          <motion.div
+          <m.div
             initial={{ scale: 0.97, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             exit={{ scale: 0.97, opacity: 0 }}
@@ -350,9 +350,9 @@ export default function PositionsPage() {
                 </div>
               </div>
             </div>
-          </motion.div>
+          </m.div>
         </div>
       )}
-    </motion.div>
+    </m.div>
   )
 }

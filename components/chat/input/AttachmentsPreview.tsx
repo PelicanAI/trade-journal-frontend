@@ -1,6 +1,6 @@
 "use client"
 
-import { motion } from "framer-motion"
+import { m } from "framer-motion"
 import { AttachmentChip } from "../attachment-chip"
 import type { Attachment, PendingAttachment } from "./types"
 
@@ -22,7 +22,7 @@ export function AttachmentsPreview({
   }
 
   return (
-    <motion.div
+    <m.div
       initial={{ opacity: 0, height: 0 }}
       animate={{ opacity: 1, height: "auto" }}
       exit={{ opacity: 0, height: 0 }}
@@ -52,6 +52,6 @@ export function AttachmentsPreview({
           />
         ))}
       </div>
-    </motion.div>
+    </m.div>
   )
 }

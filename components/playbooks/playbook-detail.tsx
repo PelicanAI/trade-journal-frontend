@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { motion, AnimatePresence } from "framer-motion"
+import { m, AnimatePresence } from "framer-motion"
 import {
   ArrowLeft,
   Eye,
@@ -71,7 +71,7 @@ export function PlaybookDetail({ playbook, onBack, onArchive, onDelete, onUnadop
   }
 
   return (
-    <motion.div variants={pageEnter} initial="hidden" animate="visible">
+    <m.div variants={pageEnter} initial="hidden" animate="visible">
       {/* Back + title */}
       <div className="flex items-center gap-3 mb-6">
         <PelicanButton variant="ghost" size="sm" onClick={onBack}>
@@ -195,31 +195,31 @@ export function PlaybookDetail({ playbook, onBack, onArchive, onDelete, onUnadop
       {/* Tab content */}
       <AnimatePresence mode="wait">
         {activeTab === "overview" && (
-          <motion.div key="overview" variants={tabContent} initial="hidden" animate="visible" exit="exit">
+          <m.div key="overview" variants={tabContent} initial="hidden" animate="visible" exit="exit">
             <PlaybookOverviewTab playbook={playbook} />
-          </motion.div>
+          </m.div>
         )}
         {activeTab === "stats" && (
-          <motion.div key="stats" variants={tabContent} initial="hidden" animate="visible" exit="exit">
+          <m.div key="stats" variants={tabContent} initial="hidden" animate="visible" exit="exit">
             <PlaybookStatsTab stats={stats} isLoading={statsLoading} />
-          </motion.div>
+          </m.div>
         )}
         {activeTab === "trades" && (
-          <motion.div key="trades" variants={tabContent} initial="hidden" animate="visible" exit="exit">
+          <m.div key="trades" variants={tabContent} initial="hidden" animate="visible" exit="exit">
             <PlaybookTradesTab stats={stats} isLoading={statsLoading} />
-          </motion.div>
+          </m.div>
         )}
         {activeTab === "grade" && (
-          <motion.div key="grade" variants={tabContent} initial="hidden" animate="visible" exit="exit">
+          <m.div key="grade" variants={tabContent} initial="hidden" animate="visible" exit="exit">
             <PlaybookGradeTab
               playbook={playbook}
               stats={stats}
               onGrade={handleGrade}
             />
-          </motion.div>
+          </m.div>
         )}
       </AnimatePresence>
-    </motion.div>
+    </m.div>
   )
 }
 

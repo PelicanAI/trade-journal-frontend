@@ -7,7 +7,7 @@ import { X, PaperPlaneRight, SpinnerGap, ArrowsClockwise, ArrowsOut } from '@pho
 import { Button } from '@/components/ui/button'
 import { IconTooltip } from '@/components/ui/icon-tooltip'
 import { cn } from '@/lib/utils'
-import { motion } from 'framer-motion'
+import { m } from 'framer-motion'
 import type { Message } from '@/lib/chat-utils'
 import { MessageContent } from '@/components/chat/message/message-content'
 import { extractTradingMetadata } from '@/lib/trading-metadata'
@@ -46,7 +46,7 @@ function PanelMessage({ message, isStreaming = false, isAutoPrompt = false }: Pa
 
   if (isUser) {
     return (
-      <motion.div
+      <m.div
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.2 }}
@@ -68,12 +68,12 @@ function PanelMessage({ message, isStreaming = false, isAutoPrompt = false }: Pa
             )}
           </div>
         </div>
-      </motion.div>
+      </m.div>
     )
   }
 
   return (
-    <motion.div
+    <m.div
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.2 }}
@@ -101,7 +101,7 @@ function PanelMessage({ message, isStreaming = false, isAutoPrompt = false }: Pa
           </div>
         </div>
       </div>
-    </motion.div>
+    </m.div>
   )
 }
 
@@ -284,7 +284,7 @@ function PelicanChatPanelInternal({
       </div>
 
       {/* Desktop: Side panel */}
-      <motion.div
+      <m.div
         initial={{ x: 100, opacity: 0 }}
         animate={{ x: 0, opacity: 1 }}
         exit={{ x: 100, opacity: 0 }}
@@ -416,7 +416,7 @@ function PelicanChatPanelInternal({
             </IconTooltip>
           </div>
         </div>
-      </motion.div>
+      </m.div>
     </>
   )
 }

@@ -2,7 +2,7 @@
 
 import { useState, useCallback, useMemo, useEffect } from "react"
 import Link from "next/link"
-import { motion } from "framer-motion"
+import { m } from "framer-motion"
 import { Plus, SortAscending, Info, X, Compass } from "@phosphor-icons/react"
 import { IconTooltip } from "@/components/ui/icon-tooltip"
 import { usePlaybooks, useSuggestedStrategies } from "@/hooks/use-playbooks"
@@ -250,7 +250,7 @@ export default function PlaybooksPage() {
   const hasAnyPlaybooks = playbooks.length > 0 || tab !== 'active'
 
   return (
-    <motion.div
+    <m.div
       variants={pageEnter}
       initial="hidden"
       animate="visible"
@@ -323,7 +323,7 @@ export default function PlaybooksPage() {
 
       {/* Tagging hint banner */}
       {showTaggingHint && (
-        <motion.div
+        <m.div
           initial={{ opacity: 0, y: -8 }}
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: -8 }}
@@ -339,7 +339,7 @@ export default function PlaybooksPage() {
           >
             <X size={16} weight="regular" />
           </button>
-        </motion.div>
+        </m.div>
       )}
 
       {/* Loading */}
@@ -513,7 +513,7 @@ export default function PlaybooksPage() {
           </button>
         </IconTooltip>
       )}
-    </motion.div>
+    </m.div>
   )
 }
 
@@ -573,7 +573,7 @@ function PlaybookSection({
       {playbooks.length === 0 ? (
         emptyState
       ) : (
-        <motion.div
+        <m.div
           variants={staggerContainer}
           initial="hidden"
           animate="visible"
@@ -596,16 +596,16 @@ function PlaybookSection({
 
           {/* "+ New Playbook" ghost card */}
           {showNewCard && onNewPlaybook && (
-            <motion.button
+            <m.button
               variants={staggerItem}
               onClick={onNewPlaybook}
               className="flex flex-col items-center justify-center gap-2 min-h-[12rem] rounded-xl border-2 border-dashed border-[var(--border-subtle)] text-[var(--text-muted)] hover:border-[var(--border-hover)] hover:text-[var(--text-secondary)] transition-all cursor-pointer"
             >
               <Plus size={24} weight="regular" />
               <span className="text-sm font-medium">New Playbook</span>
-            </motion.button>
+            </m.button>
           )}
-        </motion.div>
+        </m.div>
       )}
     </section>
   )
@@ -615,7 +615,7 @@ function PlaybookSection({
 
 function GlobalEmptyState({ onCreatePlaybook }: { onCreatePlaybook: () => void }) {
   return (
-    <motion.div
+    <m.div
       variants={pageEnter}
       initial="hidden"
       animate="visible"
@@ -652,6 +652,6 @@ function GlobalEmptyState({ onCreatePlaybook }: { onCreatePlaybook: () => void }
           <p className="text-xs text-[var(--text-muted)] leading-relaxed">Browse proven strategies from the Pelican team and community.</p>
         </Link>
       </div>
-    </motion.div>
+    </m.div>
   )
 }

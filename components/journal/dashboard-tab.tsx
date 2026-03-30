@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback, useRef } from 'react'
 import { TradeStats, EquityCurvePoint } from '@/hooks/use-trade-stats'
 import { TrendUp, TrendDown, Target, Trophy, ChartBar } from '@phosphor-icons/react'
-import { motion } from 'framer-motion'
+import { m } from 'framer-motion'
 import { Line, LineChart, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts'
 import { PelicanCard, staggerContainer, staggerItem } from '@/components/ui/pelican'
 import { DrawdownChart } from '@/components/shared/drawdown-chart'
@@ -101,7 +101,7 @@ export function DashboardTab({ stats, equityCurve, isLoading }: DashboardTabProp
   ]
 
   return (
-    <motion.div
+    <m.div
       variants={staggerContainer}
       initial="hidden"
       animate="visible"
@@ -112,7 +112,7 @@ export function DashboardTab({ stats, equityCurve, isLoading }: DashboardTabProp
         {statCards.map((card) => {
           const Icon = card.icon
           return (
-            <motion.div key={card.label} variants={staggerItem}>
+            <m.div key={card.label} variants={staggerItem}>
               <PelicanCard>
                 <div className="flex items-center justify-between mb-2">
                   <span className="text-[var(--text-muted)] uppercase text-xs tracking-wider font-medium">
@@ -124,14 +124,14 @@ export function DashboardTab({ stats, equityCurve, isLoading }: DashboardTabProp
                   {card.value}
                 </div>
               </PelicanCard>
-            </motion.div>
+            </m.div>
           )
         })}
       </div>
 
       {/* Additional Stats */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <motion.div variants={staggerItem}>
+        <m.div variants={staggerItem}>
           <PelicanCard>
             <div className="text-[var(--text-muted)] uppercase text-xs tracking-wider font-medium mb-2">
               Avg Win
@@ -140,8 +140,8 @@ export function DashboardTab({ stats, equityCurve, isLoading }: DashboardTabProp
               +${stats.avg_win.toFixed(2)}
             </div>
           </PelicanCard>
-        </motion.div>
-        <motion.div variants={staggerItem}>
+        </m.div>
+        <m.div variants={staggerItem}>
           <PelicanCard>
             <div className="text-[var(--text-muted)] uppercase text-xs tracking-wider font-medium mb-2">
               Avg Loss
@@ -150,8 +150,8 @@ export function DashboardTab({ stats, equityCurve, isLoading }: DashboardTabProp
               -${Math.abs(stats.avg_loss).toFixed(2)}
             </div>
           </PelicanCard>
-        </motion.div>
-        <motion.div variants={staggerItem}>
+        </m.div>
+        <m.div variants={staggerItem}>
           <PelicanCard>
             <div className="text-[var(--text-muted)] uppercase text-xs tracking-wider font-medium mb-2">
               Avg R-Multiple
@@ -162,12 +162,12 @@ export function DashboardTab({ stats, equityCurve, isLoading }: DashboardTabProp
               {stats.avg_r_multiple.toFixed(2)}R
             </div>
           </PelicanCard>
-        </motion.div>
+        </m.div>
       </div>
 
       {/* Performance Charts — Tabbed */}
       {equityCurve.length > 0 ? (
-        <motion.div variants={staggerItem}>
+        <m.div variants={staggerItem}>
           <PelicanCard>
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-sm font-semibold text-[var(--text-primary)]">Performance</h3>
@@ -234,12 +234,12 @@ export function DashboardTab({ stats, equityCurve, isLoading }: DashboardTabProp
               />
             )}
           </PelicanCard>
-        </motion.div>
+        </m.div>
       ) : null}
 
       {/* Empty state for charts when trades exist but no equity curve */}
       {equityCurve.length === 0 && !isLoading && stats && stats.total_trades > 0 && (
-        <motion.div variants={staggerItem}>
+        <m.div variants={staggerItem}>
           <PelicanCard>
             <div className="flex flex-col items-center justify-center py-16">
               <TrendUp size={32} className="text-[var(--text-muted)]" />
@@ -251,8 +251,8 @@ export function DashboardTab({ stats, equityCurve, isLoading }: DashboardTabProp
               </p>
             </div>
           </PelicanCard>
-        </motion.div>
+        </m.div>
       )}
-    </motion.div>
+    </m.div>
   )
 }

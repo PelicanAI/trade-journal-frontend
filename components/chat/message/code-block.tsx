@@ -2,7 +2,7 @@
 
 import { cn } from "@/lib/utils"
 import { Copy } from "@phosphor-icons/react"
-import { motion } from "framer-motion"
+import { m } from "framer-motion"
 import DOMPurify from "isomorphic-dompurify"
 
 interface CodeBlockProps {
@@ -15,7 +15,7 @@ export function CodeBlock({ content, language, index }: CodeBlockProps) {
   const sanitizedCode = DOMPurify.sanitize(content)
 
   return (
-    <motion.div
+    <m.div
       key={`code-${index}`}
       initial={{ opacity: 0, x: -10 }}
       animate={{ opacity: 1, x: 0 }}
@@ -50,6 +50,6 @@ export function CodeBlock({ content, language, index }: CodeBlockProps) {
           <Copy size={20} weight="regular" className="sm:hidden" /><Copy size={16} weight="regular" className="hidden sm:block" />
         </button>
       </div>
-    </motion.div>
+    </m.div>
   )
 }

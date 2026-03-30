@@ -4,7 +4,7 @@ import { Trade } from "@/hooks/use-trades"
 import { CaretUp, CaretDown, CaretUpDown, PlayCircle, ArrowRight, X as XIcon, PencilSimple } from "@phosphor-icons/react"
 import { useState } from "react"
 import Link from "next/link"
-import { motion } from "framer-motion"
+import { m } from "framer-motion"
 import { useLiveQuotes, type Quote } from "@/hooks/use-live-quotes"
 import { LogoImg } from "@/components/ui/logo-img"
 import { PelicanCard, PelicanButton, staggerContainer, staggerItem } from "@/components/ui/pelican"
@@ -518,7 +518,7 @@ export function TradesTable({ trades, onSelectTrade, selectedTradeId, onScanTrad
       )}
 
       {/* Mobile Card View */}
-      <motion.div
+      <m.div
         variants={staggerContainer}
         initial="hidden"
         animate="visible"
@@ -536,7 +536,7 @@ export function TradesTable({ trades, onSelectTrade, selectedTradeId, onScanTrad
           const isLoser = displayPnL.amount !== null && displayPnL.amount < 0
 
           return (
-            <motion.div key={trade.id} variants={staggerItem} data-trade-id={trade.id}>
+            <m.div key={trade.id} variants={staggerItem} data-trade-id={trade.id}>
               <PelicanCard
                 interactive
                 onClick={() => onSelectTrade(trade)}
@@ -686,10 +686,10 @@ export function TradesTable({ trades, onSelectTrade, selectedTradeId, onScanTrad
                   </div>
                 </div>
               </PelicanCard>
-            </motion.div>
+            </m.div>
           )
         })}
-      </motion.div>
+      </m.div>
     </>
   )
 }

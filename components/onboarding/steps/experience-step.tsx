@@ -1,7 +1,7 @@
 'use client'
 
 import { SurveyOptionCard } from '@/components/onboarding/survey-option-card'
-import { motion } from 'framer-motion'
+import { m } from 'framer-motion'
 
 const EXPERIENCE_OPTIONS = [
   { value: 'brand_new', emoji: '\u{1F331}', title: 'Brand New', subtitle: "I haven't started trading yet" },
@@ -18,7 +18,7 @@ interface ExperienceStepProps {
 
 export function ExperienceStep({ value, onChange }: ExperienceStepProps) {
   return (
-    <motion.div
+    <m.div
       initial={{ opacity: 0, y: 8 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3, ease: [0.25, 0.1, 0.25, 1] }}
@@ -45,6 +45,6 @@ export function ExperienceStep({ value, onChange }: ExperienceStepProps) {
           />
         ))}
       </div>
-    </motion.div>
+    </m.div>
   )
 }

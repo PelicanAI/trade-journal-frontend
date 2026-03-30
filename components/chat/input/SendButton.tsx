@@ -2,7 +2,7 @@
 
 import { PaperPlaneRight, Square } from "@phosphor-icons/react"
 import { cn } from "@/lib/utils"
-import { motion, AnimatePresence } from "framer-motion"
+import { m, AnimatePresence } from "framer-motion"
 import { IconTooltip } from "@/components/ui/icon-tooltip"
 
 interface SendButtonProps {
@@ -15,7 +15,7 @@ interface SendButtonProps {
 export function SendButton({ isAIResponding, isSendDisabled, onStop, onSend }: SendButtonProps) {
   return (
     <IconTooltip label={isAIResponding ? "Stop generation" : "Send message"} side="top" kbd={isAIResponding ? undefined : "↵"}>
-      <motion.button
+      <m.button
         whileHover={{ scale: 1.05 }}
         whileTap={{ scale: 0.95 }}
         onClick={isAIResponding && onStop ? onStop : onSend}
@@ -31,7 +31,7 @@ export function SendButton({ isAIResponding, isSendDisabled, onStop, onSend }: S
         )}
       >
         <AnimatePresence mode="wait" initial={false}>
-          <motion.div
+          <m.div
             key={isAIResponding ? "stop" : "send"}
             initial={{ scale: 0.8, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
@@ -39,9 +39,9 @@ export function SendButton({ isAIResponding, isSendDisabled, onStop, onSend }: S
             transition={{ duration: 0.1, ease: 'easeOut' }}
           >
             {isAIResponding ? <Square size={20} weight="fill" /> : <PaperPlaneRight size={20} weight="fill" />}
-          </motion.div>
+          </m.div>
         </AnimatePresence>
-      </motion.button>
+      </m.button>
     </IconTooltip>
   )
 }

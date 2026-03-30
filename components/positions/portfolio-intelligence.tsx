@@ -1,6 +1,6 @@
 'use client'
 
-import { motion } from 'framer-motion'
+import { m } from 'framer-motion'
 import {
   ChartDonut,
   ShieldWarning,
@@ -117,7 +117,7 @@ export function PortfolioIntelligence({
 }: PortfolioIntelligenceProps) {
   return (
     <div>
-      <motion.div
+      <m.div
         className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2"
         variants={staggerContainer}
         initial="hidden"
@@ -126,7 +126,7 @@ export function PortfolioIntelligence({
         {intelligenceCards.map((card) => {
           const Icon = card.icon
           return (
-            <motion.div key={card.id} variants={staggerItem}>
+            <m.div key={card.id} variants={staggerItem}>
               <PelicanCard
                 interactive
                 className="bg-[var(--bg-base)]/80 p-4 cursor-pointer border border-[var(--border-subtle)]/40 rounded-lg hover:border-[var(--border-subtle)]/60 transition-all duration-150"
@@ -146,10 +146,10 @@ export function PortfolioIntelligence({
                   {card.description}
                 </p>
               </PelicanCard>
-            </motion.div>
+            </m.div>
           )
         })}
-      </motion.div>
+      </m.div>
     </div>
   )
 }

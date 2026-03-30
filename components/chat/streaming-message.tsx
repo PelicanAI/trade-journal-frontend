@@ -1,7 +1,7 @@
 "use client"
 
 import React, { useEffect, useState, useMemo } from "react"
-import { motion } from "framer-motion"
+import { m } from "framer-motion"
 import { MessageBubble } from "./message-bubble"
 import type { Message } from "@/lib/chat-utils"
 import type { ActionTrade, ActionWatchlistItem } from "@/types/action-buttons"
@@ -95,7 +95,7 @@ export const StreamingMessage = React.memo(function StreamingMessage({
   }
 
   return (
-    <motion.div
+    <m.div
       className="relative group w-full"
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
@@ -129,6 +129,6 @@ export const StreamingMessage = React.memo(function StreamingMessage({
         onSubmitPrompt={onSubmitPrompt}
         onSaveInsight={onSaveInsight}
       />
-    </motion.div>
+    </m.div>
   )
 })

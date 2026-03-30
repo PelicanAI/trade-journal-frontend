@@ -1,7 +1,7 @@
 'use client'
 
 import { useMemo } from 'react'
-import { motion } from 'framer-motion'
+import { m } from 'framer-motion'
 import { TrendUp, Plus } from '@phosphor-icons/react'
 import { Line, LineChart, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts'
 import { Trade } from '@/hooks/use-trades'
@@ -151,7 +151,7 @@ export function PositionsDashboardTab({
   }
 
   return (
-    <motion.div
+    <m.div
       variants={staggerContainer}
       initial="hidden"
       animate="visible"
@@ -159,24 +159,24 @@ export function PositionsDashboardTab({
     >
       {/* Tilt Alerts */}
       {tiltAlerts.length > 0 && (
-        <motion.div variants={staggerItem}>
+        <m.div variants={staggerItem}>
           <TiltAlertBanner alerts={tiltAlerts} />
-        </motion.div>
+        </m.div>
       )}
 
       {/* Grade Overview */}
-      <motion.div variants={staggerItem}>
+      <m.div variants={staggerItem}>
         <GradeOverview trades={trades} />
-      </motion.div>
+      </m.div>
 
       {/* Row 1: Quick Stats */}
-      <motion.div variants={staggerItem}>
+      <m.div variants={staggerItem}>
         <StatsRow stats={quickStats} />
-      </motion.div>
+      </m.div>
 
       {/* Row 2: Allocation + Exposure */}
       {openTrades.length > 0 && (
-        <motion.div
+        <m.div
           variants={staggerItem}
           className="grid grid-cols-1 lg:grid-cols-2 gap-4"
         >
@@ -185,23 +185,23 @@ export function PositionsDashboardTab({
             onSelectTrade={onSelectTrade}
           />
           <ExposureBar exposure={exposure} />
-        </motion.div>
+        </m.div>
       )}
 
       {/* Row 3: P&L Bars + Risk Check */}
       {openTrades.length > 0 && (
-        <motion.div
+        <m.div
           variants={staggerItem}
           className="grid grid-cols-1 lg:grid-cols-2 gap-4"
         >
           <PnlBars bars={pnlBars} onSelectTrade={onSelectTrade} />
           <RiskCheck insights={riskInsights} />
-        </motion.div>
+        </m.div>
       )}
 
       {/* Row 4: Equity Curve / Drawdown / Balance */}
       {equityCurve.length > 0 ? (
-        <motion.div variants={staggerItem}>
+        <m.div variants={staggerItem}>
           <PelicanCard>
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-sm font-semibold text-[var(--text-primary)]">Performance</h3>
@@ -270,9 +270,9 @@ export function PositionsDashboardTab({
               />
             )}
           </PelicanCard>
-        </motion.div>
+        </m.div>
       ) : (
-        <motion.div variants={staggerItem}>
+        <m.div variants={staggerItem}>
           <PelicanCard>
             <div className="flex flex-col items-center justify-center py-12">
               <TrendUp size={32} className="text-[var(--text-muted)]" />
@@ -284,8 +284,8 @@ export function PositionsDashboardTab({
               </p>
             </div>
           </PelicanCard>
-        </motion.div>
+        </m.div>
       )}
-    </motion.div>
+    </m.div>
   )
 }

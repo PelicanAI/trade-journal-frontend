@@ -1,7 +1,7 @@
 'use client'
 
 import { useMemo } from 'react'
-import { motion } from 'framer-motion'
+import { m } from 'framer-motion'
 import {
   UserCircle,
   Brain,
@@ -83,9 +83,9 @@ export default function TraderProfileTab({ trades, stats, isLoading, onAskPelica
   }
 
   return (
-    <motion.div className="space-y-8" variants={container} initial="hidden" animate="show">
+    <m.div className="space-y-8" variants={container} initial="hidden" animate="show">
       {/* Section A: Profile Overview */}
-      <motion.section variants={item}>
+      <m.section variants={item}>
         <div className="rounded-xl border border-[var(--border-subtle)] bg-[var(--bg-surface)] p-6">
           <div className="flex items-center gap-3 mb-4">
             <UserCircle size={24} weight="regular" className="text-[var(--accent-primary)]" />
@@ -119,10 +119,10 @@ export default function TraderProfileTab({ trades, stats, isLoading, onAskPelica
             </div>
           )}
         </div>
-      </motion.section>
+      </m.section>
 
       {/* Section B: Behavioral Insights */}
-      <motion.section variants={item}>
+      <m.section variants={item}>
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-2">
             <Brain size={20} weight="regular" className="text-[var(--accent-primary)]" />
@@ -160,10 +160,10 @@ export default function TraderProfileTab({ trades, stats, isLoading, onAskPelica
             ))}
           </div>
         )}
-      </motion.section>
+      </m.section>
 
       {/* Section C: Milestones */}
-      <motion.section variants={item}>
+      <m.section variants={item}>
         <div className="flex items-center gap-2 mb-4">
           <Trophy size={20} weight="regular" className="text-[var(--accent-primary)]" />
           <h3 className="text-lg font-semibold text-[var(--text-primary)]">Milestones</h3>
@@ -206,10 +206,10 @@ export default function TraderProfileTab({ trades, stats, isLoading, onAskPelica
             </div>
           ))}
         </div>
-      </motion.section>
+      </m.section>
 
       {/* Section D: Quick Actions */}
-      <motion.section variants={item}>
+      <m.section variants={item}>
         <div className="flex flex-col sm:flex-row gap-3">
           <button
             onClick={handleAnalyze}
@@ -224,7 +224,7 @@ export default function TraderProfileTab({ trades, stats, isLoading, onAskPelica
             <Warning size={18} weight="regular" /> Review my plan
           </button>
         </div>
-      </motion.section>
-    </motion.div>
+      </m.section>
+    </m.div>
   )
 }

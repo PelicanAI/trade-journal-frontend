@@ -1,6 +1,6 @@
 "use client"
 
-import { motion } from 'framer-motion'
+import { m } from 'framer-motion'
 import { Sun, Moon, Briefcase, Binoculars } from '@phosphor-icons/react'
 import { LogoImg } from '@/components/ui/logo-img'
 import { staggerItem } from '@/components/ui/pelican/motion-variants'
@@ -39,7 +39,7 @@ export function SpotlightCard({ event, onClick }: SpotlightCardProps) {
       : null
 
   return (
-    <motion.button
+    <m.button
       variants={staggerItem}
       type="button"
       onClick={() => onClick(event)}
@@ -149,6 +149,6 @@ export function SpotlightCard({ event, onClick }: SpotlightCardProps) {
           {epsBeat ? 'Beat estimates' : 'Missed estimates'}
         </div>
       )}
-    </motion.button>
+    </m.button>
   )
 }

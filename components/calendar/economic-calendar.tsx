@@ -1,7 +1,7 @@
 "use client"
 
 import { useMemo } from "react"
-import { motion } from "framer-motion"
+import { m } from "framer-motion"
 import { usePelicanPanelContext } from "@/providers/pelican-panel-provider"
 import { cn } from "@/lib/utils"
 import { staggerContainer, staggerItem } from "@/components/ui/pelican"
@@ -68,9 +68,9 @@ export function EconomicCalendar({ events, primaryMarket = 'stocks' }: EconomicC
   }
 
   return (
-    <motion.div className="space-y-6" variants={staggerContainer} initial="hidden" animate="visible">
+    <m.div className="space-y-6" variants={staggerContainer} initial="hidden" animate="visible">
       {grouped.map(group => (
-        <motion.div key={group.date} variants={staggerItem}>
+        <m.div key={group.date} variants={staggerItem}>
           {/* Date header */}
           <div className="text-sm font-medium text-[var(--text-primary)] mb-3 sticky top-0 bg-[var(--bg-base)] py-1 z-10">
             {formatDate(group.date)}
@@ -146,8 +146,8 @@ export function EconomicCalendar({ events, primaryMarket = 'stocks' }: EconomicC
               )
             })}
           </div>
-        </motion.div>
+        </m.div>
       ))}
-    </motion.div>
+    </m.div>
   )
 }

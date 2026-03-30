@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { motion, AnimatePresence } from "framer-motion"
+import { m, AnimatePresence } from "framer-motion"
 import { X, CheckCircle, Warning } from "@phosphor-icons/react"
 import { cn } from "@/lib/utils"
 import { modal, backdrop } from "@/components/ui/pelican"
@@ -48,7 +48,7 @@ export function PublishModal({ playbook, open, onOpenChange, onPublished }: Publ
 
   return (
     <AnimatePresence>
-      <motion.div
+      <m.div
         variants={backdrop}
         initial="hidden"
         animate="visible"
@@ -56,7 +56,7 @@ export function PublishModal({ playbook, open, onOpenChange, onPublished }: Publ
         className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4"
         onClick={() => onOpenChange(false)}
       >
-        <motion.div
+        <m.div
           variants={modal}
           initial="hidden"
           animate="visible"
@@ -147,8 +147,8 @@ export function PublishModal({ playbook, open, onOpenChange, onPublished }: Publ
               </button>
             </div>
           )}
-        </motion.div>
-      </motion.div>
+        </m.div>
+      </m.div>
     </AnimatePresence>
   )
 }

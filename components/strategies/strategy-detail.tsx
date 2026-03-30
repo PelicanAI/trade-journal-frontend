@@ -4,7 +4,7 @@ import { useState } from "react"
 import Link from "next/link"
 import Image from "next/image"
 import { useRouter } from "next/navigation"
-import { motion, AnimatePresence } from "framer-motion"
+import { m, AnimatePresence } from "framer-motion"
 import {
   Eye, ChartBar, ChatCircle, Star,
   Lightning, SignIn, Users,
@@ -71,7 +71,7 @@ export function StrategyDetail({ slug }: StrategyDetailProps) {
   }
 
   return (
-    <motion.div variants={pageEnter} initial="hidden" animate="visible">
+    <m.div variants={pageEnter} initial="hidden" animate="visible">
       {/* Nav bar */}
       <nav className="sticky top-0 z-40 border-b border-[var(--border-subtle)] bg-[var(--bg-surface)]/90 backdrop-blur-xl">
         <div className="max-w-4xl mx-auto px-6 h-14 flex items-center justify-between">
@@ -179,24 +179,24 @@ export function StrategyDetail({ slug }: StrategyDetailProps) {
         {/* Tab content */}
         <AnimatePresence mode="wait">
           {activeTab === "overview" && (
-            <motion.div key="overview" variants={tabContent} initial="hidden" animate="visible" exit="exit">
+            <m.div key="overview" variants={tabContent} initial="hidden" animate="visible" exit="exit">
               <OverviewTab strategy={strategy} similar={similar} />
-            </motion.div>
+            </m.div>
           )}
           {activeTab === "stats" && (
-            <motion.div key="stats" variants={tabContent} initial="hidden" animate="visible" exit="exit">
+            <m.div key="stats" variants={tabContent} initial="hidden" animate="visible" exit="exit">
               <StrategyStats strategy={strategy} />
               {backtests.length > 0 && <BacktestChart backtests={backtests} />}
-            </motion.div>
+            </m.div>
           )}
           {activeTab === "reviews" && (
-            <motion.div key="reviews" variants={tabContent} initial="hidden" animate="visible" exit="exit">
+            <m.div key="reviews" variants={tabContent} initial="hidden" animate="visible" exit="exit">
               <StrategyReviews strategy={strategy} ratings={ratings} />
-            </motion.div>
+            </m.div>
           )}
         </AnimatePresence>
       </div>
-    </motion.div>
+    </m.div>
   )
 }
 

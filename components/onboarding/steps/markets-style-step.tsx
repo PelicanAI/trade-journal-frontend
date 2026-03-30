@@ -1,7 +1,7 @@
 'use client'
 
 import { SurveyOptionCard } from '@/components/onboarding/survey-option-card'
-import { motion } from 'framer-motion'
+import { m } from 'framer-motion'
 
 const MARKET_OPTIONS = [
   { value: 'stocks', emoji: '\u{1F4C8}', title: 'Stocks' },
@@ -64,7 +64,7 @@ export function MarketsStyleStep({
   }
 
   return (
-    <motion.div
+    <m.div
       initial={{ opacity: 0, y: 8 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3, ease: [0.25, 0.1, 0.25, 1] }}
@@ -106,6 +106,6 @@ export function MarketsStyleStep({
           ))}
         </div>
       </div>
-    </motion.div>
+    </m.div>
   )
 }

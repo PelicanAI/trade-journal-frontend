@@ -1,8 +1,7 @@
 "use client"
 
 import { useState, useCallback, useRef, useEffect } from "react"
-import { motion, AnimatePresence } from "framer-motion"
-import { Warning, Trash, XCircle } from "@phosphor-icons/react"
+import { Warning, Trash } from "@phosphor-icons/react"
 import {
   AlertDialog,
   AlertDialogContent,

@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { motion } from "framer-motion"
+import { m } from "framer-motion"
 import { Sun, Moon } from "@phosphor-icons/react"
 import { staggerContainer } from "@/components/ui/pelican"
 import { EarningsCard } from "@/components/earnings/earnings-card"
@@ -56,7 +56,7 @@ export function EarningsSection({
           ({events.length})
         </span>
       </div>
-      <motion.div
+      <m.div
         className="space-y-1.5"
         variants={staggerContainer}
         initial="hidden"
@@ -72,7 +72,7 @@ export function EarningsSection({
             onToggleWatchlist={onToggleWatchlist}
           />
         ))}
-      </motion.div>
+      </m.div>
       {hasMore && (
         <button
           onClick={() => setExpanded(!expanded)}

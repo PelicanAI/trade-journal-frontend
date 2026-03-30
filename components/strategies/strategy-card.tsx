@@ -1,7 +1,7 @@
 "use client"
 
 import Link from "next/link"
-import { motion } from "framer-motion"
+import { m } from "framer-motion"
 import { Star, Users, ShieldCheck, Lightning, CheckCircle } from "@phosphor-icons/react"
 import { cn } from "@/lib/utils"
 import { staggerItem } from "@/components/ui/pelican"
@@ -38,7 +38,7 @@ export function StrategyCard({ strategy, isAdopted }: StrategyCardProps) {
 
   return (
     <Link href={`/strategies/${strategy.slug}`}>
-      <motion.div
+      <m.div
         variants={staggerItem}
         whileHover={{
           y: -1,
@@ -118,7 +118,7 @@ export function StrategyCard({ strategy, isAdopted }: StrategyCardProps) {
             </div>
           )}
         </div>
-      </motion.div>
+      </m.div>
     </Link>
   )
 }

@@ -1,7 +1,7 @@
 'use client'
 
 import { useMemo } from 'react'
-import { motion } from 'framer-motion'
+import { m } from 'framer-motion'
 import { Lightning, Notebook, CalendarCheck } from '@phosphor-icons/react'
 import { Trade } from '@/hooks/use-trades'
 import { formatPnl } from '@/lib/formatters'
@@ -268,7 +268,7 @@ export function PerformanceTab({
   }
 
   return (
-    <motion.div
+    <m.div
       variants={staggerContainer}
       initial="hidden"
       animate="visible"
@@ -276,9 +276,9 @@ export function PerformanceTab({
     >
       {/* Period Comparison */}
       {hasClosedTrades && (
-        <motion.div variants={staggerItem}>
+        <m.div variants={staggerItem}>
           <PeriodComparison trades={trades} />
-        </motion.div>
+        </m.div>
       )}
 
       {/* Dashboard Stats & Charts */}
@@ -294,19 +294,19 @@ export function PerformanceTab({
 
       {/* Review CTAs */}
       {hasClosedTrades && (
-        <motion.div variants={staggerItem}>
+        <m.div variants={staggerItem}>
           <ReviewCTAs trades={trades} onAskPelican={onAskPelican} />
-        </motion.div>
+        </m.div>
       )}
 
       {/* Calendar (folded in from Calendar tab) */}
-      <motion.div variants={staggerItem}>
+      <m.div variants={staggerItem}>
         <CalendarTab
           trades={trades}
           isLoading={isLoading}
           onOpenLogTrade={onOpenLogTrade}
         />
-      </motion.div>
-    </motion.div>
+      </m.div>
+    </m.div>
   )
 }

@@ -1,6 +1,6 @@
 "use client"
 
-import { motion } from "framer-motion"
+import { m } from "framer-motion"
 import { getSectors, type SP500Sector } from "@/lib/data/sp500-constituents"
 import { HeatmapStock } from "@/app/api/heatmap/route"
 import { DataCell, staggerContainer, staggerItem } from "@/components/ui/pelican"
@@ -64,7 +64,7 @@ export function SectorLegend({ stocks, selectedSectors, onToggleSector, onHighli
       </div>
 
       {/* Clean sector list with performance bars */}
-      <motion.div
+      <m.div
         variants={staggerContainer}
         initial="hidden"
         animate="visible"
@@ -77,7 +77,7 @@ export function SectorLegend({ stocks, selectedSectors, onToggleSector, onHighli
           const barWidth = (absChange / maxAbsChange) * 100
 
           return (
-            <motion.button
+            <m.button
               key={sector}
               variants={staggerItem}
               onClick={() => onToggleSector(sector as SP500Sector)}
@@ -124,10 +124,10 @@ export function SectorLegend({ stocks, selectedSectors, onToggleSector, onHighli
                   className="font-semibold ml-3"
                 />
               </div>
-            </motion.button>
+            </m.button>
           )
         })}
-      </motion.div>
+      </m.div>
     </div>
   )
 }

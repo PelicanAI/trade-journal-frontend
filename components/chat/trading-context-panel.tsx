@@ -6,7 +6,7 @@ import { IconTooltip } from "@/components/ui/icon-tooltip"
 import { cn, normalizeTicker } from "@/lib/utils"
 import { useState, useRef } from "react"
 import type { Trade } from "@/hooks/use-trades"
-import { motion, AnimatePresence } from "framer-motion"
+import { m, AnimatePresence } from "framer-motion"
 import { useChart } from "@/providers/chart-provider"
 import { useRouter } from "next/navigation"
 import dynamic from "next/dynamic"
@@ -385,7 +385,7 @@ export function TradingContextPanel({
           </div>
         )}
         <AnimatePresence mode="wait">
-          <motion.div
+          <m.div
             key={activeMode}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -437,7 +437,7 @@ export function TradingContextPanel({
             ) : (
               <EconomicCalendar onClose={closeChart} />
             )}
-          </motion.div>
+          </m.div>
         </AnimatePresence>
       </Card>
     )
@@ -529,7 +529,7 @@ export function TradingContextPanel({
       {!learnTabActive && !actionsTabActive && (
       <AnimatePresence>
         {!isCollapsed && (
-          <motion.div
+          <m.div
             initial={{ height: 0, opacity: 0 }}
             animate={{ height: "auto", opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
@@ -997,7 +997,7 @@ export function TradingContextPanel({
                 </span>
               </div>
             </div>
-          </motion.div>
+          </m.div>
         )}
       </AnimatePresence>
       )}

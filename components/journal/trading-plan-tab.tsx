@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect, useMemo, useRef, useCallback } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
+import { m, AnimatePresence } from 'framer-motion'
 import useSWR from 'swr'
 import {
   ClipboardText,
@@ -493,7 +493,7 @@ export function TradingPlanTab({ trades, onAskPelican, complianceStats, tradeSta
   // ── Empty State ──
   if (!plan && !isCreating) {
     return (
-      <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3 }} className="flex flex-col items-center justify-center py-16 text-center">
+      <m.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3 }} className="flex flex-col items-center justify-center py-16 text-center">
         <ClipboardText size={48} weight="thin" className="text-[var(--text-muted)] mb-4" />
         <h3 className="text-lg font-semibold text-[var(--text-primary)] mb-2">No Trading Plan Yet</h3>
         <p className="text-sm text-[var(--text-secondary)] max-w-sm mb-6">
@@ -515,28 +515,28 @@ export function TradingPlanTab({ trades, onAskPelican, complianceStats, tradeSta
             Build My Plan with Pelican
           </PelicanButton>
         </div>
-      </motion.div>
+      </m.div>
     )
   }
 
   // ── Plan Form (create mode OR always-editable existing plan) ──
   return (
     <>
-      <motion.div variants={staggerContainer} initial="hidden" animate="visible" className="space-y-4">
+      <m.div variants={staggerContainer} initial="hidden" animate="visible" className="space-y-4">
         {/* Compliance Hero */}
         {plan && liveCompliance && (
-          <motion.div variants={staggerItem}>
+          <m.div variants={staggerItem}>
             <PlanComplianceHero
               compliance={liveCompliance}
               trades={trades}
               plan={plan}
               onScrollToForm={() => formRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })}
             />
-          </motion.div>
+          </m.div>
         )}
 
         {/* Plan Header */}
-        <motion.div variants={staggerItem}>
+        <m.div variants={staggerItem}>
           <PelicanCard>
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3 flex-1 min-w-0">
@@ -579,10 +579,10 @@ export function TradingPlanTab({ trades, onAskPelican, complianceStats, tradeSta
               </div>
             </div>
           </PelicanCard>
-        </motion.div>
+        </m.div>
 
         {/* Risk Management */}
-        <motion.div variants={staggerItem} ref={formRef}>
+        <m.div variants={staggerItem} ref={formRef}>
           <PelicanCard>
             <SectionHeader
               icon={Shield}
@@ -596,7 +596,7 @@ export function TradingPlanTab({ trades, onAskPelican, complianceStats, tradeSta
             />
             <AnimatePresence>
               {(expandedSections.risk ?? true) && (
-                <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }} transition={{ duration: 0.2 }}>
+                <m.div initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }} transition={{ duration: 0.2 }}>
                   {renderNote('risk')}
                   <div className="grid grid-cols-2 gap-3">
                     <NumberInput label="Max Risk / Trade" value={form.max_risk_per_trade_pct} onChange={v => updateForm('max_risk_per_trade_pct', v)} suffix="%" saveStatus={fieldStatus.max_risk_per_trade_pct} />
@@ -605,14 +605,14 @@ export function TradingPlanTab({ trades, onAskPelican, complianceStats, tradeSta
                     <NumberInput label="Max Trades / Day" value={form.max_trades_per_day} onChange={v => updateForm('max_trades_per_day', v)} saveStatus={fieldStatus.max_trades_per_day} />
                     <NumberInput label="Min R:R Ratio" value={form.min_risk_reward_ratio} onChange={v => updateForm('min_risk_reward_ratio', v)} saveStatus={fieldStatus.min_risk_reward_ratio} />
                   </div>
-                </motion.div>
+                </m.div>
               )}
             </AnimatePresence>
           </PelicanCard>
-        </motion.div>
+        </m.div>
 
         {/* Requirements */}
-        <motion.div variants={staggerItem}>
+        <m.div variants={staggerItem}>
           <PelicanCard>
             <SectionHeader
               icon={ClipboardText}
@@ -626,21 +626,21 @@ export function TradingPlanTab({ trades, onAskPelican, complianceStats, tradeSta
             />
             <AnimatePresence>
               {(expandedSections.requirements ?? true) && (
-                <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }} transition={{ duration: 0.2 }}>
+                <m.div initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }} transition={{ duration: 0.2 }}>
                   {renderNote('requirements')}
                   <div className="space-y-1">
                     <ToggleSwitch label="Require stop loss" checked={form.require_stop_loss ?? false} onChange={v => updateForm('require_stop_loss', v)} />
                     <ToggleSwitch label="Require take profit" checked={form.require_take_profit ?? false} onChange={v => updateForm('require_take_profit', v)} />
                     <ToggleSwitch label="Require thesis" checked={form.require_thesis ?? false} onChange={v => updateForm('require_thesis', v)} />
                   </div>
-                </motion.div>
+                </m.div>
               )}
             </AnimatePresence>
           </PelicanCard>
-        </motion.div>
+        </m.div>
 
         {/* Discipline */}
-        <motion.div variants={staggerItem}>
+        <m.div variants={staggerItem}>
           <PelicanCard>
             <SectionHeader
               icon={Warning}
@@ -654,20 +654,20 @@ export function TradingPlanTab({ trades, onAskPelican, complianceStats, tradeSta
             />
             <AnimatePresence>
               {(expandedSections.discipline ?? true) && (
-                <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }} transition={{ duration: 0.2 }}>
+                <m.div initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }} transition={{ duration: 0.2 }}>
                   {renderNote('discipline')}
                   <div className="grid grid-cols-2 gap-3 mb-3">
                     <NumberInput label="Max Consecutive Losses" value={form.max_consecutive_losses_before_stop} onChange={v => updateForm('max_consecutive_losses_before_stop', v)} saveStatus={fieldStatus.max_consecutive_losses_before_stop} />
                   </div>
                   <ToggleSwitch label="No same ticker after loss" checked={form.no_same_ticker_after_loss ?? false} onChange={v => updateForm('no_same_ticker_after_loss', v)} />
-                </motion.div>
+                </m.div>
               )}
             </AnimatePresence>
           </PelicanCard>
-        </motion.div>
+        </m.div>
 
         {/* Pre-Entry Checklist */}
-        <motion.div variants={staggerItem}>
+        <m.div variants={staggerItem}>
           <PelicanCard>
             <SectionHeader
               icon={Check}
@@ -680,7 +680,7 @@ export function TradingPlanTab({ trades, onAskPelican, complianceStats, tradeSta
             />
             <AnimatePresence>
               {(expandedSections.checklist ?? true) && (
-                <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }} transition={{ duration: 0.2 }}>
+                <m.div initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }} transition={{ duration: 0.2 }}>
                   {renderNote('checklist')}
                   <div className="space-y-2">
                     {(form.pre_entry_checklist ?? []).map((item, i) => (
@@ -708,14 +708,14 @@ export function TradingPlanTab({ trades, onAskPelican, complianceStats, tradeSta
                       </IconTooltip>
                     </div>
                   </div>
-                </motion.div>
+                </m.div>
               )}
             </AnimatePresence>
           </PelicanCard>
-        </motion.div>
+        </m.div>
 
         {/* Markets & Assets */}
-        <motion.div variants={staggerItem}>
+        <m.div variants={staggerItem}>
           <PelicanCard>
             <SectionHeader
               icon={ClipboardText}
@@ -728,7 +728,7 @@ export function TradingPlanTab({ trades, onAskPelican, complianceStats, tradeSta
             />
             <AnimatePresence>
               {(expandedSections.markets ?? true) && (
-                <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }} transition={{ duration: 0.2 }}>
+                <m.div initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }} transition={{ duration: 0.2 }}>
                   {renderNote('markets')}
                   <span className="text-xs text-[var(--text-muted)] mb-2 block">Allowed Asset Types</span>
                   <div className="flex flex-wrap gap-2 mb-4">
@@ -776,15 +776,15 @@ export function TradingPlanTab({ trades, onAskPelican, complianceStats, tradeSta
                       </button>
                     </IconTooltip>
                   </div>
-                </motion.div>
+                </m.div>
               )}
             </AnimatePresence>
           </PelicanCard>
-        </motion.div>
+        </m.div>
 
         {/* Pelican Actions */}
         {plan && (
-          <motion.div variants={staggerItem}>
+          <m.div variants={staggerItem}>
             <div className="flex items-center gap-2">
               <PelicanButton
                 onClick={() => onAskPelican(buildPlanComplianceSummary(plan, trades) + '\n\nAm I following my trading plan today? Analyze my compliance and give me feedback.')}
@@ -802,12 +802,12 @@ export function TradingPlanTab({ trades, onAskPelican, complianceStats, tradeSta
                 Review my plan
               </PelicanButton>
             </div>
-          </motion.div>
+          </m.div>
         )}
 
         {/* Plan History */}
         {plan && historyData && historyData.length > 0 && (
-          <motion.div variants={staggerItem}>
+          <m.div variants={staggerItem}>
             <PelicanCard>
               <SectionHeader
                 icon={ClockCounterClockwise}
@@ -817,17 +817,17 @@ export function TradingPlanTab({ trades, onAskPelican, complianceStats, tradeSta
               />
               <AnimatePresence>
                 {(expandedSections.history ?? false) && (
-                  <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }} transition={{ duration: 0.2 }}>
+                  <m.div initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }} transition={{ duration: 0.2 }}>
                     <div className="divide-y divide-[var(--border-subtle)]">
                       {historyData.map(change => (
                         <HistoryItem key={change.id} change={change} />
                       ))}
                     </div>
-                  </motion.div>
+                  </m.div>
                 )}
               </AnimatePresence>
             </PelicanCard>
-          </motion.div>
+          </m.div>
         )}
 
         {/* Create Actions */}
@@ -841,7 +841,7 @@ export function TradingPlanTab({ trades, onAskPelican, complianceStats, tradeSta
             </PelicanButton>
           </div>
         )}
-      </motion.div>
+      </m.div>
 
       <ConfirmDestructiveAction
         open={destructive.state.isOpen}

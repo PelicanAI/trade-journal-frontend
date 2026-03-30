@@ -3,7 +3,7 @@
 import { useMemo } from "react"
 import Link from "next/link"
 import Image from "next/image"
-import { motion } from "framer-motion"
+import { m } from "framer-motion"
 import { ArrowLeft } from "@phosphor-icons/react"
 import { useStrategies } from "@/hooks/use-strategies"
 import { pageEnter, staggerContainer } from "@/components/ui/pelican"
@@ -18,7 +18,7 @@ export function StrategyBrowse() {
   const community = useMemo(() => strategies.filter(s => !s.is_curated && s.is_published), [strategies])
 
   return (
-    <motion.div variants={pageEnter} initial="hidden" animate="visible">
+    <m.div variants={pageEnter} initial="hidden" animate="visible">
       {/* Nav bar */}
       <nav className="sticky top-0 z-40 border-b border-[var(--border-subtle)] bg-[var(--bg-surface)]/90 backdrop-blur-xl">
         <div className="max-w-7xl mx-auto px-6 h-14 flex items-center justify-between">
@@ -70,11 +70,11 @@ export function StrategyBrowse() {
               </span>
               <span className="text-xs text-[var(--text-muted)] font-mono tabular-nums">{curated.length}</span>
             </div>
-            <motion.div variants={staggerContainer} initial="hidden" animate="visible" className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            <m.div variants={staggerContainer} initial="hidden" animate="visible" className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
               {curated.map((strategy) => (
                 <StrategyCard key={strategy.id} strategy={strategy} isAdopted={adoptedIds.has(strategy.id)} />
               ))}
-            </motion.div>
+            </m.div>
           </section>
         )}
 
@@ -87,11 +87,11 @@ export function StrategyBrowse() {
               </span>
               <span className="text-xs text-[var(--text-muted)] font-mono tabular-nums">{community.length}</span>
             </div>
-            <motion.div variants={staggerContainer} initial="hidden" animate="visible" className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            <m.div variants={staggerContainer} initial="hidden" animate="visible" className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
               {community.map((strategy) => (
                 <StrategyCard key={strategy.id} strategy={strategy} isAdopted={adoptedIds.has(strategy.id)} />
               ))}
-            </motion.div>
+            </m.div>
           </section>
         )}
 
@@ -102,6 +102,6 @@ export function StrategyBrowse() {
           </div>
         )}
       </div>
-    </motion.div>
+    </m.div>
   )
 }

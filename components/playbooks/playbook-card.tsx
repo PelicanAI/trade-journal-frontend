@@ -1,6 +1,6 @@
 "use client"
 
-import { motion } from "framer-motion"
+import { m } from "framer-motion"
 import { CheckSquare, Lightning, DotsThreeVertical, Archive, Trash, X as XIcon } from "@phosphor-icons/react"
 import { cn } from "@/lib/utils"
 import { staggerItem } from "@/components/ui/pelican"
@@ -77,7 +77,7 @@ export function PlaybookCard({
   const hasMenu = onArchive || onDelete || onActivate || onUnadopt
 
   return (
-    <motion.div
+    <m.div
       variants={staggerItem}
       whileHover={{
         y: -1,
@@ -273,7 +273,7 @@ export function PlaybookCard({
           )}
         </div>
       )}
-    </motion.div>
+    </m.div>
   )
 }
 

@@ -4,7 +4,7 @@ import { useState, useEffect } from "react"
 import Link from "next/link"
 import { useSearchParams } from "next/navigation"
 import dynamicImport from "next/dynamic"
-import { motion, AnimatePresence } from "framer-motion"
+import { m, AnimatePresence } from "framer-motion"
 import { useTrades, Trade } from "@/hooks/use-trades"
 import { useTradeStats } from "@/hooks/use-trade-stats"
 import { usePlanCompliance } from "@/hooks/use-plan-compliance"
@@ -326,7 +326,7 @@ export default function JournalPage() {
   ]
 
   return (
-    <motion.div
+    <m.div
       variants={pageEnter}
       initial="hidden"
       animate="visible"
@@ -428,7 +428,7 @@ export default function JournalPage() {
         <div className="flex-1 overflow-auto p-4 sm:p-6">
           <AnimatePresence mode="wait">
             {activeTab === 'performance' && (
-              <motion.div
+              <m.div
                 key="performance"
                 variants={tabContent}
                 initial="hidden"
@@ -452,11 +452,11 @@ export default function JournalPage() {
                   }}
                   onAskPelican={handleAskPelican}
                 />
-              </motion.div>
+              </m.div>
             )}
 
             {activeTab === 'trades' && (
-              <motion.div
+              <m.div
                 key="trades"
                 variants={tabContent}
                 initial="hidden"
@@ -479,11 +479,11 @@ export default function JournalPage() {
                     onEditTrade={handleEditTrade}
                   />
                 )}
-              </motion.div>
+              </m.div>
             )}
 
             {activeTab === 'plan' && (
-              <motion.div
+              <m.div
                 key="plan"
                 variants={tabContent}
                 initial="hidden"
@@ -496,11 +496,11 @@ export default function JournalPage() {
                   complianceStats={complianceStats}
                   tradeStats={stats}
                 />
-              </motion.div>
+              </m.div>
             )}
 
             {activeTab === 'insights' && (
-              <motion.div
+              <m.div
                 key="insights"
                 variants={tabContent}
                 initial="hidden"
@@ -512,7 +512,7 @@ export default function JournalPage() {
                   onAskPelican={handleAskPelican}
                   onLogTrade={() => setShowLogTradeModal(true)}
                 />
-              </motion.div>
+              </m.div>
             )}
           </AnimatePresence>
 
@@ -580,7 +580,7 @@ export default function JournalPage() {
       {/* Trade Replay Modal */}
       <AnimatePresence>
         {replayTrade && (
-          <motion.div
+          <m.div
             variants={backdrop}
             initial="hidden"
             animate="visible"
@@ -588,7 +588,7 @@ export default function JournalPage() {
             className="fixed inset-0 z-50 bg-[var(--bg-overlay)] backdrop-blur-sm cursor-pointer"
             onClick={() => setReplayTrade(null)}
           >
-            <motion.div
+            <m.div
               initial={{ opacity: 0, scale: 0.96 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.96 }}
@@ -621,15 +621,15 @@ export default function JournalPage() {
                   onNarrate={handleNarrateTrade}
                 />
               </div>
-            </motion.div>
-          </motion.div>
+            </m.div>
+          </m.div>
         )}
       </AnimatePresence>
 
       {/* Profile Modal */}
       <AnimatePresence>
         {showProfileModal && (
-          <motion.div
+          <m.div
             variants={backdrop}
             initial="hidden"
             animate="visible"
@@ -637,7 +637,7 @@ export default function JournalPage() {
             className="fixed inset-0 z-50 bg-[var(--bg-overlay)] cursor-pointer"
             onClick={() => setShowProfileModal(false)}
           >
-            <motion.div
+            <m.div
               initial={{ opacity: 0, scale: 0.96 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.96 }}
@@ -662,8 +662,8 @@ export default function JournalPage() {
                   onAskPelican={handleAskPelican}
                 />
               </div>
-            </motion.div>
-          </motion.div>
+            </m.div>
+          </m.div>
         )}
       </AnimatePresence>
 
@@ -681,7 +681,7 @@ export default function JournalPage() {
       {/* Mobile: Trade Detail Bottom Sheet */}
       <AnimatePresence>
         {showDetailPanel && selectedTrade && (
-          <motion.div
+          <m.div
             variants={backdrop}
             initial="hidden"
             animate="visible"
@@ -689,7 +689,7 @@ export default function JournalPage() {
             className="md:hidden fixed inset-0 z-50 bg-[var(--bg-overlay)] cursor-pointer"
             onClick={handleCloseDetailPanel}
           >
-            <motion.div
+            <m.div
               initial={{ y: '100%' }}
               animate={{ y: 0 }}
               exit={{ y: '100%' }}
@@ -705,10 +705,10 @@ export default function JournalPage() {
                 onCloseTrade={handleOpenCloseTrade}
                 onReplay={handleReplayTrade}
               />
-            </motion.div>
-          </motion.div>
+            </m.div>
+          </m.div>
         )}
       </AnimatePresence>
-    </motion.div>
+    </m.div>
   )
 }

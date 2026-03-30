@@ -4,7 +4,7 @@ import type React from "react"
 import { useRef } from "react"
 import { Paperclip } from "@phosphor-icons/react"
 import { cn } from "@/lib/utils"
-import { motion } from "framer-motion"
+import { m } from "framer-motion"
 import { useT } from "@/lib/providers/translation-provider"
 import { IconTooltip } from "@/components/ui/icon-tooltip"
 
@@ -28,7 +28,7 @@ export function AttachButton({ disabled, onFileSelect }: AttachButtonProps) {
   return (
     <>
       <IconTooltip label={t.chat.attachFile} side="top">
-        <motion.button
+        <m.button
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
           onClick={() => fileInputRef.current?.click()}
@@ -41,7 +41,7 @@ export function AttachButton({ disabled, onFileSelect }: AttachButtonProps) {
           )}
         >
           <Paperclip size={20} weight="regular" className="text-muted-foreground" />
-        </motion.button>
+        </m.button>
       </IconTooltip>
 
       <input

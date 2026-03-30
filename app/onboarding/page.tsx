@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { AnimatePresence, motion } from 'framer-motion'
+import { AnimatePresence, m } from 'framer-motion'
 import { ArrowLeft, SpinnerGap } from '@phosphor-icons/react'
 import { toast } from '@/hooks/use-toast'
 
@@ -407,7 +407,7 @@ export default function OnboardingPage() {
         {/* Back Button */}
         <div className="mb-6 h-8">
           {currentStep > 1 && (
-            <motion.button
+            <m.button
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               type="button"
@@ -421,14 +421,14 @@ export default function OnboardingPage() {
             >
               <ArrowLeft weight="bold" className="w-4 h-4" />
               Back
-            </motion.button>
+            </m.button>
           )}
         </div>
 
         {/* Step Content */}
         <div className="flex-1 mb-8">
           <AnimatePresence mode="wait" initial={false}>
-            <motion.div
+            <m.div
               key={currentStep}
               initial={{ opacity: 0, y: direction > 0 ? 12 : -12 }}
               animate={{ opacity: 1, y: 0 }}
@@ -436,7 +436,7 @@ export default function OnboardingPage() {
               transition={{ duration: 0.25, ease: [0.25, 0.1, 0.25, 1] }}
             >
               {renderStep()}
-            </motion.div>
+            </m.div>
           </AnimatePresence>
         </div>
 

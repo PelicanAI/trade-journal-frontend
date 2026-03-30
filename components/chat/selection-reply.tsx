@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback, useRef } from "react"
 import { Quotes } from "@phosphor-icons/react"
-import { motion, AnimatePresence } from "framer-motion"
+import { m, AnimatePresence } from "framer-motion"
 
 interface SelectionReplyProps {
   containerRef: React.RefObject<HTMLElement | null>
@@ -108,7 +108,7 @@ export function SelectionReply({ containerRef, onReply }: SelectionReplyProps) {
   return (
     <AnimatePresence>
       {position && selectedText && (
-        <motion.button
+        <m.button
           initial={{ opacity: 0, scale: 0.9, y: 4 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.9, y: 4 }}
@@ -122,7 +122,7 @@ export function SelectionReply({ containerRef, onReply }: SelectionReplyProps) {
         >
           <Quotes size={12} weight="bold" />
           Reply
-        </motion.button>
+        </m.button>
       )}
     </AnimatePresence>
   )

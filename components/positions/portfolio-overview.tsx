@@ -1,7 +1,7 @@
 'use client'
 
 import Link from 'next/link'
-import { motion } from 'framer-motion'
+import { m } from 'framer-motion'
 import {
   ShieldCheck,
   Warning,
@@ -153,19 +153,19 @@ export function PortfolioOverview({
   }
 
   return (
-    <motion.div
+    <m.div
       variants={staggerContainer}
       initial="hidden"
       animate="visible"
       className="space-y-3"
     >
       {/* ── Visual Breakdowns ──────────────────────────────────────────── */}
-      <motion.div
+      <m.div
         variants={staggerContainer}
         className="grid grid-cols-1 gap-3"
       >
         {/* Card A: Exposure Breakdown Donut */}
-        <motion.div variants={staggerItem}>
+        <m.div variants={staggerItem}>
           <PelicanCard className="bg-[var(--bg-base)]/80 p-4 border border-[var(--border-subtle)]/40 rounded-lg">
             <div className="flex items-center gap-2 mb-3">
               <ChartPie size={18} weight="regular" className="text-[var(--text-muted)]" />
@@ -252,10 +252,10 @@ export function PortfolioOverview({
               </>
             )}
           </PelicanCard>
-        </motion.div>
+        </m.div>
 
         {/* Card B: Risk Budget */}
-        <motion.div variants={staggerItem}>
+        <m.div variants={staggerItem}>
           <PelicanCard className="bg-[var(--bg-base)]/80 p-4 border border-[var(--border-subtle)]/40 rounded-lg">
             <div className="flex items-center gap-2 mb-3">
               <ShieldCheck size={18} weight="regular" className="text-[var(--text-muted)]" />
@@ -313,7 +313,7 @@ export function PortfolioOverview({
               </div>
 
               <div className="h-1.5 w-full rounded-full bg-[var(--bg-base)] overflow-hidden">
-                <motion.div
+                <m.div
                   className="h-full rounded-full"
                   style={{ backgroundColor: riskBarColor }}
                   initial={{ width: 0 }}
@@ -365,11 +365,11 @@ export function PortfolioOverview({
               </button>
             )}
           </PelicanCard>
-        </motion.div>
-      </motion.div>
+        </m.div>
+      </m.div>
 
       {/* ── Row 3: Plan Compliance ────────────────────────────────────── */}
-      <motion.div variants={staggerItem}>
+      <m.div variants={staggerItem}>
         {!planCompliance.has_active_plan ? (
           <Link
             href="/journal?tab=plan"
@@ -428,7 +428,7 @@ export function PortfolioOverview({
             </span>
           </div>
         )}
-      </motion.div>
-    </motion.div>
+      </m.div>
+    </m.div>
   )
 }

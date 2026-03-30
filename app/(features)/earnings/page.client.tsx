@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useMemo, useCallback } from "react"
-import { motion } from "framer-motion"
+import { m } from "framer-motion"
 import Image from "next/image"
 import { CaretLeft, CaretRight, ArrowsClockwise } from "@phosphor-icons/react"
 import { useEnrichedEarnings, applyEarningsFilters } from "@/hooks/use-enriched-earnings"
@@ -167,7 +167,7 @@ What are the key things to watch? Any whisper numbers or sentiment shifts? How h
     const isToday = day.dateStr === todayStr
 
     return (
-      <motion.div
+      <m.div
         key={i}
         variants={staggerItem}
         className={cn(
@@ -234,7 +234,7 @@ What are the key things to watch? Any whisper numbers or sentiment shifts? How h
             <span className="text-xs text-[var(--text-disabled)]">No reports</span>
           </div>
         )}
-      </motion.div>
+      </m.div>
     )
   }
 
@@ -322,32 +322,32 @@ What are the key things to watch? Any whisper numbers or sentiment shifts? How h
           ) : filteredEvents.length === 0 && hasActiveFilters ? (
             <EarningsEmptyState variant="filtered" onClearFilters={clearFilters} />
           ) : (
-            <motion.div
+            <m.div
               className="relative"
               initial="hidden"
               animate="visible"
               variants={staggerContainer}
             >
               {/* Desktop: 5-column grid */}
-              <motion.div
+              <m.div
                 className="hidden md:grid grid-cols-5 gap-px bg-[var(--border-subtle)] rounded-xl overflow-hidden border border-[var(--border-subtle)]"
                 variants={staggerContainer}
                 initial="hidden"
                 animate="visible"
               >
                 {weekDays.map((day, i) => renderDayColumn(day, i))}
-              </motion.div>
+              </m.div>
 
               {/* Mobile: horizontal scroll */}
               <div className="md:hidden overflow-x-auto scrollbar-hide">
-                <motion.div
+                <m.div
                   className="flex gap-px min-w-[1000px] bg-[var(--border-subtle)] rounded-xl overflow-hidden border border-[var(--border-subtle)]"
                   variants={staggerContainer}
                   initial="hidden"
                   animate="visible"
                 >
                   {weekDays.map((day, i) => renderDayColumn(day, i))}
-                </motion.div>
+                </m.div>
               </div>
 
               {/* Watermark */}
@@ -361,7 +361,7 @@ What are the key things to watch? Any whisper numbers or sentiment shifts? How h
                 draggable={false}
                 aria-hidden={true}
               />
-            </motion.div>
+            </m.div>
           )}
 
           {/* Attribution for Parqet logos */}

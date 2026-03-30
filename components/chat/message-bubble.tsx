@@ -3,7 +3,7 @@
 import type React from "react"
 import Image from "next/image"
 
-import { motion } from "framer-motion"
+import { m } from "framer-motion"
 import { useState, useCallback, useMemo, useRef, useEffect, memo } from "react"
 import { Copy, Check, PencilSimple, ArrowsClockwise, SpinnerGap, CaretDown, CaretUp, BookmarkSimple } from "@phosphor-icons/react"
 import { Button } from "@/components/ui/button"
@@ -178,7 +178,7 @@ export const MessageBubble = memo(function MessageBubble({
     }
 
     return (
-      <motion.div
+      <m.div
         {...animationVariant}
         className="w-full py-4 group/ts"
         role="article"
@@ -295,12 +295,12 @@ export const MessageBubble = memo(function MessageBubble({
             </div>
           </div>
         </div>
-      </motion.div>
+      </m.div>
     )
   }
 
   return (
-    <motion.div
+    <m.div
       {...animationVariant}
       className="w-full py-4 group/ts"
       role="article"
@@ -404,7 +404,7 @@ export const MessageBubble = memo(function MessageBubble({
           </div>
         </div>
       </div>
-    </motion.div>
+    </m.div>
   )
 }, (prevProps, nextProps) => {
   return (

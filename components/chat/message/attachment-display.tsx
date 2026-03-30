@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect, useCallback } from "react"
-import { motion } from "framer-motion"
+import { m } from "framer-motion"
 import Image from "next/image"
 import { X } from "@phosphor-icons/react"
 import { AttachmentChip } from "../attachment-chip"
@@ -66,7 +66,7 @@ export function AttachmentDisplay({ attachments }: AttachmentDisplayProps) {
 
           if (isImage) {
             return (
-              <motion.div
+              <m.div
                 key={index}
                 className="my-2"
                 initial={{ opacity: 0, y: 5 }}
@@ -86,12 +86,12 @@ export function AttachmentDisplay({ attachments }: AttachmentDisplayProps) {
                     className="w-full h-auto"
                   />
                 </div>
-              </motion.div>
+              </m.div>
             )
           }
 
           return (
-            <motion.div
+            <m.div
               key={index}
               className="flex flex-wrap gap-2 mb-2"
               initial={{ opacity: 0, y: 5 }}
@@ -103,7 +103,7 @@ export function AttachmentDisplay({ attachments }: AttachmentDisplayProps) {
                 type={attachment.type || "application/octet-stream"}
                 onClick={() => window.open(attachment.url, "_blank")}
               />
-            </motion.div>
+            </m.div>
           )
         })}
       </div>

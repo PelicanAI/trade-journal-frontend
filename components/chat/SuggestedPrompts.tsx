@@ -1,7 +1,7 @@
 "use client"
 
 import { useMemo } from "react"
-import { motion } from "framer-motion"
+import { m } from "framer-motion"
 import { cn } from "@/lib/utils"
 import { useTodaysWarnings } from "@/hooks/use-todays-warnings"
 import { useBehavioralInsights } from "@/hooks/use-behavioral-insights"
@@ -226,7 +226,7 @@ export function SuggestedPrompts({ onSelect, disabled }: SuggestedPromptsProps) 
         chips.map((chip, index) => {
           const Icon = chip.icon
           return (
-            <motion.button
+            <m.button
               key={`${chip.label}-${index}`}
               initial={{ opacity: 0, y: 6 }}
               animate={{ opacity: 1, y: 0 }}
@@ -251,12 +251,12 @@ export function SuggestedPrompts({ onSelect, disabled }: SuggestedPromptsProps) 
             >
               <Icon size={16} weight="regular" />
               {chip.label}
-            </motion.button>
+            </m.button>
           )
         })
       ) : (
         (MARKET_DEFAULT_PROMPTS[primaryMarket] || MARKET_DEFAULT_PROMPTS.stocks!).map((prompt, index) => (
-          <motion.button
+          <m.button
             key={index}
             initial={{ opacity: 0, y: 6 }}
             animate={{ opacity: 1, y: 0 }}
@@ -276,7 +276,7 @@ export function SuggestedPrompts({ onSelect, disabled }: SuggestedPromptsProps) 
             )}
           >
             {prompt}
-          </motion.button>
+          </m.button>
         ))
       )}
     </div>
