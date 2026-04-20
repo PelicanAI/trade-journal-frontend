@@ -7,6 +7,7 @@ import { ArrowLeft, Envelope, Lock } from "@phosphor-icons/react"
 import { useRouter } from "next/navigation"
 import { useState } from "react"
 import { createClient } from "@/lib/supabase/client"
+import { isSignupClosed } from "@/lib/signup-gate"
 
 export default function LoginPage() {
   const [email, setEmail] = useState("")
@@ -175,10 +176,21 @@ export default function LoginPage() {
           </button>
 
           <p className="mt-8 text-center text-sm text-muted-foreground">
-            Don&apos;t have an account?{' '}
-            <Link href="/auth/signup" className="text-primary hover:text-primary/80 font-medium transition-colors">
-              Sign up
-            </Link>
+            {isSignupClosed() ? (
+              <Link
+                href="/waitlist"
+                className="text-primary hover:text-primary/80 font-medium transition-colors"
+              >
+                Join the waitlist →
+              </Link>
+            ) : (
+              <>
+                Don&apos;t have an account?{' '}
+                <Link href="/auth/signup" className="text-primary hover:text-primary/80 font-medium transition-colors">
+                  Sign up
+                </Link>
+              </>
+            )}
           </p>
         </div>
       </div>

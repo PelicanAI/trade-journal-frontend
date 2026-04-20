@@ -3,6 +3,8 @@ import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
 import type { User } from '@supabase/supabase-js'
 import { cookies } from 'next/headers'
+import { isUserPostCutoff } from '@/lib/signup-gate'
+import { getServiceClient } from '@/lib/admin'
 
 export const dynamic = 'force-dynamic'
 
@@ -45,6 +47,27 @@ export async function GET(request: NextRequest) {
       if (!user) {
         console.error('[AUTH CALLBACK] No user found after exchangeCodeForSession')
         return NextResponse.redirect(`${origin}/auth/error`)
+      }
+
+      // Shutdown gate: block new OAuth users created after cutoff.
+      // Existing users (created before cutoff) continue through normally.
+      if (isUserPostCutoff(user.created_at)) {
+        console.log('[AUTH CALLBACK] Post-cutoff OAuth user blocked:', user.id)
+
+        // End the just-created session so they land unauthenticated.
+        await supabase.auth.signOut()
+
+        // Clean up the stray auth.users row and any trigger-created user_credits.
+        try {
+          const admin = getServiceClient()
+          await admin.from('user_credits').delete().eq('user_id', user.id)
+          await admin.auth.admin.deleteUser(user.id)
+        } catch (cleanupErr) {
+          console.error('[AUTH CALLBACK] Blocked-user cleanup failed', cleanupErr)
+          // Continue regardless. Zombie row has no session and no access.
+        }
+
+        return NextResponse.redirect(`${origin}/waitlist?oauth=blocked`)
       }
 
       // Handle referral code from cookie (OAuth flow)

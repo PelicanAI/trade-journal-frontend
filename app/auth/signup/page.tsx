@@ -9,6 +9,7 @@ import { useState, useEffect, useRef } from "react"
 import Image from "next/image"
 import { Lock, Envelope, ArrowLeft } from "@phosphor-icons/react"
 import { ReferralCodeInput } from "@/components/ReferralCodeInput"
+import { isSignupClosed } from "@/lib/signup-gate"
 
 export default function SignUpPage() {
   const [email, setEmail] = useState("")
@@ -22,6 +23,13 @@ export default function SignUpPage() {
   const planParam = searchParams.get('plan')
   const recordReferralRef = useRef<((userId: string) => Promise<void>) | null>(null)
 
+  // Belt-and-suspenders for cached page loads. Middleware handles this at the request layer.
+  useEffect(() => {
+    if (isSignupClosed()) {
+      router.replace('/waitlist')
+    }
+  }, [router])
+
   // Store the plan parameter in sessionStorage for use after signup
   useEffect(() => {
     if (planParam) {
@@ -31,6 +39,10 @@ export default function SignUpPage() {
 
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault()
+    if (isSignupClosed()) {
+      router.replace('/waitlist')
+      return
+    }
     const supabase = createClient()
     setIsLoading(true)
     setError(null)
@@ -100,6 +112,10 @@ export default function SignUpPage() {
   }
 
   const signInWithGoogle = async () => {
+    if (isSignupClosed()) {
+      router.replace('/waitlist')
+      return
+    }
     const supabase = createClient()
     await supabase.auth.signInWithOAuth({
       provider: 'google',
