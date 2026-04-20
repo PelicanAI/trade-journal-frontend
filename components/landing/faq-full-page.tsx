@@ -6,6 +6,7 @@ import { CaretDown } from '@phosphor-icons/react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Section } from '@/components/landing/section'
 import { ScrollReveal } from '@/components/landing/scroll-reveal'
+import { isSignupClosed } from '@/lib/signup-gate'
 
 interface FAQItem {
   question: string
@@ -259,10 +260,10 @@ export function FAQFullPage() {
                 Email Support
               </a>
               <Link
-                href="/auth/signup"
+                href={isSignupClosed() ? '/waitlist' : '/auth/signup'}
                 className="rounded-xl bg-violet-600 px-6 py-3 text-sm font-medium text-white hover:bg-violet-700 transition-colors"
               >
-                Start Trading Now
+                {isSignupClosed() ? 'Join Waitlist' : 'Start Trading Now'}
               </Link>
             </div>
           </div>

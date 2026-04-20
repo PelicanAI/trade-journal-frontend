@@ -14,6 +14,7 @@ import {
 } from '@phosphor-icons/react'
 import { Section } from '@/components/landing/section'
 import { ScrollReveal } from '@/components/landing/scroll-reveal'
+import { isSignupClosed } from '@/lib/signup-gate'
 
 const sections = [
   {
@@ -165,6 +166,7 @@ const intelligenceActions = [
 ]
 
 export function HowToUsePage() {
+  const closed = isSignupClosed()
   return (
     <main id="main-content" className="pt-24 pb-16 overflow-x-hidden">
       <Section>
@@ -247,10 +249,10 @@ export function HowToUsePage() {
                   {section.cta && (
                     <div className="ml-[52px] mt-4">
                       <Link
-                        href={section.cta.href}
+                        href={closed ? '/waitlist' : section.cta.href}
                         className="inline-flex items-center gap-1.5 rounded-lg bg-violet-600 px-4 py-2 text-sm font-medium text-white hover:bg-violet-700 transition-colors"
                       >
-                        {section.cta.label}
+                        {closed ? 'Join Waitlist →' : section.cta.label}
                       </Link>
                     </div>
                   )}
@@ -324,10 +326,10 @@ export function HowToUsePage() {
 
               <div className="ml-[52px] mt-4">
                 <Link
-                  href="/auth/signup"
+                  href={closed ? '/waitlist' : '/auth/signup'}
                   className="inline-flex items-center gap-1.5 rounded-lg bg-violet-600 px-4 py-2 text-sm font-medium text-white hover:bg-violet-700 transition-colors"
                 >
-                  Start building your profile &rarr;
+                  {closed ? 'Join Waitlist →' : 'Start building your profile →'}
                 </Link>
               </div>
             </div>

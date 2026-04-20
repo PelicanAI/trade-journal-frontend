@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button"
 import { ArrowLeft, User, FloppyDisk, CircleNotch } from "@phosphor-icons/react"
 import Link from "next/link"
 import { LanguageSelector } from "@/components/language-selector"
+import { isSignupClosed } from "@/lib/signup-gate"
 import type { User as SupabaseUser } from "@supabase/supabase-js"
 
 interface SettingsHeaderProps {
@@ -52,9 +53,9 @@ export function SettingsHeader({ user, isSaving, hasUnsavedChanges, onSave }: Se
                 asChild
                 className="w-full sm:w-auto bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800"
               >
-                <Link href="/auth/signup">
+                <Link href={isSignupClosed() ? "/waitlist" : "/auth/signup"}>
                   <User size={16} weight="regular" className="mr-2" />
-                  Sign Up to Save
+                  {isSignupClosed() ? "Join Waitlist" : "Sign Up to Save"}
                 </Link>
               </Button>
             )}

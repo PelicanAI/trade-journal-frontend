@@ -3,8 +3,10 @@
 import Link from 'next/link'
 import { Section } from '@/components/landing/section'
 import { ScrollReveal } from '@/components/landing/scroll-reveal'
+import { isSignupClosed } from '@/lib/signup-gate'
 
 export function FinalCTA() {
+  const closed = isSignupClosed()
   return (
     <section className="relative bg-gradient-to-b from-white via-violet-50 to-purple-100">
       <Section>
@@ -24,14 +26,16 @@ export function FinalCTA() {
             </p>
 
             <Link
-              href="/auth/signup"
+              href={closed ? '/waitlist' : '/auth/signup'}
               className="inline-block px-10 py-4 bg-violet-600 hover:bg-violet-700 text-white font-semibold rounded-xl text-lg shadow-lg shadow-violet-600/20 hover:shadow-violet-600/30 transition-all duration-300 active:scale-[0.98]"
             >
-              Start Free &rarr;
+              {closed ? 'Join Waitlist' : 'Start Free →'}
             </Link>
-            <p className="text-sm text-slate-400 mt-3">
-              No credit card required
-            </p>
+            {!closed && (
+              <p className="text-sm text-slate-400 mt-3">
+                No credit card required
+              </p>
+            )}
           </div>
         </ScrollReveal>
       </Section>

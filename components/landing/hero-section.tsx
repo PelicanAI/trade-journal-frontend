@@ -4,10 +4,12 @@ import Link from 'next/link'
 import { motion } from 'framer-motion'
 import { ArrowRight } from '@phosphor-icons/react'
 import { HeroChatDemo } from '@/components/landing/hero-chat-demo'
+import { isSignupClosed } from '@/lib/signup-gate'
 
 const ease = [0.25, 0.1, 0.25, 1] as [number, number, number, number]
 
 export function HeroSection() {
+  const closed = isSignupClosed()
   return (
     <section className="relative overflow-hidden px-6 pb-20 pt-32 md:pt-40">
       <div className="relative mx-auto max-w-7xl">
@@ -44,10 +46,10 @@ export function HeroSection() {
           className="mt-10 flex flex-col items-center gap-4 sm:flex-row sm:justify-center"
         >
           <Link
-            href="/auth/signup"
+            href={closed ? '/waitlist' : '/auth/signup'}
             className="group flex items-center gap-2 rounded-xl bg-violet-600 px-6 py-3 text-sm font-medium text-white shadow-lg shadow-violet-600/20 transition-all duration-150 hover:bg-violet-700 hover:shadow-violet-600/30 active:scale-[0.98]"
           >
-            Start Trading Smarter — It&apos;s Free
+            {closed ? 'Join Waitlist' : "Start Trading Smarter — It's Free"}
             <ArrowRight
               weight="bold"
               className="h-4 w-4 transition-transform duration-150 group-hover:translate-x-0.5"
@@ -62,14 +64,16 @@ export function HeroSection() {
         </motion.div>
 
         {/* Fine print */}
-        <motion.p
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.5, delay: 0.4, ease }}
-          className="mt-4 text-center text-xs text-slate-400"
-        >
-          10 free questions, no credit card required
-        </motion.p>
+        {!closed && (
+          <motion.p
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.5, delay: 0.4, ease }}
+            className="mt-4 text-center text-xs text-slate-400"
+          >
+            10 free questions, no credit card required
+          </motion.p>
+        )}
 
         {/* Product screenshot */}
         <motion.div

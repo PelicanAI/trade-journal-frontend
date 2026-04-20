@@ -6,6 +6,7 @@ import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { useT } from '@/lib/providers/translation-provider';
 import { LanguageSelector } from '@/components/language-selector';
+import { isSignupClosed } from '@/lib/signup-gate';
 
 interface NavLink {
   href: string;
@@ -34,10 +35,18 @@ export default function MarketingNav({
   const mobileNavRef = useRef<HTMLDivElement>(null);
   const toggleButtonRef = useRef<HTMLButtonElement>(null);
 
-  const resolvedCtaLabel = ctaLabel ?? t.marketing.nav.launchApp;
+  const closed = isSignupClosed();
+  const resolvedCtaLabel =
+    closed && ctaAction === 'signup'
+      ? 'Join Waitlist'
+      : ctaLabel ?? t.marketing.nav.launchApp;
 
   const handleCta = () => {
-    router.push(ctaAction === 'login' ? '/auth/login' : '/auth/signup');
+    if (ctaAction === 'login') {
+      router.push('/auth/login');
+      return;
+    }
+    router.push(closed ? '/waitlist' : '/auth/signup');
   };
 
   const closeMobileNav = useCallback(() => {

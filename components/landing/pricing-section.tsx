@@ -5,6 +5,7 @@ import { Check } from '@phosphor-icons/react'
 import { cn } from '@/lib/utils'
 import { Section } from '@/components/landing/section'
 import { ScrollReveal } from '@/components/landing/scroll-reveal'
+import { isSignupClosed } from '@/lib/signup-gate'
 
 const plans = [
   {
@@ -61,6 +62,7 @@ const plans = [
 ]
 
 export function PricingSection() {
+  const closed = isSignupClosed()
   return (
     <Section id="pricing">
       <ScrollReveal>
@@ -121,7 +123,7 @@ export function PricingSection() {
               </ul>
 
               <Link
-                href={`/auth/signup?plan=${plan.planId}`}
+                href={closed ? `/waitlist?plan=${plan.planId}` : `/auth/signup?plan=${plan.planId}`}
                 className={cn(
                   'block w-full text-center py-3 rounded-xl font-semibold text-sm transition-all duration-200 active:scale-[0.98]',
                   plan.highlighted
@@ -129,7 +131,7 @@ export function PricingSection() {
                     : 'bg-slate-100 hover:bg-slate-200 text-slate-900 border border-slate-200'
                 )}
               >
-                {plan.cta}
+                {closed ? 'Join Waitlist' : plan.cta}
               </Link>
             </div>
           </ScrollReveal>
@@ -160,11 +162,13 @@ export function PricingSection() {
         </div>
       </ScrollReveal>
 
-      <ScrollReveal delay={0.4}>
-        <p className="text-center text-sm text-slate-400 mt-10">
-          Not ready to commit? Start with 10 free questions, no signup required.
-        </p>
-      </ScrollReveal>
+      {!closed && (
+        <ScrollReveal delay={0.4}>
+          <p className="text-center text-sm text-slate-400 mt-10">
+            Not ready to commit? Start with 10 free questions, no signup required.
+          </p>
+        </ScrollReveal>
+      )}
     </Section>
   )
 }

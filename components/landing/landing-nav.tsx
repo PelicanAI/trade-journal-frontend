@@ -4,10 +4,14 @@ import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { List, X } from '@phosphor-icons/react'
+import { isSignupClosed } from '@/lib/signup-gate'
 
 export function LandingNav() {
   const [mobileOpen, setMobileOpen] = useState(false)
   const [scrolled, setScrolled] = useState(false)
+  const closed = isSignupClosed()
+  const ctaHref = closed ? '/waitlist' : '/auth/signup'
+  const ctaLabel = closed ? 'Join Waitlist' : 'Start Free'
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 20)
@@ -71,10 +75,10 @@ export function LandingNav() {
             Log in
           </Link>
           <Link
-            href="/auth/signup"
+            href={ctaHref}
             className="hidden rounded-lg bg-violet-600 px-4 py-2 text-sm font-medium text-white transition-all duration-150 hover:bg-violet-700 active:scale-[0.98] sm:block"
           >
-            Start Free
+            {ctaLabel}
           </Link>
           {/* Mobile hamburger */}
           <button
@@ -130,10 +134,10 @@ export function LandingNav() {
               Log in
             </Link>
             <Link
-              href="/auth/signup"
+              href={ctaHref}
               className="rounded-lg bg-violet-600 px-4 py-2.5 text-center text-sm font-medium text-white transition-all hover:bg-violet-700"
             >
-              Start Free
+              {ctaLabel}
             </Link>
           </div>
         </div>

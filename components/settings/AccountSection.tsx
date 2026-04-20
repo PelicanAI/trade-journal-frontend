@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { User } from "@phosphor-icons/react"
 import Link from "next/link"
+import { isSignupClosed } from "@/lib/signup-gate"
 import { SubscriptionCard } from "./SubscriptionCard"
 import { SecuritySection } from "./SecuritySection"
 import type { UserSettings } from "./types"
@@ -38,7 +39,9 @@ export function AccountSection({ user, settings, supabase }: AccountSectionProps
                   </p>
                   <div className="flex gap-3">
                     <Button asChild size="sm" className="bg-gradient-to-r from-blue-600 to-blue-700">
-                      <Link href="/auth/signup">Create Account</Link>
+                      <Link href={isSignupClosed() ? "/waitlist" : "/auth/signup"}>
+                        {isSignupClosed() ? "Join Waitlist" : "Create Account"}
+                      </Link>
                     </Button>
                     <Button asChild variant="outline" size="sm">
                       <Link href="/auth/login">Sign In</Link>
