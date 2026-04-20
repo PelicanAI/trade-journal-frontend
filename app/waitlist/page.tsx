@@ -77,10 +77,10 @@ function WaitlistForm() {
             />
           </div>
           <h1 className="text-2xl font-bold tracking-tight text-foreground">
-            You&apos;re on the list.
+            You&apos;re in.
           </h1>
           <p className="text-sm text-muted-foreground mt-3 leading-relaxed">
-            We&apos;ll email you when we reopen.
+            We&apos;ll email you the moment we reopen.
           </p>
         </div>
       </div>
@@ -94,7 +94,7 @@ function WaitlistForm() {
           className="mb-4 rounded-2xl border border-border bg-card p-4 text-sm text-muted-foreground"
           role="alert"
         >
-          Signup is currently closed. Add yourself below and we&apos;ll notify you when we reopen.
+          Signups are closed for now. Get on the list and we&apos;ll reach out when the next wave opens.
         </div>
       )}
 
@@ -110,13 +110,13 @@ function WaitlistForm() {
             />
           </div>
           <h1 className="text-2xl font-bold tracking-tight text-foreground">
-            We&apos;re at capacity.
+            Pelican is full.
           </h1>
           <p className="text-sm text-muted-foreground mt-4 leading-relaxed">
-            After launch, demand outpaced our model capacity. We&apos;re keeping current users on as a test environment while we scale.
+            Launch demand blew past what we planned for. We&apos;re sharpening the model with our current traders before the next wave opens up.
           </p>
           <p className="text-sm text-muted-foreground mt-3 leading-relaxed">
-            Leave your name and email and we&apos;ll let you know when the doors reopen. Thanks for the patience.
+            Drop your name and email. You&apos;ll be first through the door when we reopen.
           </p>
         </div>
 
@@ -172,7 +172,7 @@ function WaitlistForm() {
             className="w-full mt-4 bg-primary hover:bg-primary/90 text-primary-foreground font-semibold py-3.5 rounded-xl transition-all active:scale-[0.98] disabled:opacity-60 disabled:cursor-not-allowed"
             disabled={loading}
           >
-            {loading ? "Loading..." : "Join waitlist"}
+            {loading ? "Loading..." : "Save my spot"}
           </button>
         </form>
       </div>
