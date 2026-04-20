@@ -20,7 +20,7 @@ const PUBLIC_PATHS = [
 ];
 
 /** Marketing and landing pages that don't require login */
-const PUBLIC_PREFIXES = ["/pricing", "/privacy", "/terms", "/faq", "/how-to-use", "/guide", "/strategies", "/api/health", "/api/help-chat", "/api/stripe/webhook", "/api/strategies", "/api/share-card", "/api/cron"];
+const PUBLIC_PREFIXES = ["/pricing", "/privacy", "/terms", "/faq", "/how-to-use", "/guide", "/strategies", "/waitlist", "/api/health", "/api/help-chat", "/api/waitlist", "/api/stripe/webhook", "/api/strategies", "/api/share-card", "/api/cron"];
 
 function isPublicPath(pathname: string): boolean {
   if (pathname === "/") return true;
@@ -30,6 +30,17 @@ function isPublicPath(pathname: string): boolean {
 
 export const updateSession = async (request: NextRequest) => {
   const pathname = request.nextUrl.pathname;
+
+  // Shutdown gate: redirect signup page to waitlist when closed.
+  if (
+    pathname === '/auth/signup' &&
+    process.env.NEXT_PUBLIC_SIGNUP_CLOSED === 'true'
+  ) {
+    const url = request.nextUrl.clone()
+    url.pathname = '/waitlist'
+    url.search = request.nextUrl.search
+    return NextResponse.redirect(url)
+  }
 
   try {
     let response = NextResponse.next({
