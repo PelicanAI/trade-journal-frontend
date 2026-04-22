@@ -86,112 +86,7 @@ const ASSET_FILTER_OPTIONS: Record<Exclude<AssetClass, 'stocks'>, string[]> = {
   forex: ['All', 'Majors', 'Crosses', 'Exotic'],
 }
 
-// Market-adaptive morning brief prompt configurations
 type MarketType = 'stocks' | 'forex' | 'crypto' | 'futures' | 'options'
-
-interface BriefConfig {
-  overnightRecap: string
-  keyLevels: string
-  sectorRotation: string
-  gamePlan: string
-}
-
-const BRIEF_CONFIGS: Record<MarketType, BriefConfig> = {
-  stocks: {
-    overnightRecap: `**1. MARKET OVERNIGHT RECAP**
-- How did futures trade overnight? Where are S&P, Nasdaq, Dow futures right now?
-- What happened in Asia and Europe sessions?
-- Any overnight gaps or significant moves?`,
-    keyLevels: `**2. KEY LEVELS TODAY**
-- Major indices: support, resistance, and pivot levels
-- Volatility readings: current level and what they signal
-- Dollar index: direction and impact`,
-    sectorRotation: `**6. SECTOR ROTATION**
-- Which sectors are showing relative strength/weakness?
-- Any notable sector divergences from the broad market?
-- Money flow signals`,
-    gamePlan: `**10. GAME PLAN**
-- Summarize: what am I doing today?
-- Key price alerts to set
-- Times to pay attention to (data releases, market open, power hour)`,
-  },
-  forex: {
-    overnightRecap: `**1. SESSION RECAP**
-- How did the Asian session trade? Any significant moves in JPY, AUD, NZD crosses?
-- European session open outlook — what's the tone?
-- Any overnight gaps or central bank interventions?`,
-    keyLevels: `**2. KEY LEVELS TODAY**
-- Major currency pairs: support, resistance, and pivot levels
-- Dollar index: current direction and momentum`,
-    sectorRotation: `**6. CURRENCY STRENGTH**
-- Which currencies are showing relative strength/weakness today?
-- Any notable divergences between correlated pairs?
-- Central bank policy outlook and rate differential shifts`,
-    gamePlan: `**10. GAME PLAN**
-- Summarize: what am I doing today?
-- Key price alerts to set on major pairs
-- Times to pay attention to (London open, NY overlap, key economic releases)`,
-  },
-  crypto: {
-    overnightRecap: `**1. MARKET RECAP (24H)**
-- How did BTC and ETH trade over the last 24 hours? Any significant moves?
-- What happened during the Asia and US sessions?
-- Any notable liquidation events or large whale movements?`,
-    keyLevels: `**2. KEY LEVELS TODAY**
-- Major cryptocurrencies: support, resistance, and pivot levels
-- Market dominance: current level and trend
-- Total crypto market cap direction`,
-    sectorRotation: `**6. CATEGORY ROTATION**
-- Which categories are leading? (Layer 1, DeFi, Meme, AI, Gaming)
-- Any notable rotation between categories?
-- Funding rates and sentiment across major exchanges`,
-    gamePlan: `**10. GAME PLAN**
-- Summarize: what am I doing today?
-- Key price alerts to set
-- Volume pattern analysis (when are the highest-volume windows?)
-- On-chain metrics to watch (exchange flows, stablecoin mints)`,
-  },
-  futures: {
-    overnightRecap: `**1. OVERNIGHT SESSION RECAP**
-- How did ES, NQ, and YM trade overnight? Key levels hit?
-- Globex session volume and range — was it trending or range-bound?
-- Any overnight gaps or significant moves? Gap fill probability?`,
-    keyLevels: `**2. KEY LEVELS TODAY**
-- Major equity futures: support, resistance, VPOC, and value area
-- Volatility futures: current level and term structure
-- Any rollover/expiration considerations?`,
-    sectorRotation: `**6. SECTOR ROTATION**
-- Which sectors are showing relative strength/weakness?
-- COT (Commitment of Traders) positioning — any notable shifts?
-- Institutional vs retail positioning signals`,
-    gamePlan: `**10. GAME PLAN**
-- Summarize: what am I doing today?
-- Key price alerts to set on ES, NQ, CL, GC
-- Times to pay attention to (data releases, RTH open, power hour, settlement)
-- Overnight session levels to reference for RTH trading`,
-  },
-  options: {
-    overnightRecap: `**1. MARKET OVERNIGHT RECAP**
-- How did futures trade overnight? Where are S&P, Nasdaq, Dow futures right now?
-- What happened in Asia and Europe sessions?
-- Any overnight gaps or significant moves affecting implied volatility?`,
-    keyLevels: `**2. KEY LEVELS TODAY**
-- Major indices: support, resistance, and gamma exposure flip levels
-- Volatility index: current level, term structure (contango/backwardation)
-- Put/Call ratio: current reading and 5-day trend
-- Max pain levels for major indices and my positions`,
-    sectorRotation: `**6. VOLATILITY & FLOW ANALYSIS**
-- Implied volatility regime — are we in high or low IV?
-- Notable unusual options activity across sectors
-- Gamma exposure levels — where are dealer hedging flows concentrated?
-- Skew analysis — is put skew elevated?`,
-    gamePlan: `**10. GAME PLAN**
-- Summarize: what am I doing today?
-- Key volatility alerts to set
-- Times to pay attention to (data releases, market open, OPEX dates)
-- Position Greeks summary — any adjustments needed?`,
-  },
-}
 
 // Market-adaptive prompts for MarketPulseStrip clicks
 const PULSE_STRIP_PROMPTS: Record<MarketType, Record<string, string>> = {
@@ -275,7 +170,6 @@ export default function MorningPage() {
   const { patterns: activePatterns } = useTradePatterns()
   const { primaryMarket } = useTraderProfile()
   const marketType = (primaryMarket as MarketType) || 'stocks'
-  const briefConfig = BRIEF_CONFIGS[marketType] ?? BRIEF_CONFIGS.stocks
 
   // Get live quotes for open positions to calculate unrealized P&L
   const openTickersWithTypes = openTrades
@@ -455,10 +349,6 @@ export default function MorningPage() {
   }, [briefContent, toast])
 
   const buildMorningBriefPrompt = useCallback(() => {
-    const now = new Date()
-    const dateStr = now.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })
-    const timeStr = now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', timeZoneName: 'short' })
-
     const positionsSummary = openTrades.length > 0
       ? openTrades.map(t =>
           `${t.direction.toUpperCase()} ${t.ticker} @ ${t.entry_price}${t.stop_loss ? ` (stop: ${t.stop_loss})` : ''}${t.take_profit ? ` (target: ${t.take_profit})` : ''}${t.pnl_percent != null ? ` P&L: ${t.pnl_percent >= 0 ? '+' : ''}${t.pnl_percent.toFixed(1)}%` : ''}`
@@ -469,7 +359,6 @@ export default function MorningPage() {
       ? watchlistItems.map(w => w.ticker).join(', ')
       : 'No watchlist items'
 
-    // Watchlist custom alert prompts
     const watchlistAlerts = watchlistItems.filter(w => w.custom_prompt)
     let watchlistAlertContext = ''
     if (watchlistAlerts.length > 0) {
@@ -484,17 +373,57 @@ export default function MorningPage() {
       `${m.ticker}: ${m.changePercent >= 0 ? '+' : ''}${m.changePercent.toFixed(1)}%`
     ).join(', ')
 
-    const marketLabel: Record<MarketType, string> = {
-      stocks: 'equities/stock',
-      forex: 'forex/currency',
-      crypto: 'cryptocurrency',
-      futures: 'futures',
-      options: 'options',
+    const now = new Date()
+    const hour = now.getHours()
+    const dayOfWeek = now.toLocaleDateString('en-US', { weekday: 'long' })
+    const dateStr = now.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })
+
+    let sessionContext = ''
+    if (hour < 9) {
+      sessionContext = 'Pre-market (US equities open at 9:30 AM ET). Focus on overnight moves, futures, pre-market action, and what\'s on deck for the session.'
+    } else if (hour >= 9 && hour < 16) {
+      sessionContext = 'Regular trading hours. Focus on intraday action, what\'s moving right now, and catalysts still to hit today.'
+    } else {
+      sessionContext = 'After-hours. Focus on today\'s closing action, after-hours movers, earnings reported post-close, and what sets up tomorrow.'
     }
 
-    let prompt = `Morning brief — key events this week, what's moving, and where are the major indices.`
+    let prompt = `Brief for ${dayOfWeek}, ${dateStr}. ${sessionContext}
 
-    // Append watchlist custom alert context
+Cover these sections in order, tight and specific. No filler, no greetings, no disclaimers.
+
+1. MARKET STATE
+Where are the major indices right now (S&P, Nasdaq, Dow, Russell), 10Y yield. One line each with level and change. Note anything unusual.
+
+2. OVERNIGHT / SESSION MOVES
+What actually moved and why. Asia and Europe if pre-market. Pre-market movers if pre-open. Intraday leaders and laggards if during session. After-hours movers and earnings reactions if post-close. Be specific — name tickers and cite the catalyst.
+
+3. TODAY'S CATALYSTS
+What's hitting today: economic data releases (with times and consensus where it matters), Fed speakers, earnings before/after the bell, notable events. If a release already came out, note the print vs consensus and how the market reacted.
+
+4. WHAT'S MOVING THIS WEEK
+Bigger picture. Themes driving tape this week — rate expectations, sector rotation, earnings season status, geopolitical, whatever's actually driving flows. Keep it to 2-3 real themes, not a laundry list.
+
+5. GAME PLAN
+2-3 specific things worth watching or acting on today. Can be levels on indices, specific tickers setting up or breaking down, catalysts that could move positioning. Only call out real setups, not stretches.
+
+Rules:
+- Grab live data or search the news for every price, level, and headline. Use today's data, not training data.
+- Pull from real sources: Bloomberg, Reuters, WSJ, CNBC, MarketWatch, exchange data, official economic calendars (BLS, BEA, Fed).
+- If a number or catalyst isn't findable, say so briefly and move on — don't pad the section.
+- Be specific. "Semis weak" is useless. "SMH -1.8%, NVDA -2.4% on TSM cut" is useful. Cite the source briefly when citing a catalyst.
+- Lead with content. No "good morning" or "happy trading."
+- Bullets for lists, prose for context.`
+
+    if (positionsSummary) {
+      prompt += `\n\nMY OPEN POSITIONS:\n${positionsSummary}\n\nFactor these into relevant sections.`
+    }
+    if (watchlistSummary) {
+      prompt += `\n\nMY WATCHLIST:\n${watchlistSummary}\n\nCover notable moves and setup matches.`
+    }
+    if (moversSummary) {
+      prompt += `\n\nTOP MOVERS (live):\n${moversSummary}\n\nUse this data rather than searching for it.`
+    }
+
     if (watchlistAlertContext) {
       prompt += watchlistAlertContext
     }
@@ -534,7 +463,7 @@ export default function MorningPage() {
     }
 
     return prompt
-  }, [openTrades, watchlistItems, movers.gainers, movers.losers, todaysWarnings, marketType, briefConfig, activePlaybooks, activePatterns])
+  }, [openTrades, watchlistItems, movers.gainers, movers.losers, todaysWarnings, activePlaybooks, activePatterns])
 
   const supabase = useMemo(() => createClient(), [])
   const briefAbortRef = useRef<AbortController | null>(null)
